@@ -1,0 +1,37 @@
+Code,HabitatID,Site,Habitat,Replicate
+BB1_1,1,Bare Bluff,Inshore,1
+BB1_2,1,Bare Bluff,Inshore,2
+BB1_3,1,Bare Bluff,Inshore,3
+BB1_4,1,Bare Bluff,Inshore,4
+MU1_1,1,Muttonbird Island,Inshore,1
+MU1_2,1,Muttonbird Island,Inshore,2
+MU1_3,1,Muttonbird Island,Inshore,3
+MU1_4,1,Muttonbird Island,Inshore,4
+CO1_1,1,Corindi,Inshore,1
+CO1_2,1,Corindi,Inshore,2
+CO1_3,1,Corindi,Inshore,3
+CO1_4,1,Corindi,Inshore,4
+402_1,2,40 Acres,Midshelf,1
+402_2,2,40 Acres,Midshelf,2
+402_3,2,40 Acres,Midshelf,3
+402_4,2,40 Acres,Midshelf,4
+SB2_1,2,Split Bommie,Midshelf,1
+SB2_2,2,Split Bommie,Midshelf,2
+SB2_3,2,Split Bommie,Midshelf,3
+SB2_4,2,Split Bommie,Midshelf,4
+NW2_1,2,NW  Solitary,Midshelf,1
+NW2_2,2,NW  Solitary,Midshelf,2
+NW2_3,2,NW  Solitary,Midshelf,3
+NW2_4,2,NW  Solitary,Midshelf,4
+NS3_1,3,North Solitary,Offshore,1
+NS3_2,3,North Solitary,Offshore,2
+NS3_3,3,North Solitary,Offshore,3
+NS3_4,3,North Solitary,Offshore,4
+SS3_1,3,South Solitary,Offshore,1
+SS3_2,3,South Solitary,Offshore,2
+SS3_3,3,South Solitary,Offshore,3
+SS3_4,3,South Solitary,Offshore,4
+NW3_1,3,NW Rock,Offshore,1
+NW3_2,3,NW Rock,Offshore,2
+NW3_3,3,NW Rock,Offshore,3
+NW3_4,3,NW Rock,Offshore,4

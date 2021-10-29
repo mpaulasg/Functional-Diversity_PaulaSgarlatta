@@ -1,0 +1,10 @@
+Code,HabitatID,Site,Habitat,Replicate
+BB1_I,1,Bare Bluff,Inshore,1
+M1_I,1,Muttonbird Island,Inshore,2
+C1_I,1,Corindi,Inshore,3
+40M2_M,2,40 Acres,Midshelf,1
+SB2_M,2,Split Bommie,Midshelf,2
+NWS2_M,2,NW  Solitary,Midshelf,3
+NS3_O,3,North Solitary,Offshore,1
+SS3_O,3,South Solitary,Offshore,2
+NWR3_O,3,NW Rock,Offshore,3
