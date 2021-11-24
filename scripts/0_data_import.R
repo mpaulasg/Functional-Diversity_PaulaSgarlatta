@@ -1,14 +1,11 @@
 ################################################################################
 ##
-## Script for temporal FD analysis 
+## Script for importing all data from csv files
 ## 
-## Code by Camille Magneville-Modified by Paula Sgarlatta
+## Code by Camille Magneville, Sébastien villéger and Paula Sgarlatta
 ##
-## 1/ First load and transform dataset - kelp and no kelp sites
-## 2/ Then, basic FD analysis
-## 3/ Then, compute alpha indices (FRic, FDis, FSpecialisation)
-## 4/ Least, compute beta indice (Jaccard like)
-## 5/ Taxonomic analysis
+## 1/ load and preparing trait datasets - kelp and no kelp sites
+## 2/ 
 ################################################################################
 
 #### 1 - Load (and transform) datasets ####
@@ -19,52 +16,61 @@ rm(list=ls()) # cleaning memory
 library(tidyverse)
 library(mFD)
 
-## trait data ####
-# load traits data - KELP ----
+## 1 trait data ####
+
+# load traits data ----
+
+# species from sites with kelp
 traits_kelp <- read.csv("data/TemporalBRUV_species_traits_kelp.csv",
                         header = TRUE, row.names = 1)
 head(traits_kelp)
 
+#Traits for sp presents in sites that never had kelp
+traits_no_kelp <- read.csv("data/TemporalBRUV_species_traits_no_kelp.csv",
+                           header = TRUE, row.names = 1)
+head(traits_no_kelp)
+
+# merging in a single data.frame and trait named renamed
+sp_tr <- as.data.frame( rbind( traits_kelp, traits_no_kelp) )
+names(sp_tr) <- c("Size", "Aggr", "Posi", "Diet")
+head(sp_tr)
+
+# recoding variable to match trait type ---
+
 # looking at trait values
-lapply(traits_kelp, unique)
+lapply(sp_tr, unique)
 
 # trait type
 tr_cat<-data.frame( trait_name = c("Size", "Aggr", "Posi", "Diet"),
                     trait_type = c("O","O","O","N") )
 
-# renaming trait and variable type according to trait coding ----
-sp_tr <- as.data.frame(traits_kelp)
-names(sp_tr) <- tr_cat$trait_name
-
-
 # size as ordinal
-sp_tr$Size <- factor(traits_kelp$Size, 
-                     levels = c("S2", "S3", "S4", "S5", "S6"),
+sp_tr$Size <- factor(sp_tr$Size, 
+                     levels = c("S2", "S3", "S4", "S5", "S6", "S7"),
                      ordered = TRUE)
 summary(sp_tr$Size)
 
 # aggregation as ordinal
-sp_tr$Aggr <- factor(traits_kelp$Agg, 
+sp_tr$Aggr <- factor(sp_tr$Aggr, 
                     levels = c("Solitary", "Pair", "Group"),
                     ordered = TRUE)
 summary(sp_tr$Aggr)
 
 # Position as ordinal
-sp_tr$Posi <- factor(traits_kelp$Position, 
+sp_tr$Posi <- factor(sp_tr$Posi, 
                     levels = c("Benthic", "BenthoP", "Pelagic"),
                     ordered = TRUE)
 summary(sp_tr$Posi)
 
 # diet as factor
-sp_tr$Diet <- as.factor(traits_kelp$Diet)
+sp_tr$Diet <- as.factor(sp_tr$Diet)
 summary(sp_tr$Diet)
 
 summary(sp_tr)
-# => trait data ready
 
+####################### # => trait data ready ####
 
-
-## species occurrences data ####
+## 2 species occurrences data ####
 
 # load temporal maxN data - only sites that use to have kelp and lost it:
 kelp <- read.csv("data/TemporalBRUV_species_maxN_kelp.csv")
@@ -81,27 +87,7 @@ no_kelp <- read.csv("data/TemporalBRUV_species_maxN_no_kelp.csv")
 rownames(no_kelp) <- no_kelp$species_id
 no_kelp <- tibble::column_to_rownames(no_kelp, var = "Site")
 
-#Traits for sp presents in sites that never had kelp
 
-traits_no_kelp <- read.csv("data/TemporalBRUV_species_traits_no_kelp.csv")
-
-# transform columns type:
-traits_no_kelp$Size <- as.ordered(traits_no_kelp$Size)
-ordered(traits_no_kelp$Size)
-traits_no_kelp$Agg <- as.ordered(traits_no_kelp$Agg)
-ordered(traits_no_kelp$Agg)
-# I have changed the order of the groups with Solitary < Pair < Group ...
-# ... instead of Group < Pair < Solitary:
-traits_no_kelp[, "Agg"] <- factor(traits_no_kelp[, "Agg"], levels = c("Solitary", "Pair", "Group"),
-                         ordered = TRUE)
-ordered(traits_no_kelp$Agg)
-traits_no_kelp$Position <- as.ordered(traits_no_kelp$Position)
-ordered(traits_no_kelp$Position)
-traits_no_kelp$Diet <- as.factor(traits_no_kelp$Diet)
-
-# add species as row names:
-rownames(traits_no_kelp) <- traits_no_kelp$species_id
-traits_no_kelp <- tibble::column_to_rownames(traits_no_kelp, var = "X")
 
 
 library(remotes)
