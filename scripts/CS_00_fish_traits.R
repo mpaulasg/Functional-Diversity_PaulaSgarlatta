@@ -46,6 +46,8 @@ head(fish_traits)
 
 nrow(fish_traits) # 143 species
 
+sort(fish_traits$Species) #
+#                                                                               => @@ check whether typo in "A_dussumeri"         "A_dussumieri"   
 
 # saving as csv file
 write.csv(fish_traits, file=here::here("data", "fish_traits.csv"), 

@@ -1,4 +1,17 @@
-#### 1 - Load (and transform) datasets ####
+################################################################################
+##
+## Script for preparing fish occurence datasets
+## 
+## Code by Camille Magneville, Sébastien villéger and Paula Sgarlatta
+##
+################################################################################
+
+rm(list=ls()) # cleaning memory
+
+# libraries
+library(tidyverse)
+library(here)
+library(mFD)
 
 rm(list=ls()) # cleaning memory
 
@@ -87,8 +100,8 @@ length(spatial_sp) # 51
 
 ## names of species present in at least one dataset ####
 sum(spatial_sp %in% temporal_sp)# 32 species shared
-species_allsurveys <- unique(temporal_sp ,  spatial_sp)
-length(species_allsurveys) # 124 species
+species_allsurveys <- unique( c(temporal_sp ,  spatial_sp) )
+length(species_allsurveys) # 143 species
 
 ## saving dataframes #####
 save(kelp_metadata, file=here::here("data", "kelp_metadata.RData") )

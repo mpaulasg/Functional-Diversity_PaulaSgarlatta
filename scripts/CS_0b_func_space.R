@@ -1,10 +1,10 @@
 ################################################################################
 ##
-## Script for importing all data from csv files
+## Script for computing species positions in a multidimensional space
+## according to their trait values
 ## 
-## Code by Camille Magneville, Sébastien villéger and Paula Sgarlatta
+## Code by Camille Magneville, Sébastien Villéger and Paula Sgarlatta
 ##
-## 1/ load and preparing trait datasets 
 ################################################################################
 
 rm(list=ls()) # cleaning memory
@@ -18,21 +18,24 @@ library(mFD)
 
 # load species names from surveys datasets
 load(here::here("data/", "species_allsurveys.RData") )
-length(species_allsurveys) # 124 species
+length(species_allsurveys) # 143 species
 
 # load traits data ----
 fish_traits <- read.csv(here::here("data", "fish_traits.csv"), header = T)
 
 ## preparing trait dataset ####
 
-# keeping only species present in surveys ----
+# checking same species in trait and occurrences datasets
+identical ( sort(species_allsurveys) , sort(fish_traits$Species ) ) # TRUE
+
+# trait values in a dataframe (species in alphabetial order)
 sp_tr <- fish_traits %>%
-  filter(Species %in% species_allsurveys) %>%
+  arrange("Species") %>%
   column_to_rownames("Species") %>%
   as.data.frame()
 head(sp_tr)
 
-nrow(sp_tr) # 124 species
+nrow(sp_tr) # 143 species
 
 # recoding variable to match trait type ---
 
@@ -83,13 +86,13 @@ range(sp_gower_dist) # from 0 to 1
 funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
                                  deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces$quality_fspaces
-# => 3D space has the lowest mAD (0.056)
+# => 3D space has the lowest mAD (0.0598)
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
 summary(sp_3D_coord)
 
-# @@@ ADD plot of funct space
+# @@@ ADD code for plots of funct space, correl tr vs axes and save them in outputs
 
 
 
@@ -102,7 +105,7 @@ save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
 save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 
-####################### # => func space data ready ####
+####################### end ####
 
 
 
