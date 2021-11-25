@@ -4,11 +4,8 @@
 ## 
 ## Code by Camille Magneville, Sébastien villéger and Paula Sgarlatta
 ##
-## 1/ load and preparing trait datasets - kelp and no kelp sites
-## 2/ 
+## 1/ load and preparing trait datasets 
 ################################################################################
-
-#### 1 - Load (and transform) datasets ####
 
 rm(list=ls()) # cleaning memory
 
@@ -17,28 +14,25 @@ library(tidyverse)
 library(here)
 library(mFD)
 
-## 1 trait data ####
+## loading ####
+
+# load species names from surveys datasets
+load(here::here("data/", "species_allsurveys.RData") )
+length(species_allsurveys) # 124 species
 
 # load traits data ----
+fish_traits <- read.csv(here::here("data", "fish_traits.csv"), header = T)
 
-# species from sites with kelp
-traits_kelp <- read.csv(here::here("data/TemporalBRUV_species_traits_kelp.csv"),
-                        header = TRUE, row.names = 1)
-head(traits_kelp)
-nrow(traits_kelp)
+## preparing trait dataset ####
 
-#Traits for sp presents in sites that never had kelp
-traits_no_kelp <- read.csv(here::here("data/TemporalBRUV_species_traits_no_kelp.csv"),
-                           header = TRUE, row.names = 1)
-head(traits_no_kelp)
-
-# merging in a single data.frame and trait named shortened (4 characters) ----
-sp_tr <- as.data.frame( rbind( traits_kelp, traits_no_kelp) )
-names(sp_tr) <- c("Size", "Aggr", "Posi", "Diet")
+# keeping only species present in surveys ----
+sp_tr <- fish_traits %>%
+  filter(Species %in% species_allsurveys) %>%
+  column_to_rownames("Species") %>%
+  as.data.frame()
 head(sp_tr)
 
-nrow(sp_tr)
-unique(row.names(sp_tr) )
+nrow(sp_tr) # 124 species
 
 # recoding variable to match trait type ---
 
@@ -76,13 +70,39 @@ summary_traits <- mFD::sp.tr.summary(tr_cat = tr_cat,
                                       sp_tr  = sp_tr)
 summary_traits
 
-# saving trait values and trait coding dataframes ----
+
+## Computing Gower distance between species ####
+sp_gower_dist <- mFD::funct.dist(sp_tr=sp_tr, tr_cat = tr_cat, 
+                                   metric="gower")
+# => no need to compute FE since all indices are not sensitive to redundant species
+range(sp_gower_dist) # from 0 to 1
+
+
+# computing PCoA-based functional spaces ----
+# mean absolute deviation index (as quality metric)
+funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
+                                 deviation_weighting = "absolute", fdist_scaling = FALSE) 
+funct_spaces$quality_fspaces
+# => 3D space has the lowest mAD (0.056)
+
+# species coordinates
+sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
+summary(sp_3D_coord)
+
+# @@@ ADD plot of funct space
+
+
+
+# saving ####
+
+# trait values and trait coding dataframes ----
 save(sp_tr, file=here::here("data/", "sp_tr.RData") )
 save(tr_cat, file=here::here("data/", "tr_cat.RData") )
 save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
+save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
+save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 
-
-####################### # => trait data ready ####
+####################### # => func space data ready ####
 
 
 

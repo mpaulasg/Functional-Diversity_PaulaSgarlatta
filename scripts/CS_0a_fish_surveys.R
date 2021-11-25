@@ -91,18 +91,18 @@ species_allsurveys <- unique(temporal_sp ,  spatial_sp)
 length(species_allsurveys) # 124 species
 
 ## saving dataframes #####
-save(kelp_metadata, file=here::here("data/", "kelp_metadata.RData") )
-save(kelp_sp_occ, file=here::here("data/", "kelp_sp_occ.RData") )
-save(kelp_summary, file=here::here("data/", "kelp_summary.RData") )
+save(kelp_metadata, file=here::here("data", "kelp_metadata.RData") )
+save(kelp_sp_occ, file=here::here("data", "kelp_sp_occ.RData") )
+save(kelp_summary, file=here::here("data", "kelp_summary.RData") )
 
-save(nokelp_metadata, file=here::here("data/", "nokelp_metadata.RData") )
-save(nokelp_sp_occ, file=here::here("data/", "nokelp_sp_occ.RData") )
-save(nokelp_summary, file=here::here("data/", "nokelp_summary.RData") )
+save(nokelp_metadata, file=here::here("data", "nokelp_metadata.RData") )
+save(nokelp_sp_occ, file=here::here("data", "nokelp_sp_occ.RData") )
+save(nokelp_summary, file=here::here("data", "nokelp_summary.RData") )
 
-save(spatial_metadata, file=here::here("data/", "spatial_metadata.RData") )
-save(spatial_sp_occ, file=here::here("data/", "spatial_sp_occ.RData") )
-save(spatial_summary, file=here::here("data/", "spatial_summary.RData") )
+save(spatial_metadata, file=here::here("data", "spatial_metadata.RData") )
+save(spatial_sp_occ, file=here::here("data", "spatial_sp_occ.RData") )
+save(spatial_summary, file=here::here("data", "spatial_summary.RData") )
 
-save(species_allsurveys, file=here::here("data/", "species_allsurveys.RData") )
+save(species_allsurveys, file=here::here("data", "species_allsurveys.RData") )
 
 ## end of script ####
