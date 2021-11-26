@@ -16,19 +16,20 @@ library(mFD)
 
 ## loading ####
 
-# load species names from surveys datasets
-load(here::here("data/", "species_allsurveys.RData") )
+# load traits data ----
+fish_traits <- read.csv(here::here("data", "raw_data", "fish_traits.csv"), header = T)
+
+# load species names from surveys datasets ----
+load(here::here("data", "species_allsurveys.RData") )
 length(species_allsurveys) # 143 species
 
-# load traits data ----
-fish_traits <- read.csv(here::here("data", "fish_traits.csv"), header = T)
+# checking same species in trait and occurrences datasets ----
+identical ( sort(species_allsurveys) , sort(fish_traits$Species ) ) # TRUE
+
 
 ## preparing trait dataset ####
 
-# checking same species in trait and occurrences datasets
-identical ( sort(species_allsurveys) , sort(fish_traits$Species ) ) # TRUE
-
-# trait values in a dataframe (species in alphabetial order)
+# trait values in a dataframe (species in alphabetical order) ----
 sp_tr <- fish_traits %>%
   arrange("Species") %>%
   column_to_rownames("Species") %>%
@@ -37,7 +38,7 @@ head(sp_tr)
 
 nrow(sp_tr) # 143 species
 
-# recoding variable to match trait type ---
+# recoding variable to match trait type ----
 
 # looking at trait values
 lapply(sp_tr, unique)

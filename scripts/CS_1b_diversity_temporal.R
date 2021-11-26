@@ -97,6 +97,7 @@ cbind( min=lapply(temporal_beta_kelp, min), max=lapply(temporal_beta_kelp, max) 
 # trait values and trait coding dataframes ----
 save(temporal_fd_nokelp, file=here::here("outputs/", "temporal_fd_nokelp.RData") )
 save(temporal_alpha_nokelp, file=here::here("outputs/", "temporal_alpha_nokelp.RData") )
+
 save(temporal_fd_kelp, file=here::here("outputs/", "temporal_fd_kelp.RData") )
 save(temporal_alpha_kelp, file=here::here("outputs/", "temporal_alpha_kelp.RData") )
 

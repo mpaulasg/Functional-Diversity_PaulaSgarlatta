@@ -26,25 +26,24 @@ library(mFD)
 # loading raw data from csv----
 
 # metadata and data from sites without kelp
-nokelp_metadata <- read.csv(here::here("data", "TemporalBRUV_species_metadata_no_kelp.csv")) %>% 
-  mutate(Replicate = Code) %>% 
-  mutate(Site = str_sub(Replicate, end = -7)) %>% 
-  `rownames<-`(.$Code)
+nokelp_metadata <- read.csv(here::here("data", "raw_data", "TemporalBRUV_nokelp_metadata.csv") )
+head(nokelp_metadata)
+unique(nokelp_metadata$Site) # 4 sites
+unique(nokelp_metadata$Year) # 14 years
 
-nokelp_sp_maxN <- read.csv(here::here("data", "TemporalBRUV_species_maxN_no_kelp.csv"),
-                           header = TRUE, row.names = 1) %>%
+nokelp_sp_maxN <- read.csv(here::here("data", "raw_data", "TemporalBRUV_nokelp_species.csv") ) %>%
+  column_to_rownames("Code") %>%
   as.matrix()
 head(nokelp_sp_maxN)
 
-
 # metadata and data from sites that use to have kelp and lost it:
-kelp_metadata <- read.csv(here::here("data", "TemporalBRUV_species_metadata_kelp.csv")) %>% 
-  mutate(Replicate = Code) %>% 
-  mutate(Site = str_sub(Replicate, end = -7)) %>% 
-  `rownames<-`(.$Code)
+kelp_metadata <- read.csv(here::here("data", "raw_data", "TemporalBRUV_kelp_metadata.csv") )
+head(kelp_metadata)
+unique(kelp_metadata$Site) # 5 sites
+unique(kelp_metadata$Year) # 14 years
 
-kelp_sp_maxN <- read.csv(here::here("data", "TemporalBRUV_species_maxN_kelp.csv"),
-                         header = TRUE, row.names = 1) %>%
+kelp_sp_maxN <- read.csv(here::here("data", "raw_data", "TemporalBRUV_kelp_species.csv") ) %>%
+  column_to_rownames("Code") %>%
   as.matrix()
 head(kelp_sp_maxN)
 
@@ -58,8 +57,8 @@ kelp_sp_occ <- kelp_summary$asb_sp_occ
 nokelp_sp_occ <- nokelp_summary$asb_sp_occ
 
 # dimensions
-dim(kelp_sp_occ) # 204 surveys * 101 species
-dim(nokelp_sp_occ) # 167 surveys * 106 species
+dim(kelp_sp_occ) # 69 assemblages * 101 species
+dim(nokelp_sp_occ) # 56 assemblages * 106 species
 
 # names of species
 kelp_sp <- colnames(kelp_sp_occ)
@@ -77,16 +76,13 @@ length(temporal_sp) # 124 unique species
 ## spatial survey data ####
 
 # metadata of surveys and fish biomass (average across UVC transects) ----
-spatial_metadata <- read.csv(here::here("data", "SpatialUVC_metadata_site.csv")) %>% 
-  mutate(Replicate = Code) %>% 
-  mutate(Site = str_sub(Replicate, end = -3)) %>% 
-  `rownames<-`(.$Code)
+spatial_metadata <- read.csv(here::here("data", "raw_data",  "SpatialUVC_metadata_site.csv"))
 head(spatial_metadata)
 
-spatial_sp_biom <- read.csv(here::here("data", "SpatialUVC_species_biomass_site_average.csv"),
+spatial_sp_biom <- read.csv(here::here("data", "raw_data", "SpatialUVC_species_biomass_site_average.csv"),
                             header = TRUE, row.names = 1) %>%
   as.matrix()
-dim(spatial_sp_biom) # 9 assemblage * 51 species
+dim(spatial_sp_biom) # 9 assemblages * 51 species
 
 # summary of surveys and occurrences data ----
 spatial_summary <- mFD::asb.sp.summary(asb_sp_w = spatial_sp_biom)
