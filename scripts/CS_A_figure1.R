@@ -139,7 +139,7 @@ plot_tempo_func
 
 
 
-## merging all plot into a single figure and saving as png 
+## merging all plot into a single figure and saving as png ####
 figure1 <- ( plot_spatial_taxo + plot_tempo_taxo ) / ( plot_spatial_func +  plot_tempo_func )
 ggsave(figure1, file=here::here("outputs/", "figure1.png") )
   
