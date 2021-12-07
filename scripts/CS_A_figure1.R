@@ -133,7 +133,7 @@ plot_tempo_func <- ggplot(temporal_toplot,
   geom_errorbar( aes(x=Year, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.2) +
   scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
   scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Species richness") +
+  labs(x="Year", y="Functional richness") +
   theme_bw()
 plot_tempo_func
 
@@ -141,6 +141,7 @@ plot_tempo_func
 
 ## merging all plot into a single figure and saving as png ####
 figure1 <- ( plot_spatial_taxo + plot_tempo_taxo ) / ( plot_spatial_func +  plot_tempo_func )
-ggsave(figure1, file=here::here("outputs/", "figure1.png") )
+ggsave(figure1, file=here::here("outputs/", "figure1.png"),
+       height = 12, width = 25, unit = "cm" )
   
        
