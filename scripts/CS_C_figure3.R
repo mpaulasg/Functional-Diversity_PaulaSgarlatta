@@ -122,7 +122,8 @@ for ( z in 1:length(pairs_axes) ) {
                     label = names(years_colors) ),
                     color = years_colors,
                 hjust = "left",
-                show.legend = FALSE)
+                show.legend = FALSE) +
+      ggtitle("Temporal - Kelp")
   }
   
   # ggplot stored in list
@@ -196,6 +197,11 @@ for ( z in 1:length(pairs_axes) ) {
     )
     
   }# end of v
+  
+  if (z==1) {
+    ggplot_z <- ggplot_z + 
+      ggtitle("Temporal - No Kelp")
+  }
   
   # ggplot stored in list
   ggplot_temporal_nokelp[[z]]<-ggplot_z
@@ -281,7 +287,8 @@ for ( z in 1:length(pairs_axes) ) {
                     label = names(hab_colors),
                     color = hab_colors ),
                 hjust = "left",
-                show.legend = FALSE)
+                show.legend = FALSE) +
+      ggtitle("Spatial")
   }
   
   # ggplot stored in list
