@@ -44,10 +44,10 @@ fish_traits <- bind_rows( kelp_traits, nokelp_traits, spatial_traits) %>%
   as.data.frame()
 head(fish_traits)
 
-nrow(fish_traits) # 143 species
+nrow(fish_traits) # 142 species
 
 sort(fish_traits$Species) #
-#                                                                               => @@ check whether typo in "A_dussumeri"         "A_dussumieri"   
+#                                                                               
 
 # saving as csv file
 write.csv(fish_traits, file=here::here("data", "raw_data", "fish_traits.csv"), 
