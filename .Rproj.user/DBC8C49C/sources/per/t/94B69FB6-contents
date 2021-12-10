@@ -13,14 +13,6 @@ library(tidyverse)
 library(here)
 library(mFD)
 
-rm(list=ls()) # cleaning memory
-
-# libraries
-library(tidyverse)
-library(here)
-library(mFD)
-
-
 ## temporal survey data ####
 
 # loading raw data from csv----
@@ -95,9 +87,9 @@ spatial_sp <- colnames(spatial_sp_occ)
 length(spatial_sp) # 51
 
 ## names of species present in at least one dataset ####
-sum(spatial_sp %in% temporal_sp)# 32 species shared
+sum(spatial_sp %in% temporal_sp)# 33 species shared
 species_allsurveys <- unique( c(temporal_sp ,  spatial_sp) )
-length(species_allsurveys) # 143 species
+length(species_allsurveys) # 142 species
 
 ## saving dataframes #####
 save(kelp_metadata, file=here::here("data", "kelp_metadata.RData") )
