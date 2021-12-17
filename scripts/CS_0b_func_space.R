@@ -87,7 +87,7 @@ range(sp_gower_dist) # from 0 to 1
 funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
                                  deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces$quality_fspaces
-# => 3D space has the lowest mAD (0.0598)
+# => 3D space has the lowest mAD (0.0596)
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
@@ -106,109 +106,6 @@ save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
 save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 
-
-######## [PS] Now same but using thermal affinity ####
-
-rm(list=ls()) # cleaning memory
-
-# load traits data ----
-fish_traits_thermal <- read.csv(here::here("data", "raw_data", "fish_traits_thermal.csv"), header = T)
-
-# load species names from surveys datasets ----
-load(here::here("data", "species_allsurveys.RData") ) 
-length(species_allsurveys) # 142 species
-
-# checking same species in trait and occurrences datasets ----
-identical ( sort(species_allsurveys) , sort(fish_traits_thermal$Species ) ) # TRUE
-
-
-## preparing trait dataset ####
-
-# trait values in a dataframe (species in alphabetical order) ----
-sp_tr_thermal <- fish_traits_thermal %>%
-  arrange("Species") %>%
-  column_to_rownames("Species") %>%
-  as.data.frame()
-head(sp_tr_thermal)
-
-nrow(sp_tr_thermal) # 142 species
-
-# recoding variable to match trait type ----
-
-# looking at trait values
-lapply(sp_tr_thermal, unique)
-
-# trait type
-tr_cat_thermal<-data.frame( trait_name = c("Size", "Aggr", "Posi", "Diet", "Thermal_affinity_min", "Thermal_affinity_max"),
-                    trait_type = c("O","O","O","N", "Q", "Q") )
-
-# size as ordinal
-sp_tr_thermal$Size <- factor(sp_tr_thermal$Size, 
-                     levels = c("S2", "S3", "S4", "S5", "S6", "S7"),
-                     ordered = TRUE)
-summary(sp_tr_thermal$Size)
-
-# aggregation as ordinal
-sp_tr_thermal$Aggr <- factor(sp_tr_thermal$Aggr, 
-                     levels = c("Solitary", "Pair", "Group"),
-                     ordered = TRUE)
-summary(sp_tr_thermal$Aggr)
-
-# Position as ordinal
-sp_tr_thermal$Posi <- factor(sp_tr_thermal$Posi, 
-                     levels = c("Benthic", "BenthoP", "Pelagic"),
-                     ordered = TRUE)
-summary(sp_tr_thermal$Posi)
-
-# diet as factor
-sp_tr_thermal$Diet <- as.factor(sp_tr_thermal$Diet)
-summary(sp_tr_thermal$Diet)
-
-# Thermal affinity as numeric
-
-sp_tr_thermal$Thermal_affinity_min <- as.numeric(sp_tr_thermal$Thermal_affinity_min)
-summary(sp_tr_thermal$Thermal_affinity_min)
-sp_tr_thermal$Thermal_affinity_max <- as.numeric(sp_tr_thermal$Thermal_affinity_max)
-summary(sp_tr_thermal$Thermal_affinity_max)
-
-# summary of trait data----
-summary_traits_thermal <- mFD::sp.tr.summary(tr_cat = tr_cat_thermal, 
-                                     sp_tr  = sp_tr_thermal)
-summary_traits_thermal
-
-
-## Computing Gower distance between species ####
-sp_gower_dist_thermal <- mFD::funct.dist(sp_tr=sp_tr_thermal, tr_cat = tr_cat_thermal, 
-                                 metric="gower")
-# => no need to compute FE since all indices are not sensitive to redundant species
-range(sp_gower_dist_thermal) # from 0 to 1
-
-
-# computing PCoA-based functional spaces ----
-# mean absolute deviation index (as quality metric)
-funct_spaces_thermal<- mFD::quality.fspaces(sp_dist = sp_gower_dist_thermal, maxdim_pcoa = 12, 
-                                    deviation_weighting = "absolute", fdist_scaling = FALSE) 
-funct_spaces_thermal$quality_fspaces
-# => 4D space has the lowest mAD (0.0471)
-
-# species coordinates
-sp_4D_coord<-funct_spaces_thermal$details_fspaces$sp_pc_coord[,1:4]
-summary(sp_4D_coord)
-
-# @@@ ADD code for plots of funct space, correl tr vs axes and save them in outputs
-
-
-
-# saving ####
-
-# trait values and trait coding dataframes ----
-save(sp_tr_thermal, file=here::here("data/", "sp_tr_thermal.RData") )
-save(tr_cat_thermal, file=here::here("data/", "tr_cat_thermal.RData") )
-save(summary_traits_thermal, file=here::here("outputs/", "summary_traits_thermal.RData") )
-save(sp_gower_dist_thermal, file=here::here("outputs/", "sp_gower_dist_thermal.RData") )
-save(sp_4D_coord, file=here::here("outputs/", "sp_4D_coord.RData") )
-
-## [PS] Is it worth it to save everything in RData files???
 
 ####################### end ####
 

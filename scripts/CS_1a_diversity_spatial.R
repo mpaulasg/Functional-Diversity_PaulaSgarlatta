@@ -68,9 +68,17 @@ save(spatial_alpha, file=here::here("outputs/", "spatial_alpha.RData") )
 save(spatial_beta, file=here::here("outputs/", "spatial_beta.RData") )
 
 ########### [PS] Now with thermal affinity ###
+rm(list=ls()) # cleaning memory
+
+# libraries
+library(tidyverse)
+library(here)
+library(mFD)
+library(betapart)
+
 
 # loading data
-
+load(here::here("data", "spatial_sp_occ.RData") )
 load(here::here("outputs", "sp_4D_coord.RData") )
 
 ## computing taxonomic and functional diversity ####

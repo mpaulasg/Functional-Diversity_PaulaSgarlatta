@@ -107,8 +107,17 @@ save(temporal_beta_kelp, file=here::here("outputs/", "temporal_beta_kelp.RData")
 
 ######## [PS] Now with thermal affinity #######
 
+rm(list=ls()) # cleaning memory
+
+# libraries
+library(tidyverse)
+library(here)
+library(mFD)
+library(betapart)
 
 # loading data
+load(here::here("data", "kelp_sp_occ.RData") )
+load(here::here("data", "nokelp_sp_occ.RData") )
 load(here::here("outputs", "sp_4D_coord.RData") )
 
 ## computing taxonomic and functional diversity ####

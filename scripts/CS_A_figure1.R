@@ -49,30 +49,37 @@ spatial_toplot <- spatial_all %>%
 spatial_toplot
 
 # color code for the 3 habitats
-hab_colors <- c(Inshore= "gold", Midshelf= "darkorange", Offshore="blue")
+hab_colors <- c(Inshore= "mediumseagreen", Midshelf= "lightsalmon1", Offshore="firebrick3")
 
 # taxonomic ----
 
 plot_spatial_taxo <- ggplot(spatial_toplot) +
-  geom_bar( aes(x=Habitat, y=TRic_mean, color = Habitat, fill = Habitat), stat="identity") +
-  geom_errorbar( aes(x=Habitat, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.5, colour="black" ) +
+  geom_bar( aes(x=Habitat, y=TRic_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
+  geom_errorbar( aes(x=Habitat, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,37), breaks = seq(from=0, to=35, by=5)  ) +
-  labs(x="Year", y="Species richness") +
-  theme_bw()
+  scale_y_continuous( limits = c(0,25), breaks = seq(from=0, to=35, by=5)  ) +
+  labs(x="", y="Species richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+       legend.position = "none", axis.text.x = element_blank())
 plot_spatial_taxo
 
 # functional ----
 
 plot_spatial_func <- ggplot(spatial_toplot) +
-  geom_bar( aes(x=Habitat, y=FRic_mean, color = Habitat, fill = Habitat), stat="identity") +
-  geom_errorbar( aes(x=Habitat, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.5, colour="black" ) +
+  geom_bar( aes(x=Habitat, y=FRic_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
+  geom_errorbar( aes(x=Habitat, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Functional richness") +
-  theme_bw()
+  scale_y_continuous( limits = c(0,0.35), breaks = seq(from=0, to=0.5, by=0.1)  ) +
+  labs(x="", y="Functional richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+          legend.position = "none")
+
 plot_spatial_func
 
 
@@ -112,29 +119,44 @@ temporal_toplot
 
 unique(temporal_toplot$Year)
 
+# color code for kelp/no kelp
+
+year_colors <- c(kelp= "mediumseagreen", no_kelp= "lightsalmon1")
+
 
 # taxonomic ----
 
 plot_tempo_taxo <- ggplot(temporal_toplot, 
                           mapping=aes(color = Habitat, fill = Habitat) ) +
-  geom_point( aes(x=Year, y=TRic_mean), stat="identity", size=2, shape=22) +
-  geom_errorbar( aes(x=Year, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.2) +
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,37), breaks = seq(from=0, to=35, by=5)  ) +
-  labs(x="Year", y="Species richness") +
-  theme_bw()
+  geom_point( aes(x=Year, y=TRic_mean), stat="identity", size=2, shape=16) +
+  geom_errorbar( aes(x=Year, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.4, size=0.8) +
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(15,37), breaks = seq(from=0, to=35, by=5)  ) +
+  scale_color_manual(values=year_colors) + 
+  scale_fill_manual(values=year_colors) + 
+  labs(x="", y="Species richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.position = "none")
 plot_tempo_taxo
   
 # functional ----
 
 plot_tempo_func <- ggplot(temporal_toplot, 
                           mapping=aes(color = Habitat, fill = Habitat) ) +
-  geom_point( aes(x=Year, y=FRic_mean), stat="identity", size=2, shape=22) +
-  geom_errorbar( aes(x=Year, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.2) +
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Functional richness") +
-  theme_bw()
+  geom_point( aes(x=Year, y=FRic_mean), stat="identity", size=2, shape=16) +
+  geom_errorbar( aes(x=Year, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.4, size=0.8) +
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(0.3,0.8), breaks = seq(from=0, to=1, by=0.2)  ) +
+  scale_color_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
+  scale_fill_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
+  labs(x="", y="Functional richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+           panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+           axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.title = element_text(size=14), legend.text = element_text(size=14),
+        legend.background = element_blank(), legend.key=element_blank())
 plot_tempo_func
 
 
@@ -142,7 +164,7 @@ plot_tempo_func
 ## merging all plot into a single figure and saving as png ####
 figure1 <- ( plot_spatial_taxo + plot_tempo_taxo ) / ( plot_spatial_func +  plot_tempo_func )
 ggsave(figure1, file=here::here("outputs/", "figure1.png"),
-       height = 12, width = 25, unit = "cm" )
+       height = 22, width = 25, unit = "cm" )
   
 
 ###### [PS] Now with thermal affinity ####
@@ -182,30 +204,37 @@ spatial_toplot_thermal <- spatial_all_thermal %>%
 spatial_toplot_thermal
 
 # color code for the 3 habitats
-hab_colors <- c(Inshore= "gold", Midshelf= "darkorange", Offshore="blue")
+hab_colors <- c(Inshore= "mediumseagreen", Midshelf= "lightsalmon1", Offshore="firebrick3")
 
 # taxonomic ----
 
 plot_spatial_taxo_thermal <- ggplot(spatial_toplot_thermal) +
-  geom_bar( aes(x=Habitat, y=TRic_mean, color = Habitat, fill = Habitat), stat="identity") +
-  geom_errorbar( aes(x=Habitat, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.5, colour="black" ) +
+  geom_bar( aes(x=Habitat, y=TRic_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
+  geom_errorbar( aes(x=Habitat, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,37), breaks = seq(from=0, to=35, by=5)  ) +
-  labs(x="Year", y="Species richness") +
-  theme_bw()
+  scale_y_continuous( limits = c(0,25), breaks = seq(from=0, to=35, by=5)  ) +
+  labs(x="", y="Species richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.position = "none", axis.text.x = element_blank())
 plot_spatial_taxo_thermal
 
 # functional ----
 
 plot_spatial_func_thermal <- ggplot(spatial_toplot_thermal) +
-  geom_bar( aes(x=Habitat, y=FRic_mean, color = Habitat, fill = Habitat), stat="identity") +
-  geom_errorbar( aes(x=Habitat, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.5, colour="black" ) +
+  geom_bar( aes(x=Habitat, y=FRic_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
+  geom_errorbar( aes(x=Habitat, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Functional richness") +
-  theme_bw()
+  scale_y_continuous( limits = c(0,0.25), breaks = seq(from=0, to=0.5, by=0.1)  ) +
+  labs(x="", y="Functional richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.position = "none")
+
 plot_spatial_func_thermal
 
 
@@ -245,17 +274,27 @@ temporal_toplot_thermal
 
 unique(temporal_toplot_thermal$Year)
 
+# color code for kelp/no kelp
+
+year_colors <- c(kelp= "mediumseagreen", no_kelp= "lightsalmon1")
+
 
 # taxonomic ----
 
+
 plot_tempo_taxo_thermal <- ggplot(temporal_toplot_thermal, 
                           mapping=aes(color = Habitat, fill = Habitat) ) +
-  geom_point( aes(x=Year, y=TRic_mean), stat="identity", size=2, shape=22) +
-  geom_errorbar( aes(x=Year, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.2) +
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,37), breaks = seq(from=0, to=35, by=5)  ) +
-  labs(x="Year", y="Species richness") +
-  theme_bw()
+  geom_point( aes(x=Year, y=TRic_mean), stat="identity", size=2, shape=16) +
+  geom_errorbar( aes(x=Year, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.4, size=0.8) +
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(15,37), breaks = seq(from=0, to=35, by=5)  ) +
+  scale_color_manual(values=year_colors) + 
+  scale_fill_manual(values=year_colors) + 
+  labs(x="", y="Species richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.position = "none")
 plot_tempo_taxo_thermal
 
 # functional ----
@@ -270,11 +309,27 @@ plot_tempo_func_thermal <- ggplot(temporal_toplot_thermal,
   theme_bw()
 plot_tempo_func_thermal
 
+plot_tempo_func_thermal <- ggplot(temporal_toplot_thermal, 
+                          mapping=aes(color = Habitat, fill = Habitat) ) +
+  geom_point( aes(x=Year, y=FRic_mean), stat="identity", size=2, shape=16) +
+  geom_errorbar( aes(x=Year, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.4, size=0.8) +
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(0,0.6), breaks = seq(from=0, to=1, by=0.2)  ) +
+  scale_color_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
+  scale_fill_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
+  labs(x="", y="Functional richness") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.title = element_text(size=14), legend.text = element_text(size=14),
+        legend.background = element_blank(), legend.key=element_blank())
+plot_tempo_func_thermal
+
 
 
 ## merging all plot into a single figure and saving as png ####
 figure1_thermal <- ( plot_spatial_taxo_thermal + plot_tempo_taxo_thermal ) / 
   ( plot_spatial_func_thermal +  plot_tempo_func_thermal )
 ggsave(figure1_thermal, file=here::here("outputs/", "figure1_thermal.png"),
-       height = 12, width = 25, unit = "cm" )
+       height = 22, width = 25, unit = "cm" )
        
