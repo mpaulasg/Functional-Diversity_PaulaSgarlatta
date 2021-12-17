@@ -1,102 +1,102 @@
-Species,Size,Agg,Position,Diet
-A_bengalensis,S3,Solitary,BenthoP,O
-A_ocellatus,S4,Solitary,Benthic,P
-A_australis,S5,Group,BenthoP,O
-A_dussumieri,S5,Group,BenthoP,G
-A_viridis,S6,Solitary,BenthoP,I
-A_narinari,S6,Solitary,BenthoP,I
-A_monoceros,S5,Solitary,BenthoP,I
-A_caeruleopunctatus,S4,Solitary,BenthoP,I
-A_lophodon,S4,Solitary,Benthic,B
-A_limenus,S2,Group,BenthoP,I
-A_strigatus,S3,Group,BenthoP,PK
-A_chinensis,S5,Solitary,BenthoP,P
-A_maculatus,S2,Solitary,BenthoP,I
-B_frenchii,S4,Solitary,BenthoP,I
-B_perditio,S5,Solitary,BenthoP,I
-B_waddi,S6,Solitary,Benthic,I
-C_callisterna,S3,Solitary,BenthoP,I
-C_taurus,S6,Solitary,BenthoP,P
-C_australis,S2,Solitary,Benthic,I
-C_tibicen,S3,Group,BenthoP,HD
-C_flavirostris,S3,Pair,BenthoP,O
-C_guentheri,S3,Solitary,BenthoP,O
-C_truncatus,S3,Pair,BenthoP,O
-C_venustus,S5,Solitary,BenthoP,I
-C_auratus,S6,Group,BenthoP,I
-C_hypsilepis,S3,Group,BenthoP,PK
-C_dorsomacula,S4,Solitary,BenthoP,I
-C_picta,S3,Solitary,BenthoP,I
-D_brevicaudata,S6,Group,Benthic,I
-D_lewini,S6,Group,BenthoP,P
-E_naucrates,S6,Solitary,BenthoP,I
-E_armatus,S4,Group,BenthoP,I
-E_daemelii,S6,Solitary,BenthoP,P
-E_fasciatus,S4,Solitary,BenthoP,P
-E_undulatostriatus,S5,Solitary,BenthoP,P
-E_mosaicus,S5,Solitary,BenthoP,I
-E_angustipes,S2,Solitary,BenthoP,I
-G_scapulare,S5,Group,BenthoP,P
-G_vestitus,S4,Solitary,BenthoP,I
-G_prasinus,S6,Solitary,Benthic,P
-G_prionodon,S6,Solitary,Benthic,P
-G_thyrsoidea,S5,Pair,Benthic,P
-H_acuminatus,S3,Pair,BenthoP,PK
-H_galeatus,S3,Solitary,Benthic,I
-H_maccullochi,S6,Solitary,BenthoP,I
-K_sydneyanus,S4,Group,BenthoP,B
-L_dimidiatus,S5,Solitary,BenthoP,I
-L_nebulosus,S2,Solitary,BenthoP,I
-L_rhacina,S6,Solitary,Benthic,P
-L_adetii,S4,Group,BenthoP,P
-L_fulviflamma,S4,Group,BenthoP,P
-L_russelli,S4,Group,BenthoP,P
-M_immaculatus,S4,Group,BenthoP,PK
-M_flavolineata,S2,Pair,BenthoP,HD
-M_freycineti,S3,Solitary,BenthoP,O
-M_trachylepis,S4,Solitary,BenthoP,O
-M_fuscus,S3,Solitary,Benthic,I
-M_vanicolensis,S5,Group,BenthoP,I
-M_australis,S4,Solitary,Benthic,I
-N_ayraudi,S6,Solitary,BenthoP,P
-N_douglasii,S6,Group,BenthoP,I
-N_gymnogenis,S6,Solitary,BenthoP,I
-O_lineolata,S3,Solitary,BenthoP,I
-O_halei,S4,Solitary,Benthic,P
-O_maculatus,S6,Solitary,Benthic,P
-P_xanthura,S6,Group,Pelagic,PK
-P_ramsayi,S4,Solitary,Benthic,I
-P_striticeps,S3,Solitary,Benthic,I
-P_unifasciata,S4,Solitary,BenthoP,HD
-P_multifasciatus,S3,Group,BenthoP,I
-P_spilurus,S4,Solitary,BenthoP,I
-P_affinis,S4,Group,BenthoP,PK
-P_compressa,S2,Group,BenthoP,PK
-P_laticlavius,S3,Solitary,BenthoP,I
-P_teira,S2,Group,BenthoP,B
-P_flavomaculatus,S5,Solitary,BenthoP,P
-P_maculatus,S2,Group,BenthoP,G
-P_microlepidotus,S4,Group,BenthoP,G
-P_dentex,S5,Group,BenthoP,P
-P_guentheri,S6,Solitary,BenthoP,I
-P_luculentus,S3,Solitary,BenthoP,I
-P_digramma,S3,Group,Pelagic,PK
-R_sarba,S6,Group,BenthoP,I
-S_australis,S5,Group,Pelagic,P
-S_scalaripinnis,S6,Group,BenthoP,PK
-S_cardinalis,S3,Solitary,Benthic,I
-S_lineolata,S4,Solitary,BenthoP,B
-S_dumerili,S5,Group,Pelagic,P
-S_hippos,S6,Group,Pelagic,P
-S_lalandi,S6,Group,Pelagic,P
-S_rivoliana,S5,Group,Pelagic,P
-S_fuscensens,S6,Group,BenthoP,B
-S_interrupta,S4,Group,BenthoP,I
-S_chrysopterus,S2,Solitary,BenthoP,I
-S_jaculum,S3,Solitary,Benthic,I
-T_lunare,S2,Solitary,BenthoP,I
-T_lutescens,S4,Group,BenthoP,I
-T_taeniatus,S3,Group,BenthoP,PK
-T_novaezelandiae,S2,Group,BenthoP,PK
-T_fasciata,S3,Solitary,Benthic,I
-U_lineatus,S6,Group,BenthoP,I
+Species,Agg,Diet,Size,Position
+Abudefduf bengalensis,Solitary,OM,S3,BenthoP
+Acanthistius ocellatus,Solitary,P,S4,Benthic
+Acanthopagrus australis,Group,OM,S5,BenthoP
+Acanthurus dussumieri,Group,G,S5,BenthoP
+Achoerodus viridis,Solitary,I,S6,BenthoP
+Aetobatus narinari,Solitary,I,S6,BenthoP
+Aluterus monoceros,Solitary,I,S5,BenthoP
+Anampses caeruleopunctatus,Solitary,I,S4,BenthoP
+Aplodactylus lophodon,Solitary,B,S4,Benthic
+Apogon limenus,Group,I,S2,BenthoP
+Atypichthys strigatus,Group,PK,S3,BenthoP
+Aulostomus chinensis,Solitary,P,S5,BenthoP
+Austrolabrus maculatus,Solitary,I,S2,BenthoP
+Bodianus frenchii,Solitary,I,S4,BenthoP
+Bodianus perditio,Solitary,I,S5,BenthoP
+Brachaelurus waddi,Solitary,I,S6,Benthic
+Canthigaster callisterna,Solitary,I,S3,BenthoP
+Carcharias taurus,Group,P,S6,BenthoP
+Centropogon australis,Solitary,I,S2,Benthic
+Centropyge tibicen,Group,HD,S3,BenthoP
+Chaetodon flavirostris,Pair,O,S3,BenthoP
+Chaetodon guentheri,Solitary,O,S3,BenthoP
+Chelmonops truncatus,Pair,O,S3,BenthoP
+Choerodon venustus,Solitary,I,S5,BenthoP
+Chrysophrys auratus,Group,I,S6,BenthoP
+Chromis hypsilepis,Group,PK,S3,BenthicP
+Coris dorsomacula,Solitary,I,S4,BenthoP
+Coris picta,Solitary,I,S3,BenthoP
+Dasyatis brevicaudata,Group,I,S6,Benthic
+Dinolestes lewini,Group,P,S6,BenthoP
+Echeneis naucrates,Solitary,I,S6,BenthoP
+Enoplosus armatus,Group,I,S4,BenthoP
+Epinephelus daemelii,Solitary,P,S6,BenthoP
+Epinephelus fasciatus,Solitary,P,S4,BenthoP
+Epinephelus undulatostriatus,Solitary,P,S5,BenthoP
+Eubalichthys mosaicus,Solitary,I,S5,BenthoP
+Eupetrichthys angustipes,Solitary,I,S2,BenthoP
+Glaucosoma scapulare,Group,P,S5,BenthoP
+Gomphosus varius,Solitary,I,S3,BenthoP
+Gymnothorax prasinus,Solitary,P,S6,Benthic
+Gymnothorax prionodon,Solitary,P,S6,Benthic
+Gymnothorax thyrsoidea,Pair,P,S5,Benthic
+Heniochus acuminatus,Solitary,PK,S3,BenthoP
+Heterodontus galeatus,Solitary,I,S6,Benthic
+Hypoplectrodes maccullochi,Solitary,I,S4,BenthoP
+Kyphosus sydneyanus,Group,B,S5,BenthoP
+Labroides dimidiatus,Solitary,I,S2,BenthoP
+Lethrinus nebulosus,Group,I,S6,BenthoP
+Lotella rhacina,Solitary,P,S4,Benthic
+Lutjanus adetii,Group,P,S4,BenthoP
+Lutjanus fulviflamma,Group,P,S4,BenthoP
+Lutjanus russellii,Group,P,S4,BenthoP
+Mecaenichthys immaculatus,Group,PK,S2,BenthoP
+Meuschenia flavolineata,Pair,HD,S3,BenthoP
+Meuschenia freycineti,Solitary,O,S5,BenthoP
+Meuschenia trachylepis,Solitary,O,S4,BenthoP
+Morwong fuscus,Solitary,I,S5,Benthic
+Mulloidichthys vanicolensis,Group,I,S4,BenthoP
+Myliobatis australis,Solitary,I,S6,Benthic
+Nelusetta ayraud,Solitary,P,S6,BenthoP
+Nemadactylus douglasii,Group,I,S6,BenthoP
+Notolabrus gymnogenis,Solitary,I,S3,BenthoP
+Ophthalmolepis lineolata,Solitary,I,S4,BenthoP
+Orectolobus halei,Solitary,P,S6,Benthic
+Orectolobus maculatus,Solitary,P,S6,Benthic
+Paracaesio xanthura,Group,PK,S4,Pelagic
+Parapercis ramsayi,Solitary,I,S3,Benthic
+Parapercis stricticeps,Solitary,I,S3,Benthic
+Parma unifasciata,Solitary,HD,S3,BenthoP
+Parupeneus multifasciatus,Group,I,S4,BenthoP
+Parupeneus spilurus,Solitary,I,S4,BenthoP
+Pempheris affinis,Group,PK,S2,BenthoP
+Pempheris compressa,Group,PK,S3,BenthoP
+Pictilabrus laticlavius,Solitary,I,S3,BenthoP
+Platax teira,Group,B,S5,BenthoP
+Plectorhinchus flavomaculatus,Solitary,P,S5,BenthoP
+Prionurus maculatus,Group,G,S4,BenthoP
+Prionurus microlepidotus,Group,G,S5,BenthoP
+Pseudocaranx dentex,Group,P,S6,BenthoP
+Pseudolabrus guentheri,Solitary,I,S3,BenthoP
+Pseudolabrus luculentus,Solitary,I,S3,BenthoP
+Pterocaesio digramma,Group,PK,S3,Pelagic
+Rhabdosargus sarba,Group,I,S5,BenthoP
+Sarda australis,Group,P,S6,Pelagic
+Schuettea scalaripinnis,Group,PK,S3,BenthoP
+Scorpaena cardinalis,Solitary,I,S4,Benthic
+Scorpis lineolata,Group,PK,S3,Benthic
+Seriola dumerili,Group,P,S6,Pelagic
+Seriola hippos,Group,P,S6,Pelagic
+Seriola lalandi,Group,P,S6,Pelagic
+Seriola rivoliana,Group,P,S6,Pelagic
+Siganus fuscescens,Group,B,S4,BenthoP
+Stethojulis interrupta,Group,I,S2,BenthoP
+Sufflamen chrysopterum,Solitary,I,S3,BenthoP
+Synodus jaculum,Solitary,I,S2,Benthic
+Thalassoma lunare,Solitary,I,S4,BenthoP
+Thalassoma lutescens,Group,I,S3,BenthoP
+Trachinops taeniatus,Group,PK,S2,BenthoP
+Trachurus novaezelandiae,Group,PK,S4,BenthoP
+Trygonorrhina fasciata,Solitary,I,S6,Benthic
+Upeneichthys lineatus,Group,I,S4,BenthoP
