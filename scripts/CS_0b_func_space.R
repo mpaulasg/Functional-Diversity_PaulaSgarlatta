@@ -21,11 +21,10 @@ fish_traits <- read.csv(here::here("data", "raw_data", "fish_traits.csv"), heade
 
 # load species names from surveys datasets ----
 load(here::here("data", "species_allsurveys.RData") )
-length(species_allsurveys) # 142 species
+length(species_allsurveys) # 139 species    # [PS] -> don't understand why this step. Why is species_allsurveys needed here?
 
 # checking same species in trait and occurrences datasets ----
-identical ( sort(species_allsurveys) , sort(fish_traits$Species ) ) # TRUE
-
+identical ( sort(species_allsurveys) , sort(fish_traits$Species ) ) # True
 
 ## preparing trait dataset ####
 
@@ -36,7 +35,7 @@ sp_tr <- fish_traits %>%
   as.data.frame()
 head(sp_tr)
 
-nrow(sp_tr) # 142 species
+nrow(sp_tr) # 139 species
 
 # recoding variable to match trait type ----
 
@@ -44,26 +43,26 @@ nrow(sp_tr) # 142 species
 lapply(sp_tr, unique)
 
 # trait type
-tr_cat<-data.frame( trait_name = c("Size", "Aggr", "Posi", "Diet"),
-                    trait_type = c("O","O","O","N") )
+tr_cat<-data.frame( trait_name = c("Size", "Agg", "Position", "Diet"),
+                    trait_type = c("O","O","O", "N") )
 
 # size as ordinal
 sp_tr$Size <- factor(sp_tr$Size, 
-                     levels = c("S2", "S3", "S4", "S5", "S6", "S7"),
+                     levels = c("S2", "S3", "S4", "S5", "S6"),
                      ordered = TRUE)
 summary(sp_tr$Size)
 
 # aggregation as ordinal
-sp_tr$Aggr <- factor(sp_tr$Aggr, 
+sp_tr$Agg <- factor(sp_tr$Agg, 
                     levels = c("Solitary", "Pair", "Group"),
                     ordered = TRUE)
-summary(sp_tr$Aggr)
+summary(sp_tr$Agg)
 
 # Position as ordinal
-sp_tr$Posi <- factor(sp_tr$Posi, 
+sp_tr$Position <- factor(sp_tr$Position, 
                     levels = c("Benthic", "BenthoP", "Pelagic"),
                     ordered = TRUE)
-summary(sp_tr$Posi)
+summary(sp_tr$Position)
 
 # diet as factor
 sp_tr$Diet <- as.factor(sp_tr$Diet)
@@ -87,7 +86,94 @@ range(sp_gower_dist) # from 0 to 1
 funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
                                  deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces$quality_fspaces
-# => 3D space has the lowest mAD (0.0596)
+# => 3D space has the lowest mAD (0.061)
+
+# species coordinates
+sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
+summary(sp_3D_coord)
+
+
+
+# [PS] This is the original one. Now I'll add one separate for each dataset (kelp, no kelp, spatial)
+
+#Loading the data (if this work, this data should be saved in raw_data in CS_00_0a_fish_traits).
+
+sp_tr_kelp <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_kelp.csv"),
+                        header = T)
+sp_tr_kelp <- sp_tr_kelp %>%
+  arrange("Species") %>%
+  column_to_rownames("Species") %>%
+  as.data.frame()
+
+# from sites that never had kelp
+sp_tr_nokelp <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_no_kelp.csv"),
+                          header = T)
+
+sp_tr_nokelp <-sp_tr_nokelp %>%
+  arrange("Species") %>%
+  column_to_rownames("Species") %>%
+  as.data.frame()
+
+# traits of species from UVC surveys
+sp_tr_spatial <- read.csv(here::here("from_paula", "SpatialUVC_species_traits.csv"), 
+                           header = T)
+
+sp_tr_spatial <- sp_tr_spatial %>%
+  arrange("Species") %>%
+  column_to_rownames("Species") %>%
+  as.data.frame()
+
+####KELP 
+
+# recoding variable to match trait type ----
+
+# trait type
+tr_cat<-data.frame( trait_name = c("Size", "Agg", "Position", "Diet"),
+                    trait_type = c("O","O","O", "N") )
+
+
+
+# size as ordinal
+sp_tr_kelp$Size <- factor(sp_tr_kelp$Size, 
+                     levels = c("S2", "S3", "S4", "S5", "S6"),
+                     ordered = TRUE)
+summary(sp_tr_kelp$Size)
+
+# aggregation as ordinal
+sp_tr_kelp$Agg <- factor(sp_tr_kelp$Agg, 
+                    levels = c("Solitary", "Pair", "Group"),
+                    ordered = TRUE)
+summary(sp_tr_kelp$Agg)
+
+# Position as ordinal
+sp_tr_kelp$Position <- factor(sp_tr_kelp$Position, 
+                         levels = c("Benthic", "BenthoP", "Pelagic"),
+                         ordered = TRUE)
+summary(sp_tr_kelp$Position)
+
+# diet as factor
+sp_tr_kelp$Diet <- as.factor(sp_tr_kelp$Diet)
+summary(sp_tr_kelp$Diet)
+
+# summary of trait data----
+summary_traits_kelp <- mFD::sp.tr.summary(tr_cat = tr_cat, 
+                                     sp_tr  = sp_tr_kelp)
+summary_traits
+
+
+## Computing Gower distance between species ####
+sp_gower_dist <- mFD::funct.dist(sp_tr=sp_tr, tr_cat = tr_cat, 
+                                 metric="gower")
+# => no need to compute FE since all indices are not sensitive to redundant species
+range(sp_gower_dist) # from 0 to 1
+
+
+# computing PCoA-based functional spaces ----
+# mean absolute deviation index (as quality metric)
+funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
+                                    deviation_weighting = "absolute", fdist_scaling = FALSE) 
+funct_spaces$quality_fspaces
+# => 3D space has the lowest mAD (0.061)
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]

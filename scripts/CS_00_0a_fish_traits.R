@@ -22,21 +22,22 @@ library(arsenal)
 kelp_traits <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_kelp.csv"),
                         header = T)
 head(kelp_traits)
-names(kelp_traits) <- c("Species","Size", "Aggr", "Posi", "Diet")
+names(kelp_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
 nrow(kelp_traits) # 101 sp
 
 # from sites that never had kelp
 nokelp_traits <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_no_kelp.csv"),
                           header = T)
 head(nokelp_traits)
-names(nokelp_traits) <- c("Species","Size", "Aggr", "Posi", "Diet")
+names(nokelp_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
 nrow(nokelp_traits) # 106 sp
 
 # traits of species from UVC surveys
 spatial_traits <- read.csv(here::here("from_paula", "SpatialUVC_species_traits.csv"), 
                            header = T)
-names(spatial_traits) <- c("Species", "Size", "Aggr", "Posi", "Diet")
 head(spatial_traits)
+names(spatial_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
+
 nrow(spatial_traits) # 51 sp
 
 # merging in a single data.frame and keeping only species present in surveys ----
@@ -45,11 +46,11 @@ fish_traits <- bind_rows( kelp_traits, nokelp_traits, spatial_traits) %>%
   as.data.frame()
 head(fish_traits)
 
-nrow(fish_traits) # 142 species
+nrow(fish_traits) # 139 species
 
-sort(fish_traits$Species) #
-#                                                                               
+fish_traits <- as.data.frame(fish_traits[order(fish_traits$Species),])
 
 # saving as csv file
 write.csv(fish_traits, file=here::here("data", "raw_data", "fish_traits.csv"), 
           row.names = FALSE )
+
