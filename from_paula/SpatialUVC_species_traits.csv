@@ -6,7 +6,7 @@ Anampses_neoguinaicus,S3,Solitary,BenthoP,I
 Acanthurus_nigrofuscus,S3,Group,BenthoP,G
 Atypichthys_strigatus,S3,Group,BenthoP,PK
 Achoerodus_viridis,S6,Solitary,BenthoP,I
-Caesio_caerulaurea,S4,Group,Benthic,PK
+Caesio_caerulaurea,S4,Group,Pelagic,PK
 Choerodon_cephalotes,S4,Solitary,BenthoP,I
 Coris_dorsomacula,S4,Solitary,BenthoP,I
 Chaetodon_guentheri,S3,Solitary,BenthoP,OM
@@ -39,13 +39,13 @@ Prionurus_microlepidotus,S5,Group,BenthoP,G
 Parma_oligolepis,S3,Solitary,BenthoP,HD
 Parupeneus_spilurus,S4,Solitary,BenthoP,I
 Parma_unifasciata,S3,Solitary,BenthoP,HD
-Paracaesio_xanthura,S4,Group,Pelagic,PK
-Rhabdosargus_sarba,S5,Group,BenthoP,I
+Paracaesio_xanthura,S4,Group,BenthoP,PK
+Rhabdosargus_sarba,S5,Group,Benthic,I
 Stegastes_apicalis,S2,Solitary,BenthoP,G
 Sufflamen_chrysopterum,S3,Solitary,BenthoP,I
 Stegastes_gascoynei,S2,Solitary,BenthoP,G
 Scarus_ghobban,S5,Solitary,BenthoP,HD
-Scorpis_lineolata,S3,Group,Benthic,PK
+Scorpis_lineolata,S3,Group,Pelagic,PK
 Siganus_fuscescens,S4,Group,BenthoP,B
 Thalassoma_jansenii,S3,Group,BenthoP,I
 Thalassoma_lunare,S4,Solitary,BenthoP,I
