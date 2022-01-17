@@ -16,6 +16,10 @@ library(mFD)
 
 # loading data
 load(here::here("outputs", "sp_3D_coord.RData") )
+load(here::here("outputs", "sp_3D_coord_kelp.RData") ) #[PS] Adding these three
+load(here::here("outputs", "sp_3D_coord_nokelp.RData") )
+load(here::here("outputs", "sp_3D_coord_spatial.RData") )
+
 
 load(here::here("data", "spatial_metadata.RData") )
 load(here::here("data", "spatial_sp_occ.RData") )
@@ -57,7 +61,7 @@ kelp_years_sp_occ <- rbind(
 )  
 
 # compute FRic for all habitats  ---
-kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord, 
+kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord_kelp, #[PS] Original was sp_3D_coord
                                   asb_sp_w = kelp_years_sp_occ,
                                   ind_vect = c("fric"), 
                                   scaling = TRUE, 

@@ -18,13 +18,14 @@ library(betapart)
 # loading data
 load(here::here("data", "kelp_sp_occ.RData") )
 load(here::here("data", "nokelp_sp_occ.RData") )
-load(here::here("outputs", "sp_3D_coord.RData") )
+load(here::here("outputs", "sp_3D_coord_kelp.RData") ) # [PS] The original one had sp_3D_coord.Rdata
+load(here::here("outputs", "sp_3D_coord_nokelp.RData") ) 
 
 ## computing taxonomic and functional diversity ####
 
 # number of species, functional richness, dispersion and identity (along 3 axes)
 temporal_fd_nokelp <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
+  sp_faxes_coord   = sp_3D_coord_nokelp,
   asb_sp_w         = nokelp_sp_occ,
   ind_vect         = c("fide", "fric", "fdis"),
   scaling          = TRUE,
@@ -35,7 +36,7 @@ temporal_alpha_nokelp <- temporal_fd_nokelp$functional_diversity_indices
 temporal_alpha_nokelp
 
 temporal_fd_kelp <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
+  sp_faxes_coord   = sp_3D_coord_kelp,
   asb_sp_w         = kelp_sp_occ,
   ind_vect         = c("fide", "fric", "fdis"),
   scaling          = TRUE,
@@ -54,7 +55,7 @@ temporal_beta_taxo_kelp <- betapart::beta.pair(kelp_sp_occ, index.family = "jacc
 # functional beta no kelp sites ----
 # functional dissimilarity = Jaccard-like index and its components
 temporal_beta_func_nokelp <- mFD::beta.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
+  sp_faxes_coord   = sp_3D_coord_nokelp,
   asb_sp_occ       = nokelp_sp_occ,
   check_input      = TRUE,
   beta_family      = c("Jaccard"),
@@ -74,7 +75,7 @@ cbind( min=lapply(temporal_beta_nokelp, min), max=lapply(temporal_beta_nokelp, m
 
 # functional beta kelp sites ----
 temporal_beta_func_kelp <- mFD::beta.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
+  sp_faxes_coord   = sp_3D_coord_kelp,
   asb_sp_occ       = kelp_sp_occ,
   check_input      = TRUE,
   beta_family      = c("Jaccard"),

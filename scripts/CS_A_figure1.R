@@ -73,7 +73,7 @@ plot_spatial_func <- ggplot(spatial_toplot) +
   geom_errorbar( aes(x=Habitat, ymin=FRic_mean-FRic_se, ymax=FRic_mean+FRic_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,0.35), breaks = seq(from=0, to=0.5, by=0.1)  ) +
+  scale_y_continuous( limits = c(0,0.9), breaks = seq(from=0, to=0.9, by=0.1)  ) +
   labs(x="", y="Functional richness") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
