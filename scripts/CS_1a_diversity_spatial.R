@@ -17,7 +17,8 @@ library(betapart)
 
 # loading data
 load(here::here("data", "spatial_sp_occ.RData") )
-load(here::here("outputs", "sp_3D_coord_spatial.RData") ) # [PS] The original one had sp_3D_coord.Rdata
+load(here::here("outputs", "sp_3D_coord.RData") )# [PS] The original one had sp_3D_coord.Rdata - If I'm using this one it's not working
+load(here::here("outputs", "sp_3D_coord_spatial.RData") ) 
 
 
 ## computing taxonomic and functional diversity ####

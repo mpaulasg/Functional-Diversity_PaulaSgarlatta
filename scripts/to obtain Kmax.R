@@ -9,7 +9,7 @@ library(rfishprod)
 
 #Load data
 
-for_K <- read.csv(here::here("fish_for_K.csv"),
+for_K <- read.csv(here::here("from_paula", "fish_for_K.csv"),
                  header = T)
 
 #To predict Kmax, you need diferent parameters, which are:
@@ -31,7 +31,9 @@ for_K <-tidytrait (for_K, db)
 
 fmod <- formula (~ sstmean + MaxSizeTL + Diet + Position + Method)
 
-# Predicting Kmax, the standardised VBGF parameter (Recommendation: use 100s to 1000s iterations) #
+# Predicting Kmax, the standardised VBGF parameter (Recommendation: use 100s to 1000s iterations) # It takes several 
+#minutes: in my computer, ~ 7 min
+
 datagr <- predKmax (for_K, 
                     dataset = db,
                     fmod = fmod,
@@ -46,5 +48,5 @@ datagr <- datagr$pred
 
 #Save data
 
-write.csv(datagr, file=here::here("fish_K_values.csv"), 
+write.csv(datagr, file=here::here("from_paula", "fish_K_values.csv"), 
           row.names = FALSE )

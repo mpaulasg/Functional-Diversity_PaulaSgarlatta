@@ -123,6 +123,7 @@ save(nokelp_summary, file=here::here("data", "nokelp_summary.RData") )
 
 save(spatial_metadata, file=here::here("data", "spatial_metadata.RData") )
 save(spatial_sp_occ, file=here::here("data", "spatial_sp_occ.RData") )
+
 save(spatial_summary, file=here::here("data", "spatial_summary.RData") )
 
 save(species_allsurveys, file=here::here("data", "species_allsurveys.RData") )

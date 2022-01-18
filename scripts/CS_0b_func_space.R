@@ -43,12 +43,12 @@ nrow(sp_tr) # 139 species
 lapply(sp_tr, unique)
 
 # trait type
-tr_cat<-data.frame( trait_name = c("Size", "Agg", "Position", "Diet"),
-                    trait_type = c("O","O","O", "N") )
+tr_cat<-data.frame( trait_name = c("Size", "Agg", "Position", "Diet", "Kmax"),
+                    trait_type = c("O","O","O", "N", "Q") )
 
 # size as ordinal
 sp_tr$Size <- factor(sp_tr$Size, 
-                     levels = c("S2", "S3", "S4", "S5", "S6"),
+                     levels = c("S1", "S2", "S3", "S4", "S5", "S6"),
                      ordered = TRUE)
 summary(sp_tr$Size)
 
@@ -68,10 +68,15 @@ summary(sp_tr$Position)
 sp_tr$Diet <- as.factor(sp_tr$Diet)
 summary(sp_tr$Diet)
 
+#Kmax as numeric
+
+sp_tr$Kmax <- as.numeric(sp_tr$Kmax)
+summary(sp_tr$Kmax)
+
 # summary of trait data----
 summary_traits <- mFD::sp.tr.summary(tr_cat = tr_cat, 
                                       sp_tr  = sp_tr)
-summary_traits
+
 
 
 ## Computing Gower distance between species ####
@@ -86,7 +91,7 @@ range(sp_gower_dist) # from 0 to 1
 funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
                                  deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces$quality_fspaces
-# => 3D space has the lowest mAD (0.061)
+# => 3D space has the lowest mAD (0.055)
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
@@ -94,11 +99,11 @@ summary(sp_3D_coord)
 
 
 
-# [PS] This is the original one. Now I'll add one separate for each dataset (kelp, no kelp, spatial)
+# [PS] This is the original one. Next, I'll add one separate for each dataset (kelp, no kelp, spatial)
 
 #Loading the data (if this work, this data should be saved in raw_data in CS_00_0a_fish_traits).
 
-sp_tr_kelp <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_kelp.csv"),
+sp_tr_kelp <- read.csv(here::here("data", "raw_data", "kelp_traits.csv"),
                         header = T)
 sp_tr_kelp <- sp_tr_kelp %>%
   arrange("Species") %>%
@@ -106,7 +111,7 @@ sp_tr_kelp <- sp_tr_kelp %>%
   as.data.frame()
 
 # from sites that never had kelp
-sp_tr_nokelp <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_no_kelp.csv"),
+sp_tr_nokelp <- read.csv(here::here("data", "raw_data", "nokelp_traits.csv"),
                           header = T)
 
 sp_tr_nokelp <-sp_tr_nokelp %>%
@@ -115,7 +120,7 @@ sp_tr_nokelp <-sp_tr_nokelp %>%
   as.data.frame()
 
 # traits of species from UVC surveys
-sp_tr_spatial <- read.csv(here::here("from_paula", "SpatialUVC_species_traits.csv"), 
+sp_tr_spatial <- read.csv(here::here("data", "raw_data", "spatial_traits.csv"), 
                            header = T)
 
 sp_tr_spatial <- sp_tr_spatial %>%
@@ -127,15 +132,10 @@ sp_tr_spatial <- sp_tr_spatial %>%
 
 # recoding variable to match trait type ----
 
-# trait type
-tr_cat<-data.frame( trait_name = c("Size", "Agg", "Position", "Diet"),
-                    trait_type = c("O","O","O", "N") )
-
-
 
 # size as ordinal
 sp_tr_kelp$Size <- factor(sp_tr_kelp$Size, 
-                     levels = c("S2", "S3", "S4", "S5", "S6"),
+                     levels = c("S1", "S2", "S3", "S4", "S5", "S6"),
                      ordered = TRUE)
 summary(sp_tr_kelp$Size)
 
@@ -155,6 +155,11 @@ summary(sp_tr_kelp$Position)
 sp_tr_kelp$Diet <- as.factor(sp_tr_kelp$Diet)
 summary(sp_tr_kelp$Diet)
 
+#Kmax as numeric
+
+sp_tr_kelp$Kmax <- as.numeric(sp_tr_kelp$Kmax)
+summary(sp_tr_kelp$Kmax)
+
 # summary of trait data----
 summary_traits_kelp <- mFD::sp.tr.summary(tr_cat = tr_cat, 
                                      sp_tr  = sp_tr_kelp)
@@ -173,7 +178,7 @@ range(sp_gower_dist_kelp) # from 0 to 1
 funct_spaces_kelp<- mFD::quality.fspaces(sp_dist = sp_gower_dist_kelp, maxdim_pcoa = 12, 
                                     deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces_kelp$quality_fspaces
-# => 3D space has the lowest mAD (0.059)
+# => 3D space has the lowest mAD (0.054)
 
 # species coordinates
 sp_3D_coord_kelp<-funct_spaces_kelp$details_fspaces$sp_pc_coord[,1:3]
@@ -192,7 +197,7 @@ save(sp_3D_coord_kelp, file=here::here("outputs/", "sp_3D_coord_kelp.RData") )
 
 # size as ordinal
 sp_tr_nokelp$Size <- factor(sp_tr_nokelp$Size, 
-                          levels = c("S2", "S3", "S4", "S5", "S6"),
+                          levels = c("S1", "S2", "S3", "S4", "S5", "S6"),
                           ordered = TRUE)
 summary(sp_tr_nokelp$Size)
 
@@ -212,6 +217,11 @@ summary(sp_tr_nokelp$Position)
 sp_tr_nokelp$Diet <- as.factor(sp_tr_nokelp$Diet)
 summary(sp_tr_nokelp$Diet)
 
+#Kmax as numeric
+
+sp_tr_nokelp$Kmax <- as.numeric(sp_tr_nokelp$Kmax)
+summary(sp_tr_nokelp$Kmax)
+
 # summary of trait data----
 summary_traits_nokelp <- mFD::sp.tr.summary(tr_cat = tr_cat, 
                                           sp_tr  = sp_tr_nokelp)
@@ -230,7 +240,7 @@ range(sp_gower_dist_nokelp) # from 0 to 1
 funct_spaces_nokelp<- mFD::quality.fspaces(sp_dist = sp_gower_dist_nokelp, maxdim_pcoa = 12, 
                                          deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces_nokelp$quality_fspaces
-# => 3D space has the lowest mAD (0.058)
+# => 3D space has the lowest mAD (0.051)
 
 # species coordinates
 sp_3D_coord_nokelp<-funct_spaces_nokelp$details_fspaces$sp_pc_coord[,1:3]
@@ -269,6 +279,11 @@ summary(sp_tr_spatial$Position)
 sp_tr_spatial$Diet <- as.factor(sp_tr_spatial$Diet)
 summary(sp_tr_spatial$Diet)
 
+#Kmax as numeric
+
+sp_tr_spatial$Kmax <- as.numeric(sp_tr_spatial$Kmax)
+summary(sp_tr_spatial$Kmax)
+
 # summary of trait data----
 summary_traits_spatial <- mFD::sp.tr.summary(tr_cat = tr_cat, 
                                             sp_tr  = sp_tr_spatial)
@@ -287,7 +302,7 @@ range(sp_gower_dist_spatial) # from 0 to 1
 funct_spaces_spatial<- mFD::quality.fspaces(sp_dist = sp_gower_dist_spatial, maxdim_pcoa = 12, 
                                            deviation_weighting = "absolute", fdist_scaling = FALSE) 
 funct_spaces_spatial$quality_fspaces
-# => 3D space has the lowest mAD (0.052) [PS] 4D space has the lowest, should I use 4D or keep 3D to compare all together?
+# => 3D space has the lowest mAD (0.050) 
 
 # species coordinates
 sp_3D_coord_spatial<-funct_spaces_spatial$details_fspaces$sp_pc_coord[,1:3]
