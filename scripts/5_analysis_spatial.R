@@ -19,19 +19,48 @@ rm(list=ls()) # cleaning memory
 
 ##Load packages
 
-library(lme4)
+library(vegan)
 library(glmmTMB)
 library(car)
-library(nortest)
-library(emmeans)
-library(DHARMa)
-library(ggplot2)
-library(ggalt)
-library(ggrepel)
-library(dplyr)
-library(stringr)
 
-load(here::here("outputs", "sp_3D_coord.RData") )
+load(here::here("outputs", "FD_beta_kelp_Hill_sites.RData") )
+
+## Preparing data for stats
+
+beta_stats <- FD_beta_kelp_Hill_sites %>%
+  filter(Year1==2002) %>% 
+  mutate(Year=paste(Year1, Year2, sep="-")) %>% 
+  select(Year, Site, q0, q1, q2)
+
+
+##GLMM
+
+FBeta_Hill_spatial <- glmmTMB(q2 ~ Year + (1|Site), data = beta_stats, family = beta_family())
+
+summary(FBeta_Hill_spatial)
+
+mod.res <- simulateResiduals(FBeta_Hill_spatial)
+plot(mod.res)
+
+
+mod<-lm(q2 ~ Year,
+        data = beta_stats)
+
+summary(mod)
+
+Anova(mod)
+
+library(DHARMa)
+
+mod.res <- simulateResiduals(mod)
+plot(mod.res)
+
+## Pairwise comparisons
+
+library(emmeans)
+
+emmeans(mod, pairwise ~ Year)
+
 
 #ANOVA for S
 
@@ -164,6 +193,4 @@ func_turn_dbrda_transect<- capscale(beta_fd_indices_transect$pairasb_fbd_indices
 anova(func_turn_dbrda_transect, by = "terms", permutations = 9999)
 
 #Not significant - p=0.1014
-
-
 
