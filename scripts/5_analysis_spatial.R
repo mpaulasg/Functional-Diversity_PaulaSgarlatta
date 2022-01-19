@@ -31,6 +31,8 @@ library(ggrepel)
 library(dplyr)
 library(stringr)
 
+load(here::here("outputs", "sp_3D_coord.RData") )
+
 #ANOVA for S
 
 s_aov_site <- aov(sp_richn~habitat ,data=fd_values_site)
