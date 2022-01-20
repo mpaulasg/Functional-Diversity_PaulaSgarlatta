@@ -16,6 +16,7 @@ library(patchwork)
 
 # loading data
 load(here::here("data", "spatial_metadata.RData") )
+
 load(here::here("outputs/", "spatial_beta.RData") )
 
 load(here::here("data", "kelp_metadata.RData") )
@@ -77,11 +78,10 @@ head(taxo_dissim_toplot)
 # plotting ----
 
 # color code for the 3 habitats
-hab_colors <- c(Kelp="darkgreen", No_Kelp="brown",
-                Midshelf_Inshore="grey30", Offshore_Midshelf="grey50", Offshore_Inshore="black")
+hab_colors <- c(Kelp="seagreen4", No_Kelp="seagreen2",
+                Midshelf_Inshore="mediumseagreen", Offshore_Midshelf="lightsalmon1", Offshore_Inshore="firebrick3")
 hab_shape <- c(Kelp=21, No_Kelp=21,
-                Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=23)
-
+               Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=22)
 
 plot_dissim_taxo <- ggplot(taxo_dissim_toplot, aes(x=Year, y=taxo_diss, group=Site) ) +
   geom_point( aes( shape= Habitat, color = Habitat, fill = Habitat), stat="identity") +
@@ -89,10 +89,13 @@ plot_dissim_taxo <- ggplot(taxo_dissim_toplot, aes(x=Year, y=taxo_diss, group=Si
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_shape_manual(values=hab_shape) + 
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Species dissimilarity") +
-  theme_bw()
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(0.2,1), breaks = seq(from=0, to=1, by=0.2)  ) +
+  labs(x="", y="Species dissimilarity") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (12),colour = "black"), axis.title = element_text(size= (14)),
+        legend.position = "none")
 plot_dissim_taxo
 
 
@@ -150,10 +153,10 @@ head(func_dissim_toplot)
 # plotting ----
 
 # color code for the 3 habitats
-hab_colors <- c(Kelp="darkgreen", No_Kelp="brown",
-                Midshelf_Inshore="grey30", Offshore_Midshelf="grey50", Offshore_Inshore="black")
+hab_colors <- c(Kelp="seagreen4", No_Kelp="seagreen2",
+                Midshelf_Inshore="mediumseagreen", Offshore_Midshelf="lightsalmon1", Offshore_Inshore="firebrick3")
 hab_shape <- c(Kelp=21, No_Kelp=21,
-               Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=23)
+               Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=22)
 
 
 plot_dissim_func <- ggplot(func_dissim_toplot, aes(x=Year, y=func_diss, group=Site) ) +
@@ -162,16 +165,20 @@ plot_dissim_func <- ggplot(func_dissim_toplot, aes(x=Year, y=func_diss, group=Si
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_shape_manual(values=hab_shape) + 
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Species dissimilarity") +
-  theme_bw()
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(0,0.7), breaks = seq(from=0, to=1, by=0.2)  ) +
+  labs(x="", y="Functional dissimilarity") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (12),colour = "black"), axis.title = element_text(size= (14)),
+        legend.title = element_text(size=12), legend.text = element_text(size=12),
+        legend.background = element_blank(), legend.key=element_blank())
 plot_dissim_func
 
 
 
 #####
 ## merging all plot into a single figure and saving as png ####
-figure2 <- ( plot_dissim_taxo / plot_dissim_func )
-ggsave(figure2, file=here::here("outputs/", "figure2bis.png"), 
+figure2_site <- ( plot_dissim_taxo / plot_dissim_func )
+ggsave(figure2_site, file=here::here("outputs/", "figure2_site.png"), 
        height = 12, width = 18, unit = "cm" )

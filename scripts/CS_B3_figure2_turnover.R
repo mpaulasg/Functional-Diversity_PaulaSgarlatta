@@ -89,24 +89,28 @@ head(taxo_turnim_toplot)
 # plotting ----
 
 # color code for the 3 habitats
-hab_colors <- c(Kelp="darkgreen", No_Kelp="brown",
-                Midshelf_Inshore="grey30", Offshore_Midshelf="grey50", Offshore_Inshore="black")
+hab_colors <- c(Kelp="seagreen4", No_Kelp="seagreen2",
+                Midshelf_Inshore="mediumseagreen", Offshore_Midshelf="lightsalmon1", Offshore_Inshore="firebrick3")
 hab_shape <- c(Kelp=21, No_Kelp=21,
-                Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=23)
+               Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=22)
 
 
-plot_turnim_taxo <- ggplot(taxo_turnim_toplot) +
+
+plot_turnim_taxo <- ggplot(taxo_turnim_toplot, mapping = aes(color=Habitat, fill=Habitat)) +
   geom_point( aes(x=Year, y=taxo_turn_mean, 
-                shape= Habitat, color = Habitat, fill = Habitat), stat="identity") +
+                shape= Habitat), stat="identity") +
   geom_errorbar( aes(x=Year, ymin=taxo_turn_mean-taxo_turn_se, ymax=taxo_turn_mean+taxo_turn_se), 
-                 width=0.1, size=0.5, colour="black" ) +
+                 width=0.2, size=0.5 ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_shape_manual(values=hab_shape) + 
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Species turnover") +
-  theme_bw()
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(0.3,0.8), breaks = seq(from=0, to=1, by=0.2)  ) +
+  labs(x="", y="Species turnover") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+           panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+           axis.text = element_text(size = (12),colour = "black"), axis.title = element_text(size= (14)),
+           legend.position = "none")
 plot_turnim_taxo
 
 
@@ -175,23 +179,27 @@ head(func_turnim_toplot)
 
 # plotting ----
 
-plot_turnim_func <- ggplot(func_turnim_toplot) +
+plot_turnim_func <- ggplot(func_turnim_toplot, mapping = aes(color=Habitat, fill=Habitat)) +
   geom_point( aes(x=Year, y=func_turn_mean, 
-                  shape= Habitat, color = Habitat, fill = Habitat), stat="identity") +
+                  shape= Habitat), stat="identity") +
   geom_errorbar( aes(x=Year, ymin=func_turn_mean-func_turn_se, ymax=func_turn_mean+func_turn_se), 
-                  width=0.1, size=0.5, colour="black" ) +
+                  width=0.2, size=0.5) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_shape_manual(values=hab_shape) + 
-  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=2)  ) +
-  scale_y_continuous( limits = c(0,1), breaks = seq(from=0, to=1, by=0.2)  ) +
-  labs(x="Year", y="Functional turnover") +
-  theme_bw()
+  scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
+  scale_y_continuous( limits = c(0,0.6), breaks = seq(from=0, to=1, by=0.2)  ) +
+  labs(x="", y="Functional turnover") +
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (12),colour = "black"), axis.title = element_text(size= (14)),
+        legend.title = element_text(size=12), legend.text = element_text(size=12),
+        legend.background = element_blank(), legend.key=element_blank())
 plot_turnim_func
 
 
 #####
 ## merging all plot into a single figure and saving as png ####
-figure2 <- ( plot_turnim_taxo / plot_turnim_func )
-ggsave(figure2, file=here::here("outputs/", "figure2_turnover.png"), 
-       height = 12, width = 18, unit = "cm" )
+figure2_turnover <- ( plot_turnim_taxo / plot_turnim_func )
+ggsave(figure2_turnover, file=here::here("outputs/", "figure2_turnover.png"), 
+       height = 20, width = 18, unit = "cm" )

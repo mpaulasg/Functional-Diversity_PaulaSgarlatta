@@ -14,24 +14,34 @@ library(tidyverse)
 library(here)
 library(mFD)
 library(betapart)
+library(dplyr)
 
 # loading data
 load(here::here("data", "spatial_sp_occ.RData") )
 load(here::here("outputs", "sp_3D_coord.RData") )
+load(here::here("outputs", "sp_3D_coord_spatial.RData") )
 
 # computing Euclidean distance between species in the 3D space
 sp_dist_funct <- dist(sp_3D_coord)
 
+sp_dist_funct <- dist(sp_3D_coord_spatial)
+
 ## computing functional diversity based on Hill numbers ####
+
+####### [PS] Same here, don't  know why it's not working for me. I need to use the specific one (in this case, sp_3D_coord_spatial)
+
+mFD :: 
 
 # number of species, functional richness, dispersion and identity (along 3 axes)
 spatial_alpha_FDhill <- mFD::alpha.fd.hill (asb_sp_w = spatial_sp_occ,
                     sp_dist = sp_dist_funct,
-                    q = c(0,1),
-                    tau= "mean",
-                    details_returned = FALSE
-                    )
+                    q = c(0,1,2),
+                    tau= "mean")
+
 summary(spatial_alpha_FDhill)
+
+spatial_alpha_FDhill$asb_FD_Hill
+
 
 
 ## computing functional beta-diversity based on Hill numbers ####
@@ -39,10 +49,15 @@ summary(spatial_alpha_FDhill)
 # functional dissimilarity
 spatial_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = spatial_sp_occ,
                                            sp_dist = sp_dist_funct,
-                                           q = c(0,1),
+                                           q = c(0,1, 2),
                                            tau= "mean",
-                                           details_returned = FALSE
-                                          )
+                                           beta_type = "Jaccard")
+spatial_beta_FDhill$
+
+# Then use the mFD::dist.to.df function to ease visualizing result
+
+mFD::dist.to.df(list_dist = list("FDBeta_2" = spatial_beta_FDhill$beta_fd_q$q2))
+
 
 # summary
 lapply(spatial_beta_FDhill, summary)
@@ -51,7 +66,7 @@ lapply(spatial_beta_FDhill, summary)
 
 # exploring data to illsutrate indice behaviour
 tau_mean<-mean(sp_dist_funct)
-tau_mean # 0.44
+tau_mean # 0.39
 test_occ <- spatial_sp_occ[1:2,]
 sp_test<-names(which(apply(test_occ,2,max)>0))
 dist_test<-as.matrix(sp_dist_funct)[sp_test,sp_test]

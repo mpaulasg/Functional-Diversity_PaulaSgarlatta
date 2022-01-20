@@ -1,6 +1,6 @@
 ################################################################################
 ##
-## Script for preparing fish occurence datasets
+## Script for preparing fish occurrence datasets
 ## 
 ## Code by Camille Magneville, Sébastien villéger and Paula Sgarlatta
 ##
@@ -12,6 +12,7 @@ rm(list=ls()) # cleaning memory
 library(tidyverse)
 library(here)
 library(mFD)
+library(dplyr)
 
 ## temporal survey data ####
 
@@ -53,15 +54,32 @@ dim(kelp_sp_occ) # 69 assemblages * 101 species
 dim(nokelp_sp_occ) # 56 assemblages * 106 species
 
 # names of species
-kelp_sp <- colnames(kelp_sp_occ)
+kelp_sp <- colnames(kelp_sp_occ) #101 sp
 length(kelp_sp) # 101 sp
-nokelp_sp <- colnames(nokelp_sp_occ)
+
+nokelp_sp <- colnames(nokelp_sp_occ) # 106 sp
 length(nokelp_sp) # 106 sp
 
 sum(kelp_sp %in% nokelp_sp)# 83 species shared
 
-temporal_sp <- unique( c( kelp_sp, nokelp_sp ) )
-length(temporal_sp) # 124 unique species
+temporal_sp <- unique(c(kelp_sp, nokelp_sp))
+
+length(temporal_sp) # 124 unique species ##[PS] This is not giving unique species, not sure what is exactly giving?
+
+temporal_sp_kelp <- as.data.frame(setdiff(kelp_sp, nokelp_sp)) #[PS] Sp only in kelp
+
+colnames(temporal_sp_kelp) <- "Species"
+
+temporal_sp_nokelp <- as.data.frame(setdiff(nokelp_sp, kelp_sp)) #[PS] Sp only in no kelp
+
+colnames(temporal_sp_nokelp) <- "Species"
+
+temporal_sp_unique <- bind_rows(temporal_sp_kelp, temporal_sp_nokelp)
+
+temporal_sp_unique <- temporal_sp_unique[order(temporal_sp_unique$Species),] 
+
+length(temporal_sp_unique) #41 unique species - THIS IS CORRECT
+
 
 ############## => temporal data ready ####
 
@@ -71,9 +89,10 @@ length(temporal_sp) # 124 unique species
 spatial_metadata <- read.csv(here::here("data", "raw_data",  "SpatialUVC_metadata_site.csv"))
 head(spatial_metadata)
 
-spatial_sp_biom <- read.csv(here::here("data", "raw_data", "SpatialUVC_species_biomass_site_average.csv"),
-                            header = TRUE, row.names = 1) %>%
+spatial_sp_biom <- read.csv(here::here("data", "raw_data", "SpatialUVC_species_biomass_site_average.csv")) %>%
+  column_to_rownames("Code") %>% 
   as.matrix()
+
 dim(spatial_sp_biom) # 9 assemblages * 51 species
 
 # summary of surveys and occurrences data ----
@@ -87,9 +106,11 @@ spatial_sp <- colnames(spatial_sp_occ)
 length(spatial_sp) # 51
 
 ## names of species present in at least one dataset ####
-sum(spatial_sp %in% temporal_sp)# 33 species shared
-species_allsurveys <- unique( c(temporal_sp ,  spatial_sp) )
-length(species_allsurveys) # 142 species
+sum(spatial_sp %in% temporal_sp)# 36 species shared 
+
+species_allsurveys <- unique( c(temporal_sp ,  spatial_sp) ) 
+length(species_allsurveys) # 139 species
+
 
 ## saving dataframes #####
 save(kelp_metadata, file=here::here("data", "kelp_metadata.RData") )
@@ -102,8 +123,10 @@ save(nokelp_summary, file=here::here("data", "nokelp_summary.RData") )
 
 save(spatial_metadata, file=here::here("data", "spatial_metadata.RData") )
 save(spatial_sp_occ, file=here::here("data", "spatial_sp_occ.RData") )
+
 save(spatial_summary, file=here::here("data", "spatial_summary.RData") )
 
 save(species_allsurveys, file=here::here("data", "species_allsurveys.RData") )
+
 
 ## end of script ####

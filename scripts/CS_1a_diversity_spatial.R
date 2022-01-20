@@ -17,14 +17,15 @@ library(betapart)
 
 # loading data
 load(here::here("data", "spatial_sp_occ.RData") )
-load(here::here("outputs", "sp_3D_coord.RData") )
+load(here::here("outputs", "sp_3D_coord.RData") )# [PS] The original one had sp_3D_coord.Rdata - If I'm using this one it's not working
+load(here::here("outputs", "sp_3D_coord_spatial.RData") ) 
 
 
 ## computing taxonomic and functional diversity ####
 
 # number of species, functional richness, dispersion and identity (along 3 axes)
 spatial_fd <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
+  sp_faxes_coord   = sp_3D_coord_spatial,
   asb_sp_w         = spatial_sp_occ,
   ind_vect         = c("fide", "fric", "fdis"),
   scaling          = TRUE,
@@ -42,7 +43,7 @@ spatial_beta_taxo <- betapart::beta.pair(spatial_sp_occ, index.family = "jaccard
 
 # functional dissimilarity = Jaccard-like index and its components
 spatial_beta_func <- mFD::beta.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
+  sp_faxes_coord   = sp_3D_coord_spatial,
   asb_sp_occ       = spatial_sp_occ,
   check_input      = TRUE,
   beta_family      = c("Jaccard"),
@@ -66,56 +67,3 @@ cbind( min=lapply(spatial_beta, min), max=lapply(spatial_beta, max) )
 save(spatial_fd, file=here::here("outputs/", "spatial_fd.RData") )
 save(spatial_alpha, file=here::here("outputs/", "spatial_alpha.RData") )
 save(spatial_beta, file=here::here("outputs/", "spatial_beta.RData") )
-
-########### [PS] Now with thermal affinity ###
-
-# loading data
-
-load(here::here("outputs", "sp_4D_coord.RData") )
-
-## computing taxonomic and functional diversity ####
-
-# number of species, functional richness, dispersion and identity (along 3 axes)
-spatial_fd_thermal <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_4D_coord,
-  asb_sp_w         = spatial_sp_occ,
-  ind_vect         = c("fide", "fric", "fdis"),
-  scaling          = TRUE,
-  check_input      = TRUE,
-  details_returned = TRUE)
-
-spatial_alpha_thermal <- spatial_fd_thermal$functional_diversity_indices
-spatial_alpha_thermal
-
-
-## computing taxonomic and functional beta-diversity ####
-
-# taxonomic dissimilarity = Jaccard index and its components
-spatial_beta_taxo_thermal <- betapart::beta.pair(spatial_sp_occ, index.family = "jaccard")
-
-# functional dissimilarity = Jaccard-like index and its components
-spatial_beta_func_thermal <- mFD::beta.fd.multidim(
-  sp_faxes_coord   = sp_4D_coord,
-  asb_sp_occ       = spatial_sp_occ,
-  check_input      = TRUE,
-  beta_family      = c("Jaccard"),
-  details_returned = TRUE)
-
-# list of distance matrices with dissimilarity and its turnover
-spatial_beta_thermal <- list (
-  taxo_diss_thermal = spatial_beta_taxo_thermal$beta.jac,
-  taxo_turn_thermal = spatial_beta_taxo_thermal$beta.jtu,
-  func_diss_thermal = spatial_beta_func_thermal$pairasb_fbd_indices$jac_diss,
-  func_turn_thermal = spatial_beta_func_thermal$pairasb_fbd_indices$jac_turn
-)
-
-# summary
-cbind( min=lapply(spatial_beta_thermal, min), max=lapply(spatial_beta_thermal, max) )
-
-
-# saving ####
-
-# trait values and trait coding dataframes ----
-save(spatial_fd_thermal, file=here::here("outputs/", "spatial_fd_thermal.RData") )
-save(spatial_alpha_thermal, file=here::here("outputs/", "spatial_alpha_thermal.RData") )
-save(spatial_beta_thermal, file=here::here("outputs/", "spatial_beta_thermal.RData") )

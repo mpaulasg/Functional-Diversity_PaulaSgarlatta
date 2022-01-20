@@ -7,6 +7,7 @@
                                                                                 ## NB: NOT TO BE ON FINAL GITHUB
 ################################################################################
 
+
 rm(list=ls()) # cleaning memory
 
 # libraries
@@ -22,82 +23,60 @@ library(arsenal)
 kelp_traits <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_kelp.csv"),
                         header = T)
 head(kelp_traits)
-names(kelp_traits) <- c("Species","Size", "Aggr", "Posi", "Diet")
+names(kelp_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
 nrow(kelp_traits) # 101 sp
-
-#[PS] Adding a new datset with thermal affinity
-
-kelp_thermal <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_only_thermal_kelp.csv"),
-                         header = T)
-
-#[PS] Check if both df have the same species
-
-summary(comparedf(kelp_traits, kelp_thermal, by = "row.names")) #Great!
-
-kelp_traits_with_thermal <- cbind(kelp_traits, kelp_thermal[c("Thermal_affinity_min", "Thermal_affinity_max")])
 
 # from sites that never had kelp
 nokelp_traits <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_no_kelp.csv"),
                           header = T)
 head(nokelp_traits)
-names(nokelp_traits) <- c("Species","Size", "Aggr", "Posi", "Diet")
+names(nokelp_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
 nrow(nokelp_traits) # 106 sp
-
-#[PS] Adding a new datset with thermal affinity
-
-no_kelp_thermal <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_only_thermal_no_kelp.csv"),
-                         header = T)
-
-#[PS] Check if both df have the same species
-
-summary(comparedf(nokelp_traits, no_kelp_thermal, by = "row.names")) #Great!
-
-nokelp_traits_with_thermal <- cbind(nokelp_traits, no_kelp_thermal[c("Thermal_affinity_min", "Thermal_affinity_max")])
 
 # traits of species from UVC surveys
 spatial_traits <- read.csv(here::here("from_paula", "SpatialUVC_species_traits.csv"), 
                            header = T)
-names(spatial_traits) <- c("Species", "Size", "Aggr", "Posi", "Diet")
 head(spatial_traits)
+names(spatial_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
+
 nrow(spatial_traits) # 51 sp
 
-#[PS] Adding a new datset with thermal affinity
+#All sp with K values
 
-spatial_thermal <- read.csv(here::here("from_paula", "SpatialUVC_species_traits_only_thermal.csv"),
-                            header = T)
-
-#[PS] Check if both df have the same species
-
-summary(comparedf(spatial_traits, spatial_thermal, by = "row.names")) #Great!
-
-spatial_traits_with_thermal <- cbind(spatial_traits, spatial_thermal[c("Thermal_affinity_min", "Thermal_affinity_max")])
+k_values <- read.csv(here::here("from_paula", "fish_K_values.csv"),
+                     header = T)
+names(k_values) <- c("Species", "sstmean", "MaxSizeTL", "Diet", "Position", "Method", "Kmax", "Kmax_lowq", "Kmax_uppq")
 
 
+#Add K values to each dataframe
+
+kelp_traits <- inner_join(kelp_traits, k_values[ , c("Species", "Kmax")], by = c("Species"), all.x=TRUE)
+  
+nokelp_traits <- inner_join(nokelp_traits, k_values[ , c("Species", "Kmax")], by = c("Species"), all.x=TRUE)   
+
+spatial_traits <- inner_join(spatial_traits, k_values[ , c("Species", "Kmax")], by = c("Species"), all.x=TRUE) 
+  
 # merging in a single data.frame and keeping only species present in surveys ----
 fish_traits <- bind_rows( kelp_traits, nokelp_traits, spatial_traits) %>%
   distinct(Species, .keep_all = TRUE ) %>%
   as.data.frame()
 head(fish_traits)
 
-#[PS] same with thermal data
+nrow(fish_traits) # 139 species
 
-fish_traits_thermal <- bind_rows(kelp_traits_with_thermal, nokelp_traits_with_thermal, spatial_traits_with_thermal) %>%
-  distinct(Species, .keep_all = TRUE ) %>%
-  as.data.frame()
-head(fish_traits_thermal)
-
-
-nrow(fish_traits) # 142 species
-nrow(fish_traits_thermal) # 142 species
-
-
-sort(fish_traits$Species) #
-#                                                                               
+fish_traits <- as.data.frame(fish_traits[order(fish_traits$Species),])
 
 # saving as csv file
+
 write.csv(fish_traits, file=here::here("data", "raw_data", "fish_traits.csv"), 
           row.names = FALSE )
-
-
-write.csv(fish_traits_thermal, file=here::here("data", "raw_data", "fish_traits_thermal.csv"), 
+write.csv(kelp_traits, file=here::here("data", "raw_data", "kelp_traits.csv"), 
           row.names = FALSE )
+
+write.csv(nokelp_traits, file=here::here("data", "raw_data", "nokelp_traits.csv"), 
+          row.names = FALSE )
+
+write.csv(spatial_traits, file=here::here("data", "raw_data", "spatial_traits.csv"), 
+          row.names = FALSE )
+
+
