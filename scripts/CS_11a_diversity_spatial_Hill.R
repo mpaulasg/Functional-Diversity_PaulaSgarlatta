@@ -83,7 +83,16 @@ save(FD_beta_spatial, file=here::here("outputs/", "FD_beta_spatial_Hill.RData") 
 
 
 
+
 #From Seb - [PS] Not sure what info is this giving us?
+
+
+# summary
+lapply(spatial_beta_FDhill, summary)
+# => beta q0 null because all most distinct pairs of species are in all assemblages
+# => beta q=1 still very low, similar composition 
+
+# exploring data to illsutrate indice behaviour
 
 tau_mean<-mean(sp_dist_funct)
 tau_mean # 0.39
@@ -93,12 +102,19 @@ dist_test<-as.matrix(sp_dist_funct)[sp_test,sp_test]
 test_occ[,sp_test]
 unique_test<-names(which(apply(test_occ,2,sum)==1))
 dist_unique_test<-dist_test[unique_test,unique_test]
+
 summary(as.dist(dist_unique_test))   # all distances between species unique to different assemblages < mean(dist) 
   
 # summary
 lapply(spatial_beta_FDhill, summary)
 # => beta q0 null because all most distinct pairs of species are in all assemblages
 # => beta q=1 still very low, similar composition 
+
+summary(as.dist(dist_unique_test))
+# => all distances between species unique to different assemblages < mean(dist) 
+# so null beta for q=0
+
+
 
 
 
