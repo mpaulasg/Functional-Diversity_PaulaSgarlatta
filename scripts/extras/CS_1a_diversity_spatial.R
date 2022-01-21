@@ -56,7 +56,7 @@ spatial_beta <- list (
   func_diss = spatial_beta_func$pairasb_fbd_indices$jac_diss,
   func_turn = spatial_beta_func$pairasb_fbd_indices$jac_turn
   )
-
+spatial_beta$taxo_diss
 # summary
 cbind( min=lapply(spatial_beta, min), max=lapply(spatial_beta, max) )
 

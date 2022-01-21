@@ -85,7 +85,7 @@ plot_spatial_func
 
 ## temporal trends ####
 
-# merging metadata and biodiv indices in a single table for each habitat type
+# merging metadata and biodiv indices in a single table for each habitat
 
 temporal_kelp<- kelp_metadata %>% 
   mutate(Habitat="kelp") %>%
