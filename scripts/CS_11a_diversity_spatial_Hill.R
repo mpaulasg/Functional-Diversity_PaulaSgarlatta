@@ -30,7 +30,7 @@ sp_dist_funct <- dist(sp_3D_coord)
   
 spatial_tax_Hill   <- alpha.fd.hill (asb_sp_w = spatial_sp_occ,
                                           sp_dist = sp_dist_funct,
-                                          q = 2, #Recommended in Chao et al 2019
+                                          q = 0, #Recommended in Chao et al 2019
                                           tau= "min") #This gives you the taxonomic profile
 
 TD_spatial <- spatial_tax_Hill$asb_FD_Hill 
@@ -39,7 +39,7 @@ TD_spatial <- spatial_tax_Hill$asb_FD_Hill
 
 spatial_alpha_FDhill <- mFD::alpha.fd.hill (asb_sp_w = spatial_sp_occ,
                     sp_dist = sp_dist_funct,
-                    q = c(0, 1, 2) , 
+                    q = 0 , 
                     tau= "mean") #This gives you functional diversity, as recommended in Chao et al 2019
 
 FD_spatial <- spatial_alpha_FDhill$asb_FD_Hill
@@ -51,7 +51,7 @@ FD_spatial <- spatial_alpha_FDhill$asb_FD_Hill
 
 spatial_beta_taxhill <-beta.fd.hill (asb_sp_w = spatial_sp_occ,
                                           sp_dist = sp_dist_funct,
-                                          q = c(0,1, 2),
+                                          q = 0,
                                           tau= "min",
                                           beta_type = "Jaccard")
   
@@ -59,12 +59,12 @@ spatial_beta_taxhill <-beta.fd.hill (asb_sp_w = spatial_sp_occ,
 
 TD_beta_spatial <- dist.to.df(spatial_beta_taxhill$beta_fd_q) %>% 
   mutate(Habitat1=sub(".*_", "", x1), Habitat2=sub(".*_", "", x2)) %>% 
-  select(Habitat1, Habitat2, q0, q1, q2)
+  select(Habitat1, Habitat2, q0)
 
 # functional dissimilarity
 spatial_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = spatial_sp_occ,
                                            sp_dist = sp_dist_funct,
-                                           q = c(0,1, 2),
+                                           q = 0,
                                            tau= "mean",
                                            beta_type = "Jaccard")
 
@@ -72,7 +72,7 @@ spatial_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = spatial_sp_occ,
 
 FD_beta_spatial <- dist.to.df(spatial_beta_FDhill$beta_fd_q)%>% 
   mutate(Habitat1=sub(".*_", "", x1), Habitat2=sub(".*_", "", x2)) %>% 
-  select(Habitat1, Habitat2, q0, q1, q2)
+  select(Habitat1, Habitat2, q0)
 
 # saving ####
 save(sp_dist_funct, file=here::here("outputs/", "sp_dist_funct_spatial_Hill.RData") )
