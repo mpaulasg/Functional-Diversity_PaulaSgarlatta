@@ -17,22 +17,118 @@ library(betapart)
 library(dplyr)
 
 # loading data
+
 load(here::here("data", "kelp_sp_occ.RData") )
 load(here::here("data", "nokelp_sp_occ.RData") )
-load(here::here("outputs", "sp_3D_coord.RData") ) #For some reason this one doesn't work
-#load(here::here("outputs", "sp_3D_coord_kelp.RData") )
-#load(here::here("outputs", "sp_3D_coord_nokelp.RData") )
+load(here::here("data", "kelp_nokelp_occ.RData") )
+load(here::here("outputs", "sp_3D_coord.RData") ) 
+load(here::here("data", "kelp_nokelp_metadata.RData") ) 
 
 # computing Euclidean distance between species in the 3D space
 
 sp_dist_funct <- dist(sp_3D_coord)
 
-#sp_dist_funct_kelp <- dist(sp_3D_coord_kelp)
-#sp_dist_funct_nokelp <- dist(sp_3D_coord_nokelp)
+kelp_nokelp_metadata <- as.data.frame(kelp_nokelp_metadata)
 
 ## computing functional diversity based on Hill numbers ####
 
-####### [PS] Same here, don't  know why it's not working for me. I need to use the specific one (in this case, sp_3D_coord_kelp/nokelp)
+
+####### KELP/NO KELP #####
+
+#Taxonomic diversity
+
+kelp_nokelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = kelp_nokelp_occ,
+                                  sp_dist = sp_dist_funct,
+                                  q = 0, # Only 0 because the three values of q give same results (as is species richness)
+                                  tau= "min") #This gives you the taxonomic profile
+
+TD_kelp_nokelp_Hill <- kelp_nokelp_tax_Hill$asb_FD_Hill %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Code")
+
+TD_kelp_nokelp <- left_join(kelp_nokelp_metadata, TD_kelp_nokelp_Hill, by="Code")
+
+# Functional diversity: number of species, functional richness, dispersion and identity (along 3 axes)
+
+kelp_nokelp_alpha_FDhill <- mFD::alpha.fd.hill (asb_sp_w = kelp_nokelp_occ,
+                                         sp_dist = sp_dist_funct,
+                                         q = c(0, 1, 2), 
+                                         tau= "mean") #This gives you functional diversity, as recommended in Chao et al 2019
+
+FD_kelp_nokelp_Hill <- kelp_nokelp_alpha_FDhill$asb_FD_Hill %>% 
+as.data.frame() %>% 
+  rownames_to_column("Code")
+
+FD_kelp_nokelp <- left_join(kelp_nokelp_metadata, FD_kelp_nokelp_Hill, by="Code")
+
+
+## computing tax/functional beta-diversity based on Hill numbers ####
+
+#Taxonomic dissimilarity
+
+kelp_nokelp_beta_taxhill <-beta.fd.hill (asb_sp_w = kelp_nokelp_occ,
+                                  sp_dist = sp_dist_funct,
+                                  q = c(0, 1, 2),
+                                  tau= "min",
+                                  beta_type = "Jaccard")
+
+# Then use the mFD::dist.to.df function to ease visualizing result
+
+see <- kelp_nokelp_beta_taxhill$beta_fd_q
+
+TD_beta_kelp_nokelp <- dist.to.df(kelp_nokelp_beta_taxhill$beta_fd_q) %>% 
+  as.data.frame() %>%  
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2), Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2),
+         Site=paste(x1,x2), sep="_") %>% 
+  select(Year1, Year2, q0, q1, q2, Site1, Site2, Site)
+
+TD_beta_k_nokelp <- left_join(kelp_nokelp_metadata, TD_beta_kelp_nokelp, by=c("Code", "Habitat"))
+
+# functional dissimilarity
+kelp_nokelp_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = kelp_nokelp_occ,
+                                       sp_dist = sp_dist_funct,
+                                       q = c(0, 1, 2),
+                                       tau= "mean",
+                                       beta_type = "Jaccard")
+
+# Then use the mFD::dist.to.df function to ease visualizing result
+
+FD_beta_kelp_nokelp <- dist.to.df(kelp_nokelp_beta_FDhill$beta_fd_q)%>% 
+  as.data.frame() %>% 
+  rownames_to_column("Code") %>%
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2), Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2)) %>% 
+  select(Year1, Year2, q0, q1, q2, Code, Site1, Site2)
+
+
+
+
+
+#For stats
+
+FD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
+  mutate(Site=sub("_.*", "", x1)) %>% 
+  select(Year1, Year2, Site, q0, q1, q2)
+
+TD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_taxhill$beta_fd_q)%>% 
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
+  mutate(Site=sub("_.*", "", x1)) %>% 
+  select(Year1, Year2, Site, q0, q1, q2)
+
+
+
+#Saving
+
+save(TD_kelp_Hill, file=here::here("outputs/", "TD_kelp_Hill.RData") )
+save(FD_kelp_Hill, file=here::here("outputs/", "FD_kelp_Hill.RData") )
+save(TD_beta_kelp, file=here::here("outputs/", "TD_beta_kelp_Hill.RData") )
+save(FD_beta_kelp, file=here::here("outputs/", "FD_beta_kelp_Hill.RData") )
+save(FD_beta_kelp_Hill_sites, file=here::here("outputs/", "FD_beta_kelp_Hill_sites.RData") )
+save(TD_beta_kelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_Hill_sites.RData") )
+
+
+
+
 
 ############################################################   KELP  #########################################################################
 
@@ -40,7 +136,7 @@ sp_dist_funct <- dist(sp_3D_coord)
 
 kelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = kelp_sp_occ,
                                      sp_dist = sp_dist_funct,
-                                     q = 0, 
+                                     q = 0, # Only 0 because the three values of q give same results (as is species richness)
                                      tau= "min") #This gives you the taxonomic profile
 
 TD_kelp_Hill <- kelp_tax_Hill$asb_FD_Hill 
@@ -49,7 +145,7 @@ TD_kelp_Hill <- kelp_tax_Hill$asb_FD_Hill
 
 kelp_alpha_FDhill <- mFD::alpha.fd.hill (asb_sp_w = kelp_sp_occ,
                                             sp_dist = sp_dist_funct,
-                                            q = 0 , 
+                                            q = c(0, 1, 2), 
                                             tau= "mean") #This gives you functional diversity, as recommended in Chao et al 2019
 
 FD_kelp_Hill <- kelp_alpha_FDhill$asb_FD_Hill
@@ -61,7 +157,7 @@ FD_kelp_Hill <- kelp_alpha_FDhill$asb_FD_Hill
 
 kelp_beta_taxhill <-beta.fd.hill (asb_sp_w = kelp_sp_occ,
                                      sp_dist = sp_dist_funct,
-                                     q = 0,
+                                     q = c(0, 1, 2),
                                      tau= "min",
                                      beta_type = "Jaccard")
 
@@ -69,27 +165,34 @@ kelp_beta_taxhill <-beta.fd.hill (asb_sp_w = kelp_sp_occ,
 
 TD_beta_kelp <- dist.to.df(kelp_beta_taxhill$beta_fd_q) %>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  select(Year1, Year2, q0)
+  select(Year1, Year2, q0, q1, q2)
 
 # functional dissimilarity
 kelp_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = kelp_sp_occ,
                                           sp_dist = sp_dist_funct,
-                                          q = 0,
+                                          q = c(0, 1, 2),
                                           tau= "mean",
                                           beta_type = "Jaccard")
 
 # Then use the mFD::dist.to.df function to ease visualizing result
+
+FD_beta_kelp <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
+  select(Year1, Year2, q0, q1, q2)
 
 #For stats
 
 FD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
   mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0)
+  select(Year1, Year2, Site, q0, q1, q2)
 
-FD_beta_kelp <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
+TD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_taxhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  select(Year1, Year2, q0)
+  mutate(Site=sub("_.*", "", x1)) %>% 
+  select(Year1, Year2, Site, q0, q1, q2)
+
+
 
 #Saving
 
@@ -98,15 +201,17 @@ save(FD_kelp_Hill, file=here::here("outputs/", "FD_kelp_Hill.RData") )
 save(TD_beta_kelp, file=here::here("outputs/", "TD_beta_kelp_Hill.RData") )
 save(FD_beta_kelp, file=here::here("outputs/", "FD_beta_kelp_Hill.RData") )
 save(FD_beta_kelp_Hill_sites, file=here::here("outputs/", "FD_beta_kelp_Hill_sites.RData") )
+save(TD_beta_kelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_Hill_sites.RData") )
 
 
-############################################################   NO KELP  #########################################################################
+
+##############################################  NO KELP  #########################################################################
 
 #Taxonomic diversity
 
 nokelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = nokelp_sp_occ,
                                   sp_dist = sp_dist_funct,
-                                  q = 0, 
+                                  q = 0, # Only 0 because the three values of q give same results (as is species richness)
                                   tau= "min") #This gives you the taxonomic profile
 
 TD_nokelp_Hill <- nokelp_tax_Hill$asb_FD_Hill 
@@ -115,7 +220,7 @@ TD_nokelp_Hill <- nokelp_tax_Hill$asb_FD_Hill
 
 nokelp_alpha_FDhill <- mFD::alpha.fd.hill (asb_sp_w = nokelp_sp_occ,
                                          sp_dist = sp_dist_funct,
-                                         q = 0 , 
+                                         q = c(0, 1, 2),  
                                          tau= "mean") #This gives you functional diversity, as recommended in Chao et al 2019
 
 FD_nokelp_Hill <- nokelp_alpha_FDhill$asb_FD_Hill
@@ -127,7 +232,7 @@ FD_nokelp_Hill <- nokelp_alpha_FDhill$asb_FD_Hill
 
 nokelp_beta_taxhill <-beta.fd.hill (asb_sp_w = nokelp_sp_occ,
                                   sp_dist = sp_dist_funct,
-                                  q = 0,
+                                  q = c(0,1, 2), 
                                   tau= "min",
                                   beta_type = "Jaccard")
 
@@ -135,28 +240,34 @@ nokelp_beta_taxhill <-beta.fd.hill (asb_sp_w = nokelp_sp_occ,
 
 TD_beta_nokelp <- dist.to.df(nokelp_beta_taxhill$beta_fd_q) %>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  select(Year1, Year2, q0)
+  select(Year1, Year2, q0, q1, q2)
 
 # functional dissimilarity
 nokelp_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = nokelp_sp_occ,
                                        sp_dist = sp_dist_funct,
-                                       q = 0,
+                                       q = c(0, 1, 2),
                                        tau= "mean",
                                        beta_type = "Jaccard")
 
 # Then use the mFD::dist.to.df function to ease visualizing result
+
+FD_beta_nokelp <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>% 
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
+  select(Year1, Year2, q0, q1, q2)
 
 #With sites - for statystical analysis
 
 FD_beta_nokelp_sites <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
   mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0)
+  select(Year1, Year2, Site, q0, q1, q2)
 
 
-FD_beta_nokelp <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>% 
-  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  select(Year1, Year2, q0)
+######## Obtain beta diversity for both datasets together ###
+
+#Merge both datasets
+
+
 
 # saving ####
 
@@ -184,4 +295,5 @@ lapply(spatial_beta_FDhill, summary)
 # => beta q0 null because all most distinct pairs of species are in all assemblages
 # => beta q=1 still very low, similar composition 
 
-####################### end of code ############################################
+
+############################################### end of code ###########################################################

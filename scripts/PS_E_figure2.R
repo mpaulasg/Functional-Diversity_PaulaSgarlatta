@@ -11,8 +11,6 @@ rm(list=ls()) # cleaning memory
 # libraries
 library(tidyverse)
 library(here)
-library(dendextend)
-library(patchwork)
 
 
 # loading data
@@ -112,16 +110,16 @@ hab_shape <- c(Kelp=21, No_kelp=21,
 
 
 plot_dissim_taxo_Hill <- ggplot(TD_dissim_Hill, mapping = aes(color=Habitat, fill=Habitat)) +
-  geom_point(aes(x=Year, y=q2_mean, 
+  geom_point(aes(x=Year, y=q0_mean, 
                  shape= Habitat), stat="identity", size=3) +
-  geom_errorbar( aes(x=Year, ymin=q2_mean-q2_se, ymax=q2_mean+q2_se), 
+  geom_errorbar( aes(x=Year, ymin=q0_mean-q0_se, ymax=q0_mean+q0_se), 
                  width=0.2, size=0.5 ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_shape_manual(values=hab_shape) + 
   scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(0.1,0.6), breaks = seq(from=0.1, to=0.6, by=0.1)  ) +
-  labs(x="", y="Taxonomic dissimilarity (q=2)") +
+  scale_y_continuous( limits = c(0.4,0.9), breaks = seq(from=0.4, to=0.9, by=0.1)  ) +
+  labs(x="", y="Taxonomic dissimilarity (q=0)") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (14)),
@@ -209,12 +207,18 @@ hab_colors <- c(Kelp="seagreen4", No_kelp="seagreen2",
 hab_shape <- c(Kelp=21, No_kelp=21,
                I_M=22, M_O=22, I_O=22)
 
+highlight <- FD_dissim_Hill %>% 
+  filter(Year == 2002)
+
 
 plot_dissim_func_Hill <- ggplot(FD_dissim_Hill, mapping = aes(color=Habitat, fill=Habitat)) +
-  geom_point(aes(x=Year, y=q2_mean, 
+  geom_point(aes(x=Year, y=q1_mean, 
                  shape= Habitat), stat="identity", size=3) +
-  geom_errorbar( aes(x=Year, ymin=q2_mean-q2_se, ymax=q2_mean+q2_se), 
+  geom_point(data=highlight, aes(x=Year, y=q1_mean), stat="identity", color="red", size = 3)+
+  geom_errorbar( aes(x=Year, ymin=q1_mean-q1_se, ymax=q1_mean+q1_se), 
                  width=0.2, size=0.5 ) +
+    geom_errorbar( data=highlight,aes(x=Year, ymin=q1_mean-q1_se, ymax=q1_mean+q1_se), 
+                   width=0.2, size=0.5, color="red" ) +
   scale_color_manual(values=hab_colors, name="Habitat", breaks = c("Kelp", "No_kelp", "I_M", "M_O", 
   "I_O"),labels=c("Kelp", "No kelp", "Midshelf-Inshore","Offshore-Midshelf", "Offshore-Inshore")) + 
   scale_fill_manual(values=hab_colors, name="Habitat", breaks = c("Kelp", "No_kelp", "I_M", "M_O", 
@@ -222,15 +226,15 @@ plot_dissim_func_Hill <- ggplot(FD_dissim_Hill, mapping = aes(color=Habitat, fil
   scale_shape_manual(values=hab_shape, name="Habitat", breaks = c("Kelp", "No_kelp", "I_M", "M_O", 
   "I_O"),labels=c("Kelp", "No kelp", "Midshelf-Inshore","Offshore-Midshelf", "Offshore-Inshore")) + 
   scale_x_continuous( limits = c(2002, 2018), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(0,0.15), breaks = seq(from=0, to=0.15, by=0.05)  ) +
-  labs(x="", y="Functional dissimilarity (q=2)") +
+  scale_y_continuous( limits = c(0,0.1), breaks = seq(from=0, to=0.1, by=0.05)  ) +
+  labs(x="", y="Functional dissimilarity (q=1)") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
         legend.title = element_text(size=14), legend.text = element_text(size=14),
         legend.background = element_blank(), legend.key=element_blank())
 
-plot_dissim_func_Hill
+plot_dissim_func_Hill #Need to change the legend colors
 
 #####
 ## merging all plot into a single figure and saving as png ####
