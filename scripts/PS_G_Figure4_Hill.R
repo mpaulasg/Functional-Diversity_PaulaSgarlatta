@@ -82,3 +82,8 @@ plot_dissim_func_Hill <- ggplot(FD_beta_k_nok) +
         legend.position = "none") 
 
 plot_dissim_func_Hill
+
+## merging all plot into a single figure and saving as png ####
+figure4 <- ( plot_dissim_taxo_Hill / plot_dissim_func_Hill)
+ggsave(figure4, file=here::here("outputs/", "figure4_Hill.png"),
+       height = 22, width = 25, unit = "cm" )
