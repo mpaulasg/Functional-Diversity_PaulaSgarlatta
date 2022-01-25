@@ -112,7 +112,7 @@ FD_beta_kelp_nokelp <- dist.to.df(kelp_nokelp_beta_FDhill$beta_fd_q)%>%
 
 save(TD_kelp_nokelp_Hill, file=here::here("outputs/", "TD_kelp_nokelp_Hill.RData") )
 save(FD_kelp_nokelp_Hill, file=here::here("outputs/", "FD_kelp_nokelp_Hill.RData") )
-save(TD_beta_kelp_nokelp , file=here::here("outputs/", "TD_beta_kelp_nokelp .RData") )
+save(TD_beta_kelp_nokelp , file=here::here("outputs/", "TD_beta_kelp_nokelp.RData") )
 save(FD_beta_kelp_nokelp, file=here::here("outputs/", "FD_beta_kelp_nokelp.RData") )
 
 
