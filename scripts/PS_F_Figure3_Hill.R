@@ -1,6 +1,6 @@
 ############################################################################################################
 ##
-## Script for plotting taxonomic and functional diversity across habitats and years using Hill numbers
+## Script for plotting temporal homogenisation within each habitat
 ## 
 ## Code by Paula Sgarlatta, Sebastien Villeger and Camille Magneville 
 ##
