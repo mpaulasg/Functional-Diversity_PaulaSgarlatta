@@ -35,6 +35,18 @@ kelp_nokelp_metadata <- as.data.frame(kelp_nokelp_metadata)
 
 ####### KELP/NO KELP #####
 
+## Change sites to habitat
+
+kelp_nokelp_occ <- kelp_nokelp_occ %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Code") %>% 
+  left_join(kelp_nokelp_metadata, kelp_nokelp_occ, by="Code" ) %>% 
+  mutate(Site = paste(Code, Habitat, sep="-")) %>% 
+  select(-Habitat, -Year, -Code) %>% 
+  column_to_rownames("Site") %>% 
+  as.matrix()
+  
+
 #Taxonomic diversity
 
 kelp_nokelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = kelp_nokelp_occ,
@@ -44,9 +56,9 @@ kelp_nokelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = kelp_nokelp_occ,
 
 TD_kelp_nokelp_Hill <- kelp_nokelp_tax_Hill$asb_FD_Hill %>% 
   as.data.frame() %>% 
-  rownames_to_column("Code")
-
-TD_kelp_nokelp <- left_join(kelp_nokelp_metadata, TD_kelp_nokelp_Hill, by="Code")
+  rownames_to_column("Code") %>% 
+  mutate(Year1 = sub("-.*", "", Code), Year= sub(".*_", "", Year1), Habitat=sub(".*-", "", Code)) %>% 
+  select(-Code, -Year1)
 
 # Functional diversity: number of species, functional richness, dispersion and identity (along 3 axes)
 
@@ -57,10 +69,9 @@ kelp_nokelp_alpha_FDhill <- mFD::alpha.fd.hill (asb_sp_w = kelp_nokelp_occ,
 
 FD_kelp_nokelp_Hill <- kelp_nokelp_alpha_FDhill$asb_FD_Hill %>% 
 as.data.frame() %>% 
-  rownames_to_column("Code")
-
-FD_kelp_nokelp <- left_join(kelp_nokelp_metadata, FD_kelp_nokelp_Hill, by="Code")
-
+  rownames_to_column("Code")%>% 
+  mutate(Year1 = sub("-.*", "", Code), Year= sub(".*_", "", Year1), Habitat=sub(".*-", "", Code)) %>% 
+  select(-Code, -Year1)
 
 ## computing tax/functional beta-diversity based on Hill numbers ####
 
@@ -74,15 +85,11 @@ kelp_nokelp_beta_taxhill <-beta.fd.hill (asb_sp_w = kelp_nokelp_occ,
 
 # Then use the mFD::dist.to.df function to ease visualizing result
 
-see <- kelp_nokelp_beta_taxhill$beta_fd_q
-
 TD_beta_kelp_nokelp <- dist.to.df(kelp_nokelp_beta_taxhill$beta_fd_q) %>% 
   as.data.frame() %>%  
-  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2), Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2),
-         Site=paste(x1,x2), sep="_") %>% 
-  select(Year1, Year2, q0, q1, q2, Site1, Site2, Site)
-
-TD_beta_k_nokelp <- left_join(kelp_nokelp_metadata, TD_beta_kelp_nokelp, by=c("Code", "Habitat"))
+  mutate(Yearx=sub("-.*", "", x1), Yeary=sub("-.*", "", x2), Habitat1=sub(".*-", "", x1), Habitat2=sub(".*-", "", x2),
+         Year1=sub(".*_", "", Yearx),  Year2=sub(".*_", "", Yeary)) %>% 
+  select(Year1, Year2, q0, q1, q2, Habitat1, Habitat2)
 
 # functional dissimilarity
 kelp_nokelp_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = kelp_nokelp_occ,
@@ -94,40 +101,19 @@ kelp_nokelp_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = kelp_nokelp_occ,
 # Then use the mFD::dist.to.df function to ease visualizing result
 
 FD_beta_kelp_nokelp <- dist.to.df(kelp_nokelp_beta_FDhill$beta_fd_q)%>% 
-  as.data.frame() %>% 
-  rownames_to_column("Code") %>%
-  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2), Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2)) %>% 
-  select(Year1, Year2, q0, q1, q2, Code, Site1, Site2)
-
-
-
-
-
-#For stats
-
-FD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
-  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0, q1, q2)
-
-TD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_taxhill$beta_fd_q)%>% 
-  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0, q1, q2)
+  as.data.frame() %>%  
+  mutate(Yearx=sub("-.*", "", x1), Yeary=sub("-.*", "", x2), Habitat1=sub(".*-", "", x1), Habitat2=sub(".*-", "", x2),
+         Year1=sub(".*_", "", Yearx),  Year2=sub(".*_", "", Yeary)) %>% 
+  select(Year1, Year2, q0, q1, q2, Habitat1, Habitat2)
 
 
 
 #Saving
 
-save(TD_kelp_Hill, file=here::here("outputs/", "TD_kelp_Hill.RData") )
-save(FD_kelp_Hill, file=here::here("outputs/", "FD_kelp_Hill.RData") )
-save(TD_beta_kelp, file=here::here("outputs/", "TD_beta_kelp_Hill.RData") )
-save(FD_beta_kelp, file=here::here("outputs/", "FD_beta_kelp_Hill.RData") )
-save(FD_beta_kelp_Hill_sites, file=here::here("outputs/", "FD_beta_kelp_Hill_sites.RData") )
-save(TD_beta_kelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_Hill_sites.RData") )
-
-
-
+save(TD_kelp_nokelp_Hill, file=here::here("outputs/", "TD_kelp_nokelp_Hill.RData") )
+save(FD_kelp_nokelp_Hill, file=here::here("outputs/", "FD_kelp_nokelp_Hill.RData") )
+save(TD_beta_kelp_nokelp , file=here::here("outputs/", "TD_beta_kelp_nokelp .RData") )
+save(FD_beta_kelp_nokelp, file=here::here("outputs/", "FD_beta_kelp_nokelp.RData") )
 
 
 ############################################################   KELP  #########################################################################
