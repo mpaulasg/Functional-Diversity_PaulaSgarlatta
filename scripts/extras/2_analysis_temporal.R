@@ -7,6 +7,86 @@
 ##
 ################################################################################
 
+rm(list=ls()) # cleaning memory
+
+##Load packages
+
+library(vegan)
+library(glmmTMB)
+library(car)
+
+load(here::here("outputs", "TD_beta_kelp_nokelp_Hill_sites.RData") )
+load(here::here("outputs", "FD_beta_kelp_nokelp_Hill_sites.RData") )
+
+## Preparing data for stats
+
+beta_stats <- FD_beta_kelp_Hill_sites %>%
+  filter(Year1==2002) %>% 
+  mutate(Year=paste(Year1, Year2, sep="-")) %>% 
+  select(Year, Site, q0, q1, q2)
+
+
+##GLMM
+
+FBeta_Hill_spatial <- glmmTMB(q2 ~ Year + (1|Site), data = beta_stats, family = beta_family())
+
+summary(FBeta_Hill_spatial)
+
+mod.res <- simulateResiduals(FBeta_Hill_spatial)
+plot(mod.res)
+
+
+mod<-lm(q2 ~ Year,
+        data = beta_stats)
+
+summary(mod)
+
+Anova(mod)
+
+library(DHARMa)
+
+mod.res <- simulateResiduals(mod)
+plot(mod.res)
+
+## Pairwise comparisons
+
+library(emmeans)
+
+emmeans(mod, pairwise ~ Year)
+
+
+#ANOVA for S
+
+s_aov_site <- aov(sp_richn~habitat ,data=fd_values_site)
+
+summary(s_aov_site)
+
+#Check  normality of residuals visually via 
+#histogram and QQ-plot
+
+par(mfrow = c(1, 2)) # combine plots
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#################################################################################################################
+
 #rm(list=ls()) # cleaning memory
 
 ##Load packages
