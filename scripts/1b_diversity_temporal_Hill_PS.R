@@ -181,7 +181,7 @@ kelp_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = kelp_sp_occ,
 
 FD_beta_kelp <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  select(Year1, Year2, q0, q1, q2)
+  select(Year1, Year2, q0, q1, q2, x1, x2)
 
 #For stats
 
