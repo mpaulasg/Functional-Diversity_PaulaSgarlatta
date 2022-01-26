@@ -104,9 +104,24 @@ FD_beta_kelp_nokelp <- dist.to.df(kelp_nokelp_beta_FDhill$beta_fd_q)%>%
   as.data.frame() %>%  
   mutate(Yearx=sub("-.*", "", x1), Yeary=sub("-.*", "", x2), Habitat1=sub(".*-", "", x1), Habitat2=sub(".*-", "", x2),
          Year1=sub(".*_", "", Yearx),  Year2=sub(".*_", "", Yeary)) %>% 
-  select(Year1, Year2, q0, q1, q2, Habitat1, Habitat2)
+  mutate(Site=sub("_.*", "", x1)) %>%
+  select(Year1, Year2, q0, q1, q2, Habitat1, Habitat2, Site)
 
+#For stats
 
+FD_beta_kelp_nokelp_Hill_sites <- dist.to.df(kelp_nokelp_beta_FDhill$beta_fd_q)%>% 
+  mutate(Yearx=sub("-.*", "", x1), Yeary=sub("-.*", "", x2), Habitat1=sub(".*-", "", x1), Habitat2=sub(".*-", "", x2),
+         Year1=sub(".*_", "", Yearx),  Year2=sub(".*_", "", Yeary)) %>% 
+  mutate(Site=sub("_.*", "", x1)) %>% 
+  filter(Year1 == Year2, Habitat1==Habitat2) %>%
+  select(Year1, Site, q0, q1, q2)
+
+TD_beta_kelp_nokelp_Hill_sites <- dist.to.df(kelp_nokelp_beta_taxhill$beta_fd_q)%>% 
+  mutate(Yearx=sub("-.*", "", x1), Yeary=sub("-.*", "", x2), Habitat1=sub(".*-", "", x1), Habitat2=sub(".*-", "", x2),
+         Year1=sub(".*_", "", Yearx),  Year2=sub(".*_", "", Yeary)) %>% 
+  mutate(Site=sub("_.*", "", x1)) %>% 
+  filter(Year1 == Year2, Habitat1==Habitat2) %>%
+  select(Year1, Site, q0, q1, q2)
 
 #Saving
 
