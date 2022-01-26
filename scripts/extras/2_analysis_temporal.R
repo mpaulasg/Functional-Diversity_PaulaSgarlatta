@@ -11,9 +11,10 @@ rm(list=ls()) # cleaning memory
 
 ##Load packages
 
-library(vegan)
 library(glmmTMB)
 library(car)
+library(DHARMa)
+library(emmeans)
 
 load(here::here("outputs", "TD_beta_kelp_nokelp_Hill_sites.RData") )
 load(here::here("outputs", "FD_beta_kelp_nokelp_Hill_sites.RData") )
@@ -32,6 +33,12 @@ fx_beta_stats <- FD_beta_kelp_Hill_sites %>%
   mutate(Year=Year1) %>% 
   select(Year, Site, q1)
 
+fx_beta_stats_nokelp <- FD_beta_nokelp_sites %>%
+  filter(Year1==Year2) %>% 
+  mutate(Year=Year1) %>% 
+  select(Year, Site, q1)
+
+
 
 ##GLMM
 
@@ -39,27 +46,31 @@ FBeta_Hill_temporal <- glmmTMB(q1 ~ Year + (1|Site), data = fx_beta_stats, famil
 
 summary(FBeta_Hill_temporal)
 
-mod.res <- simulateResiduals(FBeta_Hill_spatial)
-plot(mod.res)
-
-
-mod<-lm(q1 ~ Year,
-        data = fx_beta_stats)
-
-summary(mod)
-
-Anova(mod)
-
-library(DHARMa)
-
-mod.res <- simulateResiduals(mod)
-plot(mod.res)
+mod.res <- simulateResiduals(FBeta_Hill_temporal)
+plot(mod.res) #Good!
 
 ## Pairwise comparisons
 
-library(emmeans)
-
 emmeans(FBeta_Hill_temporal, pairwise ~ Year)
+
+
+
+### No kelp
+
+FBeta_Hill_temporal_nk <- glmmTMB(q1 ~ Year + (1|Site), data = fx_beta_stats_nokelp, family = beta_family())
+
+summary(FBeta_Hill_temporal_nk)
+
+mod.res_nk <- simulateResiduals(FBeta_Hill_temporal_nk)
+plot(mod.res_nk) #Check this one - not ok 
+
+
+## Pairwise comparisons
+
+emmeans(FBeta_Hill_temporal_nk, pairwise ~ Year)
+
+
+
 
 
 #################################################################################################################
