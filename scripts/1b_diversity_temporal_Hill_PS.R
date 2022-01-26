@@ -129,6 +129,8 @@ save(TD_kelp_nokelp_Hill, file=here::here("outputs/", "TD_kelp_nokelp_Hill.RData
 save(FD_kelp_nokelp_Hill, file=here::here("outputs/", "FD_kelp_nokelp_Hill.RData") )
 save(TD_beta_kelp_nokelp , file=here::here("outputs/", "TD_beta_kelp_nokelp.RData") )
 save(FD_beta_kelp_nokelp, file=here::here("outputs/", "FD_beta_kelp_nokelp.RData") )
+save(FD_beta_kelp_nokelp_Hill_sites, file=here::here("outputs/", "FD_beta_kelp_nokelp_Hill_sites.RData") )
+save(TD_beta_kelp_nokelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_nokelp_Hill_sites.RData") )
 
 
 ############################################################   KELP  #########################################################################
@@ -263,12 +265,10 @@ FD_beta_nokelp_sites <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>%
   mutate(Site=sub("_.*", "", x1)) %>% 
   select(Year1, Year2, Site, q0, q1, q2)
 
-
-######## Obtain beta diversity for both datasets together ###
-
-#Merge both datasets
-
-
+TD_beta_nokelp_sites <- dist.to.df(nokelp_beta_taxhill$beta_fd_q)%>% 
+  mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
+  mutate(Site=sub("_.*", "", x1)) %>% 
+  select(Year1, Year2, Site, q0, q1, q2)
 
 # saving ####
 
@@ -277,6 +277,9 @@ save(FD_nokelp_Hill, file=here::here("outputs/", "FD_nokelp_Hill.RData") )
 save(TD_beta_nokelp, file=here::here("outputs/", "TD_beta_nokelp_Hill.RData") )
 save(FD_beta_nokelp, file=here::here("outputs/", "FD_beta_nokelp_Hill.RData") )
 save(FD_beta_nokelp_sites, file=here::here("outputs/", "FD_beta_nokelp_sites.RData") )
+save(TD_beta_nokelp_sites, file=here::here("outputs/", "TD_beta_nokelp_sites.RData") )
+
+
 
 #From Seb - Do we need this info?
 
