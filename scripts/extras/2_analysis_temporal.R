@@ -1,15 +1,10 @@
 ################################################################################
 ##
-## Script for spatial FD analysis
+## Script for temporal FD analysis
 ##
-## ## Code taken from Boulanger et al. 2021 paper: 
-#  "Environmental DNA metabarcoding reveals and unpacks a 
-#  biodiversity conservation paradox in Mediterranean marine reserves."  
-#  https://github.com/eboulanger/MEDeDNA--reserves
-#
-#  Modified by Paula Sgarlatta
+## 
+## Paula Sgarlatta
 ##
-#
 ################################################################################
 
 #rm(list=ls()) # cleaning memory
