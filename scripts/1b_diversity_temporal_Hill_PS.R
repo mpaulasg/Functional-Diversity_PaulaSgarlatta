@@ -133,7 +133,7 @@ save(FD_beta_kelp_nokelp_Hill_sites, file=here::here("outputs/", "FD_beta_kelp_n
 save(TD_beta_kelp_nokelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_nokelp_Hill_sites.RData") )
 
 
-############################################################   KELP  #########################################################################
+#################################   KELP  #########################################
 
 #Taxonomic diversity
 
@@ -208,7 +208,7 @@ save(TD_beta_kelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_Hill_sit
 
 
 
-##############################################  NO KELP  #########################################################################
+####################################  NO KELP  #####################################
 
 #Taxonomic diversity
 
@@ -258,7 +258,7 @@ FD_beta_nokelp <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>%
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
   select(Year1, Year2, q0, q1, q2)
 
-#With sites - for statystical analysis
+#With sites - for statistical analysis
 
 FD_beta_nokelp_sites <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
@@ -267,8 +267,8 @@ FD_beta_nokelp_sites <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>%
 
 TD_beta_nokelp_sites <- dist.to.df(nokelp_beta_taxhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0, q1, q2)
+  mutate(Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2)) %>% 
+  select(Year1, Year2, Site1, Site2, q0, q1, q2)
 
 # saving ####
 
