@@ -214,7 +214,7 @@ save(TD_beta_kelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_Hill_sit
 
 nokelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = nokelp_sp_occ,
                                   sp_dist = sp_dist_funct,
-                                  q = 0, # Only 0 because the three values of q give same results (as is species richness)
+                                  q = 1, 
                                   tau= "min") #This gives you the taxonomic profile
 
 TD_nokelp_Hill <- nokelp_tax_Hill$asb_FD_Hill 

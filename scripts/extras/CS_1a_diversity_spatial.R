@@ -17,15 +17,14 @@ library(betapart)
 
 # loading data
 load(here::here("data", "spatial_sp_occ.RData") )
-load(here::here("outputs", "sp_3D_coord.RData") )# [PS] The original one had sp_3D_coord.Rdata - If I'm using this one it's not working
-load(here::here("outputs", "sp_3D_coord_spatial.RData") ) 
+load(here::here("outputs", "sp_3D_coord.RData") )
 
 
 ## computing taxonomic and functional diversity ####
 
 # number of species, functional richness, dispersion and identity (along 3 axes)
 spatial_fd <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord_spatial,
+  sp_faxes_coord   = sp_3D_coord,
   asb_sp_w         = spatial_sp_occ,
   ind_vect         = c("fide", "fric", "fdis"),
   scaling          = TRUE,
@@ -43,7 +42,7 @@ spatial_beta_taxo <- betapart::beta.pair(spatial_sp_occ, index.family = "jaccard
 
 # functional dissimilarity = Jaccard-like index and its components
 spatial_beta_func <- mFD::beta.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord_spatial,
+  sp_faxes_coord   = sp_3D_coord,
   asb_sp_occ       = spatial_sp_occ,
   check_input      = TRUE,
   beta_family      = c("Jaccard"),

@@ -153,7 +153,7 @@ plot_dissim_taxo_Hill <- ggplot(TD_dissim_Hill, mapping = aes(color=Habitat, fil
   scale_fill_manual(values=hab_colors) + 
   #scale_shape_manual(values=hab_shape) + 
   scale_x_continuous( limits = c(2002, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(0.2,0.6), breaks = seq(from=0.2, to=0.6, by=0.1)  ) +
+  scale_y_continuous( limits = c(0,0.6), breaks = seq(from=0, to=0.6, by=0.1)  ) +
   labs(x="", y="Taxonomic dissimilarity (q=1)") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
