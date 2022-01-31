@@ -139,7 +139,7 @@ save(TD_beta_kelp_nokelp_Hill_sites, file=here::here("outputs/", "TD_beta_kelp_n
 
 kelp_tax_Hill   <- alpha.fd.hill (asb_sp_w = kelp_sp_occ,
                                      sp_dist = sp_dist_funct,
-                                     q = 0, # Only 0 because the three values of q give same results (as is species richness)
+                                     q = 1, 
                                      tau= "min") #This gives you the taxonomic profile
 
 TD_kelp_Hill <- kelp_tax_Hill$asb_FD_Hill 
@@ -187,13 +187,13 @@ FD_beta_kelp <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>%
 
 FD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_FDhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0, q1, q2)
+  mutate(Site1=sub("_.*", "", x1),Site2=sub("_.*", "", x2) ) %>% 
+  select(Year1, Year2, Site1, Site2, q0, q1, q2)
 
 TD_beta_kelp_Hill_sites <- dist.to.df(kelp_beta_taxhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0, q1, q2)
+  mutate(Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2)) %>% 
+  select(Year1, Year2, Site1, Site2, q0, q1, q2)
 
 
 
@@ -262,8 +262,8 @@ FD_beta_nokelp <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>%
 
 FD_beta_nokelp_sites <- dist.to.df(nokelp_beta_FDhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
-  mutate(Site=sub("_.*", "", x1)) %>% 
-  select(Year1, Year2, Site, q0, q1, q2)
+  mutate(Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2)) %>% 
+  select(Year1, Year2, Site1, Site2, q0, q1, q2)
 
 TD_beta_nokelp_sites <- dist.to.df(nokelp_beta_taxhill$beta_fd_q)%>% 
   mutate(Year1=sub(".*_", "", x1), Year2=sub(".*_", "", x2)) %>% 
