@@ -30,7 +30,7 @@ sp_dist_funct <- dist(sp_3D_coord)
   
 spatial_tax_Hill   <- alpha.fd.hill (asb_sp_w = spatial_sp_occ,
                                           sp_dist = sp_dist_funct,
-                                          q = 0, # Only 0 because the three values of q give same results (as is species richness)
+                                          q = 1, # Only 0 because the three values of q give same results (as is species richness)
                                           tau= "min") #This gives you the taxonomic profile
 
 TD_spatial <- spatial_tax_Hill$asb_FD_Hill 
@@ -73,6 +73,7 @@ spatial_beta_FDhill <- mFD::beta.fd.hill (asb_sp_w = spatial_sp_occ,
 FD_beta_spatial <- dist.to.df(spatial_beta_FDhill$beta_fd_q)%>% 
   mutate(Habitat1=sub(".*_", "", x1), Habitat2=sub(".*_", "", x2)) %>% 
   select(Habitat1, Habitat2, q0, q1, q2)
+
 
 # saving ####
 save(sp_dist_funct, file=here::here("outputs/", "sp_dist_funct_spatial_Hill.RData") )
