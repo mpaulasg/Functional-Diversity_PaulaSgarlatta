@@ -70,13 +70,6 @@ fish_traits <- as.data.frame(fish_traits[order(fish_traits$Species),])
 
 write.csv(fish_traits, file=here::here("data", "raw_data", "fish_traits.csv"), 
           row.names = FALSE )
-#write.csv(kelp_traits, file=here::here("data", "raw_data", "kelp_traits.csv"), 
-          #row.names = FALSE )
-
-#write.csv(nokelp_traits, file=here::here("data", "raw_data", "nokelp_traits.csv"), 
-         # row.names = FALSE )
-
-#write.csv(spatial_traits, file=here::here("data", "raw_data", "spatial_traits.csv"), 
-          #row.names = FALSE )
 
 
+########################################## end of code ###############################################################
