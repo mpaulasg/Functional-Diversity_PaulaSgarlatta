@@ -12,7 +12,6 @@ rm(list=ls()) # cleaning memory
 # libraries
 library(tidyverse)
 library(here)
-library(mFD)
 
 ## temporal survey data from sites without kelp ####
 

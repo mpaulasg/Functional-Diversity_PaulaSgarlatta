@@ -107,10 +107,10 @@ save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 
 
-########################################  end #######################################################################
+##################################  end of code ######################################################################
 
 
-# [PS] This is the original one. Next, I'll add one separate for each dataset (kelp, no kelp, spatial)
+# [PS] - Delete this one -  This is the original one. Next, I'll add one separate for each dataset (kelp, no kelp, spatial)
 
 #Loading the data (if this work, this data should be saved in raw_data in CS_00_0a_fish_traits).
 
