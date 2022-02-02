@@ -84,8 +84,8 @@ spatial_turn <- interhab_taxo_turn %>%
 
 # merging ----
 taxo_turnim_toplot <- bind_rows(kelp_interyear_taxo_turn, 
-                            nokelp_interyear_taxo_turn)
-                            #spatial_turn) 
+                            nokelp_interyear_taxo_turn,
+                            spatial_turn) 
 
 head(taxo_turnim_toplot)
 
@@ -175,8 +175,8 @@ spatial_turn <- interhab_func_turn %>%
 
 # merging ----
 func_turnim_toplot <- bind_rows(kelp_interyear_func_turn, 
-                                nokelp_interyear_func_turn)
-                                #spatial_turn) 
+                                nokelp_interyear_func_turn,
+                                spatial_turn) 
 
 head(func_turnim_toplot)
 

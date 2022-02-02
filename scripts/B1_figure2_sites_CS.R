@@ -69,7 +69,7 @@ interhab_taxo_diss <- dendextend::dist_long(spatial_beta$taxo_diss) %>%
 
 spatial_diss <- interhab_taxo_diss %>%
   filter(Habitat1==Habitat2) %>%
-  mutate(Habitat = Habitat1) %>% 
+  mutate(Habitat = Habitat1) %>%
   group_by(Habitat) %>%
   summarise( n = n(),
              distance_mean = mean(distance),
@@ -82,8 +82,8 @@ spatial_diss <- interhab_taxo_diss %>%
 
 # merging ----
 taxo_dissim_toplot <- bind_rows(kelp_interyear_taxo_diss, 
-                            nokelp_interyear_taxo_diss)
-                            #spatial_diss) 
+                            nokelp_interyear_taxo_diss,
+                            spatial_diss) 
 
 head(taxo_dissim_toplot)
 
@@ -157,7 +157,7 @@ interhab_func_diss <- dendextend::dist_long(spatial_beta$func_diss) %>%
 
 spatial_diss_func <- interhab_func_diss %>%
   filter(Habitat1==Habitat2) %>%
-  mutate(Habitat = Habitat1) %>% 
+  mutate(Habitat = Habitat1) %>%
   group_by(Habitat) %>%
   summarise( n = n(),
              distance_mean = mean(distance),
@@ -171,8 +171,8 @@ spatial_diss_func <- interhab_func_diss %>%
 
 # merging ----
 func_dissim_toplot <- bind_rows(kelp_interyear_func_diss, 
-                                nokelp_interyear_func_diss)
-                                #spatial_diss_func) 
+                                nokelp_interyear_func_diss,
+                                spatial_diss_func) 
 
 head(func_dissim_toplot)
 
@@ -193,7 +193,7 @@ plot_dissim_func <- ggplot(func_dissim_toplot, mapping = aes(color=Habitat, fill
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
-  #scale_y_continuous( limits = c(0,0.6), breaks = seq(from=0, to=0.6, by=0.2)  ) +
+  scale_y_continuous( limits = c(0,0.6), breaks = seq(from=0, to=0.6, by=0.2)  ) +
   labs(x="", y="Functional dissimilarity") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
@@ -207,6 +207,6 @@ plot_dissim_func
 
 #####
 ## merging all plot into a single figure and saving as png ####
-figure2_convex_site_average <- ( plot_dissim_taxo / plot_dissim_func )
-ggsave(figure2_convex_site_average, file=here::here("outputs/", "figure2_convex_site_average.png"), 
+figure2_beta <- ( plot_dissim_taxo / plot_dissim_func )
+ggsave(figure2_beta, file=here::here("outputs/", "figure2_beta.png"), 
        height = 20, width = 18, unit = "cm" )

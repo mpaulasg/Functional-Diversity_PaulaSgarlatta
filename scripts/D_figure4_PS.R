@@ -18,7 +18,7 @@ load(here::here("outputs", "temporal_alpha_nokelp.RData") )
 load(here::here("outputs", "temporal_alpha_kelp.RData") )
 
 
-#######No kelp
+#######No kelp - Only PC3 for now
 
 fide3_nokelp <- temporal_alpha_nokelp %>% 
   select(fide_PC3) 
@@ -114,10 +114,9 @@ plot_fide3 <- ggplot(df_fide, mapping = aes(color=Habitat)) +
 plot_fide3
 
 
-#####
 ## saving figure as png ####
-figure2_convex_site_average <- ( plot_dissim_taxo / plot_dissim_func )
-ggsave(figure2_convex_site_average, file=here::here("outputs/", "figure2_convex_site_average.png"), 
+
+ggsave(plot_fide3, file=here::here("outputs/", "figure4_fide.png"), 
        height = 20, width = 18, unit = "cm" )
 
 ################################################ end of script #######################################################
