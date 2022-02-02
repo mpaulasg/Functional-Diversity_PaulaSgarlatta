@@ -93,7 +93,7 @@ head(taxo_dissim_toplot)
 
 # color code for the 3 habitats
 hab_colors <- c(Kelp="seagreen4", No_Kelp="seagreen2",
-                Midshelf_Inshore="mediumseagreen", Offshore_Midshelf="lightsalmon1", Offshore_Inshore="firebrick3")
+                Midshelf_Inshore="#2C6BAA", Offshore_Midshelf="lightsalmon1", Offshore_Inshore="firebrick3")
 hab_shape <- c(Kelp=21, No_Kelp=21,
                 Midshelf_Inshore=22, Offshore_Midshelf=22, Offshore_Inshore=22)
 

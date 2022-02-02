@@ -66,3 +66,6 @@ cbind( min=lapply(spatial_beta, min), max=lapply(spatial_beta, max) )
 save(spatial_fd, file=here::here("outputs/", "spatial_fd.RData") )
 save(spatial_alpha, file=here::here("outputs/", "spatial_alpha.RData") )
 save(spatial_beta, file=here::here("outputs/", "spatial_beta.RData") )
+
+
+#################################### end of script ####################################################################

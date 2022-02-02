@@ -32,7 +32,7 @@ temporal_fd_nokelp <- mFD::alpha.fd.multidim(
   details_returned = TRUE)
 
 temporal_alpha_nokelp <- temporal_fd_nokelp$functional_diversity_indices
-temporal_alpha_nokelp
+
 
 temporal_fd_kelp <- mFD::alpha.fd.multidim(
   sp_faxes_coord   = sp_3D_coord,
@@ -43,7 +43,8 @@ temporal_fd_kelp <- mFD::alpha.fd.multidim(
   details_returned = TRUE)
 
 temporal_alpha_kelp <- temporal_fd_kelp$functional_diversity_indices
-temporal_alpha_kelp
+
+
 
 ## computing taxonomic and functional beta-diversity ####
 
