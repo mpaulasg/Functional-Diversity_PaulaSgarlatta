@@ -24,10 +24,19 @@ load(here::here("outputs/", "spatial_fd.RData") )
 load(here::here("data", "kelp_metadata.RData") )
 load(here::here("data", "kelp_sp_occ.RData") )
 load(here::here("data", "nokelp_metadata.RData") )
+
 load(here::here("data", "nokelp_sp_occ.RData") )
 
 
 ## settings ####
+
+## Prepare thermal affinity data
+
+thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>% 
+  mutate(thermal_label= if_else(thermal>"23", "tropical", "temperate")) %>% 
+  column_to_rownames("Species") %>% 
+  select(thermal_label)
+
 
 # coordinates of all species ----
 pool_coord<-spatial_fd$details$sp_faxes_coord
@@ -66,7 +75,7 @@ kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
 
 # color code for the 4 years
 years_colors <- c(y2002="green3", y2008="blue3", y2013="grey50", y2018="red3")
-
+thermal_colors <- 
 
 ## plotting  ####
 
@@ -270,9 +279,17 @@ for ( z in 1:length(pairs_axes) ) {
     ggplot_z<-fric.plot( ggplot_bg=ggplot_z, 
                          asb_sp_coord2D=list(vv=pool_coord[sp_h,xy]),
                          asb_vertices_nD=list(vv=hab_multidimFD$details$asb_vert_nm[[h]]),
-                         plot_sp = FALSE,
-                         color_ch=c(vv=col_h),
-                         fill_ch=c(vv=col_h),
+                         plot_sp = TRUE,
+                         size_sp = c(vv=3),
+                         size_vert = c(vv=3),
+                         color_vert = c(vv=hab_colors),
+                         fill_vert = c(vv=hab_colors),
+                         shape_sp = c(vv=3),
+                         color_sp = (pool = "grey50", asb1 = "#1F968BFF", asb2 = "#DCE319FF",
+                         fill_sp=c(vv=hab_colors),
+                         shape_vert = c(vv=3),
+                         color_ch=c(vv=hab_colors),
+                         fill_ch=c(vv=hab_colors),
                          alpha_ch=c(vv=0.1)
     )
     
