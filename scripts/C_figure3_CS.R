@@ -32,14 +32,21 @@ load(here::here("data", "nokelp_sp_occ.RData") )
 
 ## Prepare thermal affinity data
 
-thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>% 
-  mutate(thermal_label= if_else(thermal>"23", "tropical", "temperate")) %>% 
-  column_to_rownames("Species") %>% 
-  select(thermal_label)
+ thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>% 
+  mutate(thermal_label= if_else(thermal>"23", "tropical", "temperate")) %>%   
+   column_to_rownames("Species") %>% 
+   select(-thermal)
 
 
 # coordinates of all species ----
-pool_coord<-spatial_fd$details$sp_faxes_coord
+pool_coord<-spatial_fd$details$sp_faxes_coord 
+#   as.data.frame() %>% 
+# rownames_to_column("Species")
+
+# Add here thermal 
+
+# pool_coord <- inner_join (pool_coord_1, thermal, by="Species", all.x=TRUE) %>% 
+#   column_to_rownames("Species")
 
 # vertices of all fe in 4D ----
 pool_vert_nm<-spatial_fd$details$pool_vert_nm
@@ -51,9 +58,6 @@ range_axes <- range_faxes_coord +
 
 
 names(spatial_fd$details$asb_vert_nm)
-spatial_metadata
-
-
 
 ## temporal kelp ####
 
@@ -65,7 +69,7 @@ kelp_years_sp_occ <- rbind(
   y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max )
 )  
 
-# compute FRic for all habitats  ---
+# compute FRic for kelp  ---
 kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord, 
                                   asb_sp_w = kelp_years_sp_occ,
                                   ind_vect = c("fric"), 
@@ -73,9 +77,13 @@ kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
                                   details_returned = TRUE
 )
 
+
+kelp_years_multidimFD$details
+
 # color code for the 4 years
 years_colors <- c(y2002="green3", y2008="blue3", y2013="grey50", y2018="red3")
-thermal_colors <- 
+
+thermal_colors <- C()
 
 ## plotting  ####
 
@@ -115,12 +123,13 @@ for ( z in 1:length(pairs_axes) ) {
     ggplot_z<-fric.plot( ggplot_bg=ggplot_z, 
                          asb_sp_coord2D=list(vv=pool_coord[sp_h,xy]),
                          asb_vertices_nD=list(vv=kelp_years_multidimFD$details$asb_vert_nm[[h]]),
-                         plot_sp = FALSE,
+                         plot_sp = TRUE,
+                         size_sp = C(vv=2),
                          color_ch=c(vv=col_h),
                          fill_ch=c(vv=col_h),
                          alpha_ch=c(vv=0.1)
     )
-    
+    # [PS]Not working - Error in nlevels(object) : argument "object" is missing, with no default
   }# end of h
   
   if (z==1) {
