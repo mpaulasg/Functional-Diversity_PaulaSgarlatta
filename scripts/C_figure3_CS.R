@@ -40,8 +40,6 @@ load(here::here("data", "nokelp_sp_occ.RData") )
 
 # coordinates of all species ----
 pool_coord<-spatial_fd$details$sp_faxes_coord 
-#   as.data.frame() %>% 
-# rownames_to_column("Species")
 
 # Add here thermal 
 
@@ -83,8 +81,6 @@ kelp_years_multidimFD$details
 # color code for the 4 years
 years_colors <- c(y2002="green3", y2008="blue3", y2013="grey50", y2018="red3")
 
-thermal_colors <- C()
-
 ## plotting  ####
 
 # list to store ggplot
@@ -123,13 +119,11 @@ for ( z in 1:length(pairs_axes) ) {
     ggplot_z<-fric.plot( ggplot_bg=ggplot_z, 
                          asb_sp_coord2D=list(vv=pool_coord[sp_h,xy]),
                          asb_vertices_nD=list(vv=kelp_years_multidimFD$details$asb_vert_nm[[h]]),
-                         plot_sp = TRUE,
-                         size_sp = C(vv=2),
+                         plot_sp = FALSE,
                          color_ch=c(vv=col_h),
                          fill_ch=c(vv=col_h),
                          alpha_ch=c(vv=0.1)
     )
-    # [PS]Not working - Error in nlevels(object) : argument "object" is missing, with no default
   }# end of h
   
   if (z==1) {
@@ -258,58 +252,48 @@ ggplot_spatial<-list()
 # pairs of axes
 pairs_axes<-list( c(1,2), c(1,3) )
 
-for ( z in 1:length(pairs_axes) ) {
+for ( a in 1:length(pairs_axes) ) {
   
   # names of axes   
-  xy<-pairs_axes[[z]]
+  xy<-pairs_axes[[a]]
   
   # background with axes range set + title
-  ggplot_z<-background.plot(range_faxes=range_axes,
+  ggplot_a<-background.plot(range_faxes=range_axes,
                             faxes_nm=paste0("PC", xy), 
                             color_bg="grey95")
   
   # convex hull of species pool
-  ggplot_z<-pool.plot(ggplot_bg=ggplot_z,
+  ggplot_a<-pool.plot(ggplot_bg=ggplot_a,
                       sp_coord2D=pool_coord[,xy],
                       vertices_nD=pool_vert_nm,
                       plot_pool=FALSE,
                       color_ch=NA, fill_ch="white", alpha_ch=1)
   
   # loop on habitats
-  for (h in row.names(hab_sp_occ) ) {
+  for (b in row.names(hab_sp_occ) ) {
     
     # color given habitat
-    col_h<-as.character(hab_colors[h])
+    col_b<-as.character(hab_colors[b])
     
     # species present in v
-    sp_h<-names(which(hab_multidimFD$details$asb_sp_occ[h,]==1))
+    sp_b<-names(which(hab_multidimFD$details$asb_sp_occ[b,]==1))
     
     # plot convex hull of assemblage but not species
-    ggplot_z<-fric.plot( ggplot_bg=ggplot_z, 
-                         asb_sp_coord2D=list(vv=pool_coord[sp_h,xy]),
-                         asb_vertices_nD=list(vv=hab_multidimFD$details$asb_vert_nm[[h]]),
-                         plot_sp = TRUE,
-                         size_sp = c(vv=3),
-                         size_vert = c(vv=3),
-                         color_vert = c(vv=hab_colors),
-                         fill_vert = c(vv=hab_colors),
-                         shape_sp = c(vv=3),
-                         color_sp = (pool = "grey50", asb1 = "#1F968BFF", asb2 = "#DCE319FF",
-                         fill_sp=c(vv=hab_colors),
-                         shape_vert = c(vv=3),
-                         color_ch=c(vv=hab_colors),
-                         fill_ch=c(vv=hab_colors),
-                         alpha_ch=c(vv=0.1)
-    )
-    
-  }# end of h
+    ggplot_a<-fric.plot( ggplot_bg=ggplot_a, 
+                         asb_sp_coord2D=list(vv=pool_coord[sp_b,xy]),
+                         asb_vertices_nD=list(vv=hab_multidimFD$details$asb_vert_nm[[b]]),
+                         plot_sp = FALSE,
+                         color_ch = c(vv=col_b),
+                         fill_ch= c(vv=col_b),
+                         alpha_ch = c(vv=0.1))
+  }# end of a
   
   # legend
-  if (z==1) {
-    nlabels_h <- length(hab_colors)
-    ggplot_z <- ggplot_z + 
-      geom_text(aes(x = rep(range_axes[1]*0.9, nlabels_h ),
-                    y = range_axes[2]*(1.05-0.15*(1:nlabels_h)),
+  if (a==1) {
+    nlabels_b <- length(hab_colors)
+    ggplot_a <- ggplot_a + 
+      geom_text(aes(x = rep(range_axes[1]*0.9, nlabels_b ),
+                    y = range_axes[2]*(1.05-0.15*(1:nlabels_b)),
                     label = names(hab_colors),
                     color = hab_colors ),
                 hjust = "left",
@@ -318,7 +302,8 @@ for ( z in 1:length(pairs_axes) ) {
   }
   
   # ggplot stored in list
-  ggplot_spatial[[z]] <- ggplot_z
+  ggplot_spatial[[a]] <- ggplot_a
+  
   
 }# end of z
 
@@ -327,7 +312,7 @@ for ( z in 1:length(pairs_axes) ) {
 ## merging all plots into a single figure and saving as png ####
 figure3 <- ( ggplot_temporal_nokelp[[1]] +  ggplot_temporal_kelp[[1]] + ggplot_spatial[[1]] ) / ( 
   
-  ggplot_temporal_nokelp[[2]] +  ggplot_temporal_kelp[[2]] + ggplot_spatial[[2]] )
+  ggplot_temporal_nokelp[[2]] +  ggplot_temporal_kelp[[2]] + ggplot_spatial[[2]])
 
 
 ggsave(figure3, file=here::here("outputs/", "figure3.png"),
