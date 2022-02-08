@@ -26,7 +26,7 @@ load(here::here("outputs", "sp_3D_coord.RData") )
 spatial_fd <- mFD::alpha.fd.multidim(
   sp_faxes_coord   = sp_3D_coord,
   asb_sp_w         = spatial_sp_occ,
-  ind_vect         = c("fide", "fric", "fdis"),
+  ind_vect         = c("fide", "fric", "fdis", "fspe"),
   scaling          = TRUE,
   check_input      = TRUE,
   details_returned = TRUE)
