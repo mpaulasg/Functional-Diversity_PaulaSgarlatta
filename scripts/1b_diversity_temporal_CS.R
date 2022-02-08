@@ -26,7 +26,7 @@ load(here::here("outputs", "sp_3D_coord.RData") )
 temporal_fd_nokelp <- mFD::alpha.fd.multidim(
   sp_faxes_coord   = sp_3D_coord,
   asb_sp_w         = nokelp_sp_occ,
-  ind_vect         = c("fide", "fric", "fdis"),
+  ind_vect         = c("fide", "fric", "fdis", "fspe"),
   scaling          = TRUE,
   check_input      = TRUE,
   details_returned = TRUE)
@@ -37,7 +37,7 @@ temporal_alpha_nokelp <- temporal_fd_nokelp$functional_diversity_indices
 temporal_fd_kelp <- mFD::alpha.fd.multidim(
   sp_faxes_coord   = sp_3D_coord,
   asb_sp_w         = kelp_sp_occ,
-  ind_vect         = c("fide", "fric", "fdis"),
+  ind_vect         = c("fide", "fric", "fdis", "fspe"),
   scaling          = TRUE,
   check_input      = TRUE,
   details_returned = TRUE)
