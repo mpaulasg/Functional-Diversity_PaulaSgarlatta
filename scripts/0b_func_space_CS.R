@@ -96,7 +96,7 @@ funct_spaces$quality_fspaces
 
 # illustrate quality of functional space
 
-funct_space <- mFD::quality.fspaces.plot(
+qual_space <- mFD::quality.fspaces.plot(
   fspaces_quality            = funct_spaces,
   quality_metric             = "mad",
   fspaces_plot               = c("tree_average", "pcoa_2d", "pcoa_3d", 
@@ -108,8 +108,6 @@ funct_space <- mFD::quality.fspaces.plot(
   gradient_deviation         = c(neg = "darkblue", nul = "grey80", pos = "darkred"),
   gradient_deviation_quality = c(low = "yellow", high = "red"),
   x_lab                      = "Trait-based distance")
-
-funct_space
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
@@ -133,7 +131,7 @@ cor_tr_faxes$tr_faxes_stat
 
 # get the plot:
 
-cor_tr_faxes$tr_faxes_plot
+plot_corr <- cor_tr_faxes$tr_faxes_plot
 
 ## Adding thermal affinity
 
@@ -151,6 +149,10 @@ sp_faxes_coord <- inner_join(sp_faxes_coord, thermal,
                              by="Species") %>%
   column_to_rownames("Species") %>% 
   as.matrix()
+
+## [PS] Not working - just using sp_faxes_cord
+
+sp_faxes_coord <- funct_spaces$"details_fspaces"$"sp_pc_coord"
 
 ### Plot functional space:
 
@@ -171,7 +173,7 @@ big_plot <- mFD::funct.space.plot(sp_faxes_coord  = sp_faxes_coord[, c("PC1", "P
                                        nm_fontface = "plain",
                                        check_input = TRUE)
 # Plot the graph with all pairs of axes:
-big_plot$patchwork
+func_space <- big_plot$patchwork
 
 # saving ####
 
@@ -182,9 +184,13 @@ save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
 save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 
+ggsave(qual_space, file=here::here("outputs/", "figure1_SM.png"),
+       height = 16, width = 30, unit = "cm" )
+
+ggsave(plot_corr, file=here::here("outputs/", "figure2_SM.png"),
+       height = 16, width = 30, unit = "cm" )
+
+ggsave(func_space, file=here::here("outputs/", "figure3_SM.png"),
+       height = 16, width = 30, unit = "cm" )
 
 ##################################  end of code ######################################################################
-
-
-
-# @@@ ADD code for plots of funct space, correl tr vs axes and save them in outputs
