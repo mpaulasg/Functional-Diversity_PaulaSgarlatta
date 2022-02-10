@@ -236,7 +236,7 @@ plot_tempo_fdis <- ggplot(temporal_toplot,
   geom_line(aes(x= Year, y= fdis_mean) , stat="identity", size=1)+
   geom_errorbar( aes(x=Year, ymin=fdis_mean-fdis_se, ymax=fdis_mean+fdis_se), width=0.4, size=0.8) +
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(0.6,0.8), breaks = seq(from=0.6, to=0.8, by=0.1)  ) +
+  scale_y_continuous( limits = c(0,0.8), breaks = seq(from=0, to=0.8, by=0.2)  ) +
   scale_color_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
   scale_fill_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) +
   labs(x="", y="Functional dispersion") +
@@ -250,7 +250,7 @@ plot_tempo_fdis
 
 ## merging all plot into a single figure and saving as png ####
 figure1_fdis <- ( plot_spatial_fdis + plot_tempo_fdis )
-ggsave(figure1_fdis, file=here::here("outputs/", "figure1_fdis.png"),
+ggsave(figure1_fdis, file=here::here("outputs/", "figure1_fdis_B.png"),
        height = 22, width = 35, unit = "cm" )
 
 

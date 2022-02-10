@@ -52,6 +52,11 @@ temporal_alpha_kelp <- temporal_fd_kelp$functional_diversity_indices
 temporal_beta_taxo_nokelp <- betapart::beta.pair(nokelp_sp_occ, index.family = "jaccard")
 temporal_beta_taxo_kelp <- betapart::beta.pair(kelp_sp_occ, index.family = "jaccard")
 
+kelp_turnover <- temporal_beta_taxo_kelp$beta.jtu
+
+write.csv(kelp_turnover, file=here::here("data", "raw_data", "kelp_turnover.csv"), 
+          row.names = FALSE )
+
 # functional beta no kelp sites ----
 # functional dissimilarity = Jaccard-like index and its components
 temporal_beta_func_nokelp <- mFD::beta.fd.multidim(
