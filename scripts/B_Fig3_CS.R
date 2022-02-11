@@ -30,21 +30,8 @@ load(here::here("data", "nokelp_sp_occ.RData") )
 
 ## settings ####
 
-## Prepare thermal affinity data
-
- thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>% 
-  mutate(thermal_label= if_else(thermal>"23", "tropical", "temperate")) %>%   
-   column_to_rownames("Species") %>% 
-   select(-thermal)
-
-
 # coordinates of all species ----
 pool_coord<-spatial_fd$details$sp_faxes_coord 
-
-# Add here thermal 
-
-# pool_coord <- inner_join (pool_coord_1, thermal, by="Species", all.x=TRUE) %>% 
-#   column_to_rownames("Species")
 
 # vertices of all fe in 4D ----
 pool_vert_nm<-spatial_fd$details$pool_vert_nm
@@ -315,11 +302,11 @@ figure3 <- ( ggplot_temporal_nokelp[[1]] +  ggplot_temporal_kelp[[1]] + ggplot_s
   ggplot_temporal_nokelp[[2]] +  ggplot_temporal_kelp[[2]] + ggplot_spatial[[2]])
 
 
-ggsave(figure3, file=here::here("outputs/", "figure3.png"),
+ggsave(figure3, file=here::here("outputs/", "Figure3.png"),
        height = 16, width = 24, unit = "cm" )
 
 
-###################### FDis ##################################
+###################### FDis convex hull  ################################## (probably delete this)
 
 load(here::here("outputs", "sp_gower_dist.RData") )
 load(here::here("data", "tr_cat.RData") )

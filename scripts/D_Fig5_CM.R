@@ -2,7 +2,7 @@
 ##
 ## Script for plotting functional space with thermal affinity information
 ## 
-## Code by Camille Magneville, Sebastien Villeger and Paula Sgarlatta
+## Code by Camille Magneville, Paula Sgarlatta and Sebastien Villeger 
 ##
 ################################################################################
 
@@ -205,5 +205,5 @@ plot_caption <- ggplot2::ggplot(data.frame(x = range_axes,
 figure <- panels.to.patchwork(ggplot_pc, plot_caption = plot_caption)
 
 
-ggsave(figure, file=here::here("outputs/", "figure_funct_sp_thermal.png"),
+ggsave(figure, file=here::here("outputs/", "Figure5.png"),
        height = 16, width = 24, unit = "cm" )

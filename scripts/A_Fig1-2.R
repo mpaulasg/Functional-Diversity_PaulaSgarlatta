@@ -1,7 +1,14 @@
 ################################################################################
 ##
 ## Script for plotting taxonomic and functional diversity across habitats and years
+##
+## Fig. 1 - Species richness and functional richness
 ## 
+## Fig. 2 - Functional Dispersion
+##
+## Fig. 1-3S - Functional Identity
+##
+##
 ## Code by Camille Magneville, Sébastien Villéger and Paula Sgarlatta
 ##
 ################################################################################
@@ -186,31 +193,13 @@ plot_tempo_func <- ggplot(temporal_toplot,
         legend.background = element_blank(), legend.key=element_blank())
 plot_tempo_func
 
-## Something like this?
-
-fric <- ggplot(temporal_toplot, aes (x= Year,y = fric_mean, color=Habitat)) +
-  geom_point()+
-  geom_smooth(method = "lm")+
-  scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(0.4,0.8), breaks = seq(from=0.4, to=0.8, by=0.2)  ) +
-  scale_color_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
-  scale_fill_manual(values=year_colors, name="Habitat", breaks = c("kelp", "no_kelp"), labels=c("Kelp", "No kelp")) + 
-  labs(x="", y="Functional richness") +
-  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
-        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
-        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.title = element_text(size=14), legend.text = element_text(size=14),
-        legend.background = element_blank(), legend.key=element_blank())
-
 
 ## merging all plot into a single figure and saving as png ####
 figure1 <- ( plot_spatial_taxo + plot_tempo_taxo ) / ( plot_spatial_func +  plot_tempo_func )
-ggsave(figure1, file=here::here("outputs/", "figure1.png"),
+
+ggsave(figure1, file=here::here("outputs/", "Figure1.png"),
        height = 22, width = 25, unit = "cm" )
   
-ggsave(fric, file=here::here("outputs/", "figure1_extra.png"),
-       height = 22, width = 25, unit = "cm" )
-
 
 #################################################### FDis ############################################################
 
@@ -249,10 +238,11 @@ plot_tempo_fdis <- ggplot(temporal_toplot,
 plot_tempo_fdis
 
 ## merging all plot into a single figure and saving as png ####
-figure1_fdis <- ( plot_spatial_fdis + plot_tempo_fdis )
-ggsave(figure1_fdis, file=here::here("outputs/", "figure1_fdis_B.png"),
-       height = 22, width = 35, unit = "cm" )
 
+figure2_fdis <- ( plot_spatial_fdis + plot_tempo_fdis )
+
+ggsave(figure2_fdis, file=here::here("outputs/", "Figure2_fdis.png"),
+       height = 22, width = 35, unit = "cm" )
 
 
 ################################################### FIde #############################################################
@@ -293,11 +283,11 @@ plot_tempo_fide1 <- ggplot(temporal_toplot,
 plot_tempo_fide1
 
 ## merging all plot into a single figure and saving as png ####
-figure1_fide1 <- ( plot_spatial_fide1 + plot_tempo_fide1 )
-ggsave(figure1_fide1, file=here::here("outputs/", "figure1_fide1.png"),
+figure3_fide1 <- ( plot_spatial_fide1 + plot_tempo_fide1 )
+ggsave(figure3_fide1, file=here::here("outputs/", "Figure1S_fide1.png"),
        height = 22, width = 35, unit = "cm" )
                      
-####################################################
+################################### FIde 2 #######################################################
 
 plot_spatial_fide2 <- ggplot(spatial_toplot) +
   geom_bar( aes(x=Habitat, y=fide_PC2_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
@@ -335,11 +325,10 @@ plot_tempo_fide2
 
 ## merging all plot into a single figure and saving as png ####
 figure1_fide2 <- ( plot_spatial_fide2 + plot_tempo_fide2 )
-ggsave(figure1_fide2, file=here::here("outputs/", "figure1_fide2.png"),
+ggsave(figure1_fide2, file=here::here("outputs/", "Figure2S_fide2.png"),
        height = 22, width = 35, unit = "cm" )
 
-
-####################################################
+############################# FIde 3
 
 plot_spatial_fide3 <- ggplot(spatial_toplot) +
   geom_bar( aes(x=Habitat, y=fide_PC3_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
@@ -376,6 +365,7 @@ plot_tempo_fide3 <- ggplot(temporal_toplot,
 plot_tempo_fide3
 
 ## merging all plot into a single figure and saving as png ####
+
 figure1_fide3 <- ( plot_spatial_fide3 + plot_tempo_fide3 )
-ggsave(figure1_fide3, file=here::here("outputs/", "figure1_fide3.png"),
+ggsave(figure1_fide3, file=here::here("outputs/", "Figure3S_fide3.png"),
        height = 22, width = 35, unit = "cm" )

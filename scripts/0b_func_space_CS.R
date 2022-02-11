@@ -91,106 +91,25 @@ range(sp_gower_dist) # from 0 to 1
 funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12, 
                                  deviation_weighting = "absolute", fdist_scaling = FALSE,
                                  fdendro = "average") 
+
 funct_spaces$quality_fspaces
+
 # => 3D space has the lowest mAD (0.055)
-
-# illustrate quality of functional space
-
-qual_space <- mFD::quality.fspaces.plot(
-  fspaces_quality            = funct_spaces,
-  quality_metric             = "mad",
-  fspaces_plot               = c("tree_average", "pcoa_2d", "pcoa_3d", 
-                                 "pcoa_4d", "pcoa_5d", "pcoa_6d"),
-  name_file                  = NULL,
-  range_dist                 = NULL,
-  range_dev                  = NULL,
-  range_qdev                 = NULL,
-  gradient_deviation         = c(neg = "darkblue", nul = "grey80", pos = "darkred"),
-  gradient_deviation_quality = c(low = "yellow", high = "red"),
-  x_lab                      = "Trait-based distance")
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
 summary(sp_3D_coord)
 
-### Test correlation between traits and functional axes:
-
-# retrieve coordinates of species:
-
-sp_faxes_coord <- funct_spaces$"details_fspaces"$"sp_pc_coord"
-
-# test correlation between traits and axes:
-cor_tr_faxes <- mFD::traits.faxes.cor(
-  sp_tr          = sp_tr, 
-  sp_faxes_coord = sp_faxes_coord[, c("PC1", "PC2", "PC3")], 
-  plot           = TRUE)
-
-# get the table of correlation:
-
-cor_tr_faxes$tr_faxes_stat
-
-# get the plot:
-
-plot_corr <- cor_tr_faxes$tr_faxes_plot
-
-## Adding thermal affinity
-
-thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>% 
-  mutate(thermal_label= if_else(thermal>"23", "tropical", "temperate")) %>%   
-  #column_to_rownames("Species") %>% 
-  select(-thermal)
-
-#Add thermal aff to sp_faxes_coord
-
-sp_faxes_coord <- as.data.frame(sp_faxes_coord) %>% 
-  rownames_to_column("Species")
-
-sp_faxes_coord <- inner_join(sp_faxes_coord, thermal, 
-                             by="Species") %>%
-  column_to_rownames("Species") %>% 
-  as.matrix()
-
-## [PS] Not working - just using sp_faxes_cord
-
-sp_faxes_coord <- funct_spaces$"details_fspaces"$"sp_pc_coord"
-
-### Plot functional space:
-
-big_plot <- mFD::funct.space.plot(sp_faxes_coord  = sp_faxes_coord[, c("PC1", "PC2", "PC3")],
-                                       faxes = c("PC1", "PC2", "PC3"), name_file = NULL,
-                                       faxes_nm = NULL, range_faxes = c(NA, NA),
-                                       color_bg = "grey95",
-                                       color_pool = "darkgreen", fill_pool = "white",
-                                       shape_pool = 21, size_pool = 1,
-                                       plot_ch = TRUE, color_ch = "black",
-                                       fill_ch = "white", alpha_ch = 0.3,
-                                       plot_vertices = TRUE, 
-                                       color_vert = "blueviolet",
-                                       fill_vert = "blueviolet", shape_vert = 23,
-                                       size_vert = 1,
-                                       plot_sp_nm = NULL, nm_size = 3, 
-                                       nm_color = "black",
-                                       nm_fontface = "plain",
-                                       check_input = TRUE)
-# Plot the graph with all pairs of axes:
-func_space <- big_plot$patchwork
-
 # saving ####
 
 # trait values and trait coding dataframes ----
+
 save(sp_tr, file=here::here("data/", "sp_tr.RData") )
 save(tr_cat, file=here::here("data/", "tr_cat.RData") )
 save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
 save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
-
-ggsave(qual_space, file=here::here("outputs/", "figure1_SM.png"),
-       height = 16, width = 30, unit = "cm" )
-
-ggsave(plot_corr, file=here::here("outputs/", "figure2_SM.png"),
-       height = 16, width = 30, unit = "cm" )
-
-ggsave(func_space, file=here::here("outputs/", "figure3_SM.png"),
-       height = 16, width = 30, unit = "cm" )
+save(funct_spaces, file=here::here("outputs/", "funct_spaces.RData") )
+save(sp_faxes_coord, file=here::here("outputs/", "sp_faxes_coord.RData") )
 
 ##################################  end of code ######################################################################

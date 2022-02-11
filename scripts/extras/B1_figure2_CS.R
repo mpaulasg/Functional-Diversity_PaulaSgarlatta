@@ -77,6 +77,8 @@ spatial_diss <- interhab_taxo_diss %>%
   mutate( Year = 2013, .before="Year" ) %>%
   filter(Habitat %in%c("Midshelf_Inshore", "Offshore_Midshelf", "Offshore_Inshore") ) %>%
   droplevels("Habitat")
+
+
 typeof(spatial_diss$Year)
 typeof(kelp_interyear_taxo_diss$Year)
 typeof(nokelp_interyear_taxo_diss$Year)
