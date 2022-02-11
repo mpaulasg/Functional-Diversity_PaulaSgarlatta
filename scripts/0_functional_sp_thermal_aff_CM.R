@@ -93,7 +93,8 @@ Fric <- alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
                                          scaling = TRUE, 
                                          details_returned = TRUE)
 
-# color code for the 4 years
+# color code for thermal affinity
+
 thermal_aff_colors <- c(tropical = "lightsalmon1", temperate = "#2C6BAA")
 
 
@@ -121,8 +122,8 @@ for (z in 1:length(pairs_axes)) {
                       sp_coord2D = sp_3D_coord[,xy],
                       vertices_nD = pool_vert_nm,
                       plot_pool = FALSE,
-                      color_ch = "black", fill_ch = "white", alpha_ch = 1, 
-                      shape_vert = 10)
+                      color_ch = "black", fill_ch = "white", alpha_ch = 1)
+  
   
 
     # species present in trop:
@@ -146,7 +147,7 @@ for (z in 1:length(pairs_axes)) {
                                                 asb2 = vert_temp),
                          plot_sp = TRUE,
                          color_sp = thermal_aff_colors,
-                         fill_sp = thermal_aff_colors,
+                         fill_sp = c(asb1 = "white", asb2 = "white"),
                          size_sp = c(asb1 = 1, asb2 = 1),
                          shape_sp = c(asb1 = 16, asb2 = 16),
                          color_vert = thermal_aff_colors,
