@@ -15,6 +15,7 @@ library(tidyverse)
 library(dplyr)
 library(car)
 library(lme4)
+library(glmmTMB)
 library(DHARMa)
 library(emmeans)
 library(vegan)
@@ -90,6 +91,8 @@ shift3D_space_stats <- shift3D_space_eucl_1 %>%
 
 ### NO KELP ###
 
+
+
 nokelp_glmm_s <- glmmTMB(sp_richn ~ Year + (1|Site) ,data=nokelp_stats, family=poisson())
 
 summary(nokelp_glmm_s)
@@ -113,6 +116,8 @@ Anova(kelp_glmm_s)
 kelp_res_s <- simulateResiduals(kelp_glmm_s)
 plot(kelp_res_s) #Deavition significant
 
+
+check_overdispersion(kelp_glmm_s)
 #Post-hoc tests
 
 pairs(emmeans(kelp_glmm_s, spec=~Year, type="response"))
@@ -121,6 +126,12 @@ pairs(emmeans(kelp_glmm_s, spec=~Year, type="response"))
 ### SPACE ###
 
 space_glmm_s <- glmmTMB(sp_richn ~ Habitat + (1|Site), data=spatial_stats, family = poisson()) 
+
+space_lmm_s <- lmer(sp_richn~ Habitat + (1|Site), data=spatial_stats)
+
+######space_lmm_s <- lmer(sp_richn ~ Habitat + (1|Site/Transect) , data=spatial_stats) -> this one 
+
+
 
 summary(space_glmm_s)
 Anova(space_glmm_s)
