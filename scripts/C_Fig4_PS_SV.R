@@ -34,6 +34,7 @@ shift3D_nokelp_eucl_1 <- dist.to.df( list(shift3D=shift3D_nokelp_eucl) ) %>%
   mutate(Site1=sub("_.*", "", x1), Site2=sub("_.*", "", x2),
          Year1=sub(".*_", "", x1),  Year2=sub(".*_", "", x2))
 
+
 df_shift3D_nokelp_toplot <- shift3D_nokelp_eucl_1 %>% 
   filter(Year1==2002 | Year2==2002) %>%
   filter(Site1 == Site2) %>%
@@ -139,6 +140,12 @@ plot_shift3D
 
 ggsave(plot_shift3D, file=here::here("outputs/", "Figure4.png"), 
        height = 20, width = 18, unit = "cm" )
+
+#save for stats
+
+save(shift3D_nokelp_eucl_1, file=here::here("outputs/", "shift3D_nokelp_eucl_1.RData") )
+save(shift3D_kelp_eucl_1 , file=here::here("outputs/", "shift3D_kelp_eucl_1 .RData") )
+save(shift3D_space_eucl_1 , file=here::here("outputs/", "shift3D_space_eucl_1 .RData") )
 
 ################################################ end of script #######################################################
 

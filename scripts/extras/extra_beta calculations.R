@@ -1,48 +1,31 @@
-################################################################################
-##
-## Script for computing taxonomic and functional diversity and dissimilarity 
-## between years for kelp and no kelp sites
-## 
-## Code by Camille Magneville, Sébastien Villéger and Paula Sgarlatta
-##
-################################################################################
 
-rm(list=ls()) # cleaning memory
 
-# libraries
-library(tidyverse)
-library(here)
-library(mFD)
-library(betapart)
+### Extra - beta calculations
 
-# loading data
-load(here::here("data", "kelp_sp_occ.RData") )
-load(here::here("data", "nokelp_sp_occ.RData") )
-load(here::here("outputs", "sp_3D_coord.RData") ) 
 
-## computing taxonomic and functional diversity ####
+## computing taxonomic and functional beta-diversity ####
 
-# number of species, functional richness, dispersion and identity (along 3 axes)
-temporal_fd_nokelp <- mFD::alpha.fd.multidim(
+# taxonomic dissimilarity = Jaccard index and its components
+spatial_beta_taxo <- betapart::beta.pair(spatial_sp_occ, index.family = "jaccard")
+
+# functional dissimilarity = Jaccard-like index and its components
+spatial_beta_func <- mFD::beta.fd.multidim(
   sp_faxes_coord   = sp_3D_coord,
-  asb_sp_w         = nokelp_sp_occ,
-  ind_vect         = c("fide", "fric", "fdis", "fspe"),
-  scaling          = TRUE,
+  asb_sp_occ       = spatial_sp_occ,
   check_input      = TRUE,
+  beta_family      = c("Jaccard"),
   details_returned = TRUE)
 
-temporal_alpha_nokelp <- temporal_fd_nokelp$functional_diversity_indices
-
-
-temporal_fd_kelp <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_3D_coord,
-  asb_sp_w         = kelp_sp_occ,
-  ind_vect         = c("fide", "fric", "fdis", "fspe"),
-  scaling          = TRUE,
-  check_input      = TRUE,
-  details_returned = TRUE)
-
-temporal_alpha_kelp <- temporal_fd_kelp$functional_diversity_indices
+# list of distance matrices with dissimilarity and its turnover
+spatial_beta <- list (
+  taxo_diss = spatial_beta_taxo$beta.jac,
+  taxo_turn = spatial_beta_taxo$beta.jtu,
+  func_diss = spatial_beta_func$pairasb_fbd_indices$jac_diss,
+  func_turn = spatial_beta_func$pairasb_fbd_indices$jac_turn
+)
+spatial_beta$taxo_diss
+# summary
+cbind( min=lapply(spatial_beta, min), max=lapply(spatial_beta, max) )
 
 
 
@@ -98,14 +81,26 @@ temporal_beta_kelp <- list (
 cbind( min=lapply(temporal_beta_kelp, min), max=lapply(temporal_beta_kelp, max) )
 
 
-# saving ####
-
-# trait values and trait coding dataframes ----
-save(temporal_fd_nokelp, file=here::here("outputs/", "temporal_fd_nokelp.RData") )
-save(temporal_alpha_nokelp, file=here::here("outputs/", "temporal_alpha_nokelp.RData") )
-
-save(temporal_fd_kelp, file=here::here("outputs/", "temporal_fd_kelp.RData") )
-save(temporal_alpha_kelp, file=here::here("outputs/", "temporal_alpha_kelp.RData") )
-
 save(temporal_beta_nokelp, file=here::here("outputs/", "temporal_beta_nokelp.RData") )
 save(temporal_beta_kelp, file=here::here("outputs/", "temporal_beta_kelp.RData") )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+save(spatial_beta, file=here::here("outputs/", "spatial_beta.RData") )
