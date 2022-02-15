@@ -233,10 +233,20 @@ plot(spatial_res_fide1) # Good
 nokelp_perma <- adonis(shift3D ~ Year, data=shift_nokelp)
 print(nokelp_perma)
 
+nokelp_lm <- lm(shift3D ~ Year, data = shift_nokelp)
+summary(nokelp_lm)
+Anova(nokelp_lm)
+
+
+
 #Kelp
 
 kelp_perma <- adonis(shift3D ~ Year, data=shift3D_kelp_stats)
 print(kelp_perma)
+
+kelp_lm <- lm(shift3D ~ Year, data=shift3D_kelp_stats)
+summary(kelp_lm)
+Anova(kelp_lm)
 
 #Space
 
