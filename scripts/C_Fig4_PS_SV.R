@@ -48,6 +48,15 @@ df_shift3D_nokelp_toplot <- shift3D_nokelp_eucl_1 %>%
   mutate(shift3D_se = shift3D_sd/sqrt(n))  %>%
   mutate( Habitat = "No_Kelp", .before="Year" )
 
+
+shift3D_nokelp_stats <- shift3D_nokelp_eucl_1 %>% 
+  filter(Year1==2002 | Year2==2002) %>%
+  filter(Site1 == Site2) %>%
+  mutate(Year = pmax ( Year1, Year2 ) ) %>% 
+  select(shift3D, Site1, Site2, Year)
+
+
+
 #######kelp - Fide on the 3 PC axes
 
 fide3_kelp <- temporal_alpha_kelp %>% 
@@ -73,6 +82,12 @@ df_shift3D_kelp_toplot <- shift3D_kelp_eucl_1 %>%
   mutate(shift3D_se = shift3D_sd/sqrt(n))  %>%
   mutate( Habitat = "Kelp", .before="Year" )
 
+
+shift3D_kelp_stats <- shift3D_kelp_eucl_1 %>% 
+  filter(Year1==2002 | Year2==2002) %>%
+  filter(Site1 == Site2) %>%
+  mutate(Year = pmax ( Year1, Year2 ) ) %>%
+  select(shift3D, Site1, Site2, Year)
 
 #### Spatial data - Fide on the 3 PC axes
 
@@ -100,7 +115,6 @@ df_shift3D_space_toplot <- shift3D_space_eucl_1 %>%
   droplevels("Habitat")
 
 df_shift3D_space_toplot$Year <- as.character(df_shift3D_space_toplot$Year)
-
 
 # merging ----
 
@@ -143,9 +157,9 @@ ggsave(plot_shift3D, file=here::here("outputs/", "Figure4.png"),
 
 #save for stats
 
-save(shift3D_nokelp_eucl_1, file=here::here("outputs/", "shift3D_nokelp_eucl_1.RData") )
-save(shift3D_kelp_eucl_1 , file=here::here("outputs/", "shift3D_kelp_eucl_1 .RData") )
-save(shift3D_space_eucl_1 , file=here::here("outputs/", "shift3D_space_eucl_1 .RData") )
+save(shift3D_nokelp_stats, file=here::here("outputs/", "shift3D_nokelp_stats.RData") )
+save(shift3D_kelp_stats , file=here::here("outputs/", "shift3D_kelp_stats.RData") )
+save(shift3D_space_eucl , file=here::here("outputs/", "shift3D_space_eucl.RData") )
 
 ################################################ end of script #######################################################
 

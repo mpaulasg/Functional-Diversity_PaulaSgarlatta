@@ -135,4 +135,79 @@ save(spatial_summary, file=here::here("data", "spatial_summary.RData") )
 save(species_allsurveys, file=here::here("data", "species_allsurveys.RData") )
 
 
+########### For statistics
+
+## temporal survey data ####
+
+# loading raw data from csv----
+
+# metadata and data from sites (and replicates) without kelp
+nokelp_metadata_all <- read.csv(here::here("from_paula", "TemporalBRUV_species_metadata_no_kelp.csv") )
+head(nokelp_metadata_all)
+unique(nokelp_metadata_all$Site) # 4 sites
+unique(nokelp_metadata_all$Year) # 14 years
+
+nokelp_sp_maxN_all <- read.csv(here::here("from_paula", "TemporalBRUV_species_maxN_no_kelp.csv") ) %>%
+  column_to_rownames("Site") %>%
+  as.matrix()
+head(nokelp_sp_maxN_all)
+
+# metadata and data from sites that use to have kelp and lost it:
+kelp_metadata_all <- read.csv(here::here("from_paula", "TemporalBRUV_species_metadata_kelp.csv") )
+head(kelp_metadata_all)
+unique(kelp_metadata_all$Site) # 5 sites
+unique(kelp_metadata$Year) # 14 years
+
+kelp_sp_maxN_all <- read.csv(here::here("from_paula", "TemporalBRUV_species_maxN_kelp.csv") ) %>%
+  column_to_rownames("Site") %>%
+  as.matrix()
+head(kelp_sp_maxN_all)
+
+
+# summary of surveys and occurrences data ----
+kelp_summary_all <- mFD::asb.sp.summary(asb_sp_w = kelp_sp_maxN_all)
+nokelp_summary_all <- mFD::asb.sp.summary(asb_sp_w = nokelp_sp_maxN_all)
+
+# retrieve occurrence matrix:
+kelp_sp_occ_all <- kelp_summary_all$asb_sp_occ
+nokelp_sp_occ_all <- nokelp_summary_all$asb_sp_occ
+
+
+# dimensions
+dim(kelp_sp_occ_all) # 204 assemblages * 101 species
+dim(nokelp_sp_occ_all) # 167 assemblages * 106 species
+
+############## => temporal data ready ####
+
+## spatial survey data ####
+
+# metadata of surveys and fish biomass (average across UVC transects) ----
+spatial_metadata_all <- read.csv(here::here("from_paula",  "SpatialUVC_metadata_transect.csv"))
+head(spatial_metadata_all)
+
+spatial_sp_biom_all <- read.csv(here::here("from_paula", "SpatialUVC_species_biomass_transect.csv")) %>%
+  column_to_rownames("Site") %>% 
+  as.matrix()
+
+dim(spatial_sp_biom_all) # 36 assemblages * 51 species
+
+# summary of surveys and occurrences data ----
+spatial_summary_all <- mFD::asb.sp.summary(asb_sp_w = spatial_sp_biom_all)
+
+# retrieve occurrence matrix:
+spatial_sp_occ_all <- spatial_summary_all$asb_sp_occ
+
+## saving dataframes #####
+save(kelp_metadata_all, file=here::here("data", "kelp_metadata_all.RData") )
+save(kelp_sp_occ_all, file=here::here("data", "kelp_sp_occ_all.RData") )
+save(kelp_summary_all, file=here::here("data", "kelp_summary_all.RData") )
+
+save(nokelp_metadata_all, file=here::here("data", "nokelp_metadata_all.RData") )
+save(nokelp_sp_occ_all, file=here::here("data", "nokelp_sp_occ_all.RData") )
+save(nokelp_summary_all, file=here::here("data", "nokelp_summary_all.RData") )
+
+save(spatial_metadata_all, file=here::here("data", "spatial_metadata_all.RData") )
+save(spatial_sp_occ_all, file=here::here("data", "spatial_sp_occ_all.RData") )
+save(spatial_summary_all, file=here::here("data", "spatial_summary_all.RData") )
+
 ############################################### end of script ########################################################

@@ -75,3 +75,63 @@ save(spatial_alpha, file=here::here("outputs/", "spatial_alpha.RData") )
 
 
 #################################### end of script ####################################################################
+
+## For statistics
+
+# loading data
+load(here::here("data", "kelp_sp_occ_all.RData") )
+load(here::here("data", "nokelp_sp_occ_all.RData") )
+load(here::here("outputs", "sp_3D_coord.RData") ) 
+load(here::here("data", "spatial_sp_occ_all.RData") )
+load(here::here("outputs", "sp_3D_coord.RData") )
+
+## computing taxonomic and functional diversity for no kelp sites ####
+
+# number of species, functional richness, dispersion and identity (along 3 axes)
+
+temporal_fd_nokelp_all <- mFD::alpha.fd.multidim(
+  sp_faxes_coord   = sp_3D_coord,
+  asb_sp_w         = nokelp_sp_occ_all,
+  ind_vect         = c("fide", "fric", "fdis"),
+  scaling          = TRUE,
+  check_input      = TRUE,
+  details_returned = TRUE)
+
+temporal_alpha_nokelp_all <- temporal_fd_nokelp_all$functional_diversity_indices
+
+## computing taxonomic and functional diversity for kelp sites ####
+
+temporal_fd_kelp_all <- mFD::alpha.fd.multidim(
+  sp_faxes_coord   = sp_3D_coord,
+  asb_sp_w         = kelp_sp_occ_all,
+  ind_vect         = c("fide", "fric", "fdis"),
+  scaling          = TRUE,
+  check_input      = TRUE,
+  details_returned = TRUE)
+
+temporal_alpha_kelp_all <- temporal_fd_kelp_all$functional_diversity_indices
+
+## computing taxonomic and functional diversity for spatial data ####
+
+spatial_fd_all <- mFD::alpha.fd.multidim(
+  sp_faxes_coord   = sp_3D_coord,
+  asb_sp_w         = spatial_sp_occ_all,
+  ind_vect         = c("fide", "fric", "fdis"),
+  scaling          = TRUE,
+  check_input      = TRUE,
+  details_returned = TRUE)
+
+spatial_alpha_all <- spatial_fd_all$functional_diversity_indices
+
+# saving ####
+
+# trait values and trait coding dataframes ----
+save(temporal_fd_nokelp_all, file=here::here("outputs/", "temporal_fd_nokelp_all.RData") )
+save(temporal_alpha_nokelp_all, file=here::here("outputs/", "temporal_alpha_nokelp_all.RData") )
+
+save(temporal_fd_kelp_all, file=here::here("outputs/", "temporal_fd_kelp_all.RData") )
+save(temporal_alpha_kelp_all, file=here::here("outputs/", "temporal_alpha_kelp_all.RData") )
+
+save(spatial_fd_all, file=here::here("outputs/", "spatial_fd_all.RData") )
+save(spatial_alpha_all, file=here::here("outputs/", "spatial_alpha_all.RData") )
+
