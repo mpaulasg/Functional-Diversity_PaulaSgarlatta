@@ -403,7 +403,7 @@ plot(kelp_res_fric) # Good
 
 ### SPATIAL - FRic ###
 
-spatial_glmm_fric <- glmmTMB(fric ~ Habitat + (1|Sites), data=spatial_stats, family = beta_family())
+spatial_glmm_fric <- glmmTMB(fric ~ Habitat + (1|Sites:Replicate), data=spatial_stats, family = beta_family())
 
 summary(spatial_glmm_fric)
 Anova(spatial_glmm_fric)
