@@ -135,9 +135,9 @@ for ( z in 1:length(pairs_axes) ) {
   if (z==1) {
     nlabels_y <- length(years_colors)
     ggplot_z <- ggplot_z + 
-      geom_text(aes(x = rep(range_axes[1]*0.85, nlabels_y ),
+      geom_text(aes(x = rep(range_axes[1]*0.95, nlabels_y ),
                     y = range_axes[2]*(1.05-0.15*(1:nlabels_y)),
-                    label = names(years_colors) ),
+                    label = substr(names(years_colors),2,5) ),
                     color = years_colors,
                 hjust = "left",
                 show.legend = FALSE) +
@@ -326,7 +326,7 @@ for ( a in 1:length(pairs_axes) ) {
   if (a==1) {
     nlabels_b <- length(hab_colors)
     ggplot_a <- ggplot_a + 
-      geom_text(aes(x = rep(range_axes[1]*0.85, nlabels_b ),
+      geom_text(aes(x = rep(range_axes[1]*0.95, nlabels_b ),
                     y = range_axes[2]*(1.05-0.15*(1:nlabels_b)),
                     label = names(hab_colors) ) ,
                     color = hab_colors ,
@@ -350,95 +350,4 @@ figure3 <- ( ggplot_temporal_nokelp[[1]] +  ggplot_temporal_kelp[[1]] + ggplot_s
 
 
 ggsave(figure3, file=here::here("outputs/", "Figure3.png"),
-       height = 16, width = 24, unit = "cm" )
-
-
-###################### FDis convex hull  ################################## (probably delete this)
-
-load(here::here("outputs", "sp_gower_dist.RData") )
-load(here::here("data", "tr_cat.RData") )
-
-
-# Compute functional spaces quality to retrieve species coordinates matrix:
-fspaces_quality_kelp <- mFD::quality.fspaces(sp_dist = sp_gower_dist, 
-                                               maxdim_pcoa         = 10,
-                                               deviation_weighting = "absolute",
-                                               fdist_scaling       = FALSE,
-                                               fdendro             = "average")
-
-# Retrieve species coordinates matrix:
-sp_faxes_coord_kelp <- fspaces_quality_kelp$details_fspaces$sp_pc_coord
-
-
-# range of axes
-range_faxes_coord <- range(pool_coord[,1:3])
-range_axes <- range_faxes_coord +
-  c(-1, 1) * (range_faxes_coord[2] - range_faxes_coord[1]) * 0.1
-
-
-# Retrieve the background plot:
-ggplot_bg_kelp <- mFD::background.plot(
-  range_faxes = range_axes, 
-  faxes_nm    = c("PC 1", "PC 2"), 
-  color_bg    = "grey90") 
-
-## temporal kelp ####
-
-# computing occurrences of species in each habitat
-kelp_years_sp_occ <- rbind( 
-  y2002 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
-  y2008 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2008"),"Code"],],2,max ),
-  y2013 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2013"),"Code"],],2,max ),
-  y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max )
-)  
-
-
-# Retrieve the matrix of species coordinates for "basket_1" and PC1 and PC2
-# sp_filter <- mFD::sp.filter(asb_nm         = list("y2002", "y2008", "y2013", "y2018"), 
-#                              sp_faxes_coord = sp_faxes_coord_kelp, 
-#                              asb_sp_w       = kelp_years_sp_occ)
-
-# compute FDis for kelp  ---
-kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_faxes_coord_kelp, 
-                                         asb_sp_w = kelp_years_sp_occ,
-                                         ind_vect = c("fdis"), 
-                                         scaling = TRUE, 
-                                         details_returned = TRUE
-)
-
-plots_alpha <- mFD::alpha.multidim.plot(
-  output_alpha_fd_multidim = kelp_years_multidimFD,
-  plot_asb_nm              = c("y2002", "y2018"),
-  ind_nm                   = c("fdis"),
-  faxes                    = NULL,
-  faxes_nm                 = NULL,
-  range_faxes              = c(NA, NA),
-  color_bg                 = "grey95",
-  shape_sp                 = c(pool = 3, asb1 = 21, asb2 = 21),
-  size_sp                  = c(pool = 0.7, asb1 = 1, asb2 = 1),
-  color_sp                 = c(pool = "grey50", asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  color_vert               = c(pool = "grey50", asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  fill_sp                  = c(pool = NA, asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  fill_vert                = c(pool = NA, asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  color_ch                 = c(pool = NA, asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  fill_ch                  = c(pool = "white", asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  alpha_ch                 = c(pool = 1, asb1 = 0.3, asb2 = 0.3),
-  shape_centroid_fdis      = c(asb1 = 22,  asb2 = 24),
-  shape_centroid_fdiv      = c(asb1 = 22,  asb2 = 24),
-  shape_centroid_fspe      = 23,
-  color_centroid_fspe      = "black",
-  size_sp_nm               = 3, 
-  color_sp_nm              = "black",
-  plot_sp_nm               = NULL,
-  fontface_sp_nm           = "plain",
-  save_file                = FALSE,
-  check_input              = TRUE)         
-
-fdis <- plots_alpha$"fdis"$"patchwork"
-
-
-
-## merging all plots into a single figure and saving as png ####
-
-ggsave(fdis, file=here::here("outputs/", "figure7_fdis.png"),
        height = 16, width = 24, unit = "cm" )
