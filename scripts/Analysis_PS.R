@@ -299,11 +299,16 @@ nokelp_stats <- temporal_alpha_nokelp_all %>%
   mutate(Sites=Site.y, .before="sp_richn") %>% 
   select(-Site, -Site.y)
 
+nokelp_stats$Year_contin <- as.numeric(nokelp_stats$Year)
+
 kelp_stats <- temporal_alpha_kelp_all %>%
   rownames_to_column(var = "Site") %>% 
   left_join(kelp_metadata_all, by=c("Site"="Code")) %>% 
   mutate(Sites=Site.y, .before="sp_richn") %>% 
   select(-Site, -Site.y, -YearID)
+
+kelp_stats$Year_contin <- as.numeric(kelp_stats$Year)
+
 
 spatial_stats <- spatial_alpha_all %>%
   rownames_to_column(var = "Site") %>% 
@@ -316,14 +321,14 @@ spatial_stats <- spatial_alpha_all %>%
 
 ### NO KELP ###
 
-nokelp_glmm_s <- glmmTMB(sp_richn ~ Year + (1|Sites:Replicate) ,data=nokelp_stats, family=poisson())
+nokelp_glmm_s <- glmmTMB(sp_richn ~ Year_contin + (1|Sites:Replicate) ,data=nokelp_stats, family=poisson())
 
 
 summary(nokelp_glmm_s)
 Anova(nokelp_glmm_s)
 
 mod.res <- simulateResiduals(nokelp_glmm_s)
-plot(mod.res) #Good
+plot(mod.res) #Check dispersion
 
 #Post-hoc tests
 
@@ -340,7 +345,7 @@ check_overdispersion(nokelp_glmm_s) #No overdispersion (dispertion ratio = 0.786
 
 ### KELP ###
 
-kelp_glmm_s <- glmmTMB(sp_richn ~ Year + (1|Sites) ,data=kelp_stats, family=poisson())
+kelp_glmm_s <- glmmTMB(sp_richn ~ Year_contin + (1|Sites) ,data=kelp_stats, family=poisson())
 
 #Not working with replicates 
 
@@ -348,7 +353,7 @@ summary(kelp_glmm_s)
 Anova(kelp_glmm_s)
 
 kelp_res_s <- simulateResiduals(kelp_glmm_s)
-plot(kelp_res_s) #Good
+plot(kelp_res_s) #Check dispersion
 
 check_overdispersion(kelp_glmm_s) #No overdispersion (dispertion ratio = 0.847)
 
@@ -360,7 +365,7 @@ pairs(emmeans(kelp_glmm_s, spec=~Year, type="response"))
 
 ### SPACE ###
 
-space_glmm_s <- glmmTMB(sp_richn ~ Habitat + (1|Sites/Replicate), data=spatial_stats, family = poisson()) 
+space_glmm_s <- glmmTMB(sp_richn ~ Habitat + (1|Sites), data=spatial_stats, family = poisson()) 
 
 summary(space_glmm_s)
 Anova(space_glmm_s)
@@ -378,7 +383,7 @@ pairs(emmeans(space_glmm_s, spec=~Habitat, type="response"))
 
 ### NO KELP - FRic ###
 
-nokelp_glmm_fric <- glmmTMB(fric ~ Year + (1|Sites:Replicate), data=nokelp_stats, family = beta_family())
+nokelp_glmm_fric <- glmmTMB(fric ~ Year_contin + (1|Sites:Replicate), data=nokelp_stats, family = beta_family())
 
 summary(nokelp_glmm_fric)
 Anova(nokelp_glmm_fric)
@@ -386,15 +391,9 @@ Anova(nokelp_glmm_fric)
 nokelp_res_fric <- simulateResiduals(nokelp_glmm_fric)
 plot(nokelp_res_fric) # Good
 
-#Post-hoc tests
-
-pairs(emmeans(nokelp_glmm_fric, spec=~Year, type="response"))
-
-#Not working
-
 ### KELP - FRic ###
 
-kelp_glmm_fric <- glmmTMB(fric ~ Year + (1|Sites:Replicate) ,data=kelp_stats, family = beta_family())
+kelp_glmm_fric <- glmmTMB(fric ~ Year_contin + (1|Sites:Replicate) ,data=kelp_stats, family = beta_family())
 
 summary(kelp_glmm_fric)
 Anova(kelp_glmm_fric)
@@ -402,15 +401,9 @@ Anova(kelp_glmm_fric)
 kelp_res_fric <- simulateResiduals(kelp_glmm_fric)
 plot(kelp_res_fric) # Good
 
-#Post-hoc tests
-
-pairs(emmeans(kelp_glmm_fric, spec=~Year, type="response"))
-
-#Not working
-
 ### SPATIAL - FRic ###
 
-spatial_glmm_fric <- glmmTMB(fric ~ Habitat + (1|Sites:Replicate), data=spatial_stats, family = beta_family())
+spatial_glmm_fric <- glmmTMB(fric ~ Habitat + (1|Sites), data=spatial_stats, family = beta_family())
 
 summary(spatial_glmm_fric)
 Anova(spatial_glmm_fric)
