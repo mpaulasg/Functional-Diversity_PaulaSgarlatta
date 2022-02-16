@@ -233,9 +233,11 @@ plot(spatial_res_fide1) # Good
 nokelp_perma <- adonis(shift3D ~ Year, data=shift_nokelp)
 print(nokelp_perma)
 
-nokelp_lm <- lm(shift3D ~ Year, data = shift_nokelp)
+nokelp_lm <- lmer(shift3D ~ Year_contin + (1|Site1), data = shift_nokelp)
 summary(nokelp_lm)
 Anova(nokelp_lm)
+
+shift_nokelp$Year_contin <- as.numeric(shift_nokelp$Year)
 
 
 
@@ -325,7 +327,8 @@ plot(mod.res) #Good
 
 #Post-hoc tests
 
-pairs(emmeans(nokelp_glmm_s, spec=~Year, type="response"))
+emmeans(nokelp_glmm_s, pairwise~Year)
+#Not trying pairwise comparisons as it will generate a  lot of comparisons
 
 #Not working
 
