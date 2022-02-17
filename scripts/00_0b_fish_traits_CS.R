@@ -26,20 +26,13 @@ head(kelp_traits)
 names(kelp_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
 nrow(kelp_traits) # 101 sp
 
-# from sites that never had kelp
-nokelp_traits <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_no_kelp.csv"),
-                          header = T)
-head(nokelp_traits)
-names(nokelp_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
-nrow(nokelp_traits) # 106 sp
-
 # traits of species from UVC surveys
 spatial_traits <- read.csv(here::here("from_paula", "SpatialUVC_species_traits.csv"), 
                            header = T)
 head(spatial_traits)
 names(spatial_traits) <- c("Species","Size", "Agg", "Position" , "Diet")
 
-nrow(spatial_traits) # 51 sp
+nrow(spatial_traits) # 53 sp
 
 #All sp with K values
 
@@ -52,17 +45,15 @@ names(k_values) <- c("Species", "sstmean", "MaxSizeTL", "Diet", "Position", "Met
 
 kelp_traits <- inner_join(kelp_traits, k_values[ , c("Species", "Kmax")], by = c("Species"), all.x=TRUE)
   
-nokelp_traits <- inner_join(nokelp_traits, k_values[ , c("Species", "Kmax")], by = c("Species"), all.x=TRUE)   
-
 spatial_traits <- inner_join(spatial_traits, k_values[ , c("Species", "Kmax")], by = c("Species"), all.x=TRUE) 
   
 # merging in a single data.frame and keeping only species present in surveys ----
-fish_traits <- bind_rows( kelp_traits, nokelp_traits, spatial_traits) %>%
+fish_traits <- bind_rows( kelp_traits, spatial_traits) %>%
   distinct(Species, .keep_all = TRUE ) %>%
   as.data.frame()
 head(fish_traits)
 
-nrow(fish_traits) # 139 species
+nrow(fish_traits) # 119 species
 
 fish_traits <- as.data.frame(fish_traits[order(fish_traits$Species),])
 
@@ -72,9 +63,6 @@ write.csv(fish_traits, file=here::here("data", "raw_data", "fish_traits.csv"),
           row.names = FALSE )
 
 write.csv(kelp_traits, file=here::here("data", "raw_data", "kelp_traits.csv"), 
-          row.names = FALSE )
-
-write.csv(nokelp_traits, file=here::here("data", "raw_data", "nokelp_traits.csv"), 
           row.names = FALSE )
 
 write.csv(spatial_traits, file=here::here("data", "raw_data", "spatial_traits.csv"), 

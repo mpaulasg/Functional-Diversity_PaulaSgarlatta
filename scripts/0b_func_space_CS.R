@@ -21,7 +21,7 @@ fish_traits <- read.csv(here::here("data", "raw_data", "fish_traits.csv"), heade
 
 # load species names from surveys datasets ----
 load(here::here("data", "species_allsurveys.RData") )
-length(species_allsurveys) # 139 species    
+length(species_allsurveys) # 119 species    
 
 # checking same species in trait and occurrences datasets ----
 identical ( sort(species_allsurveys) , sort(fish_traits$Species ) ) # True
@@ -35,7 +35,7 @@ sp_tr <- fish_traits %>%
   as.data.frame()
 head(sp_tr)
 
-nrow(sp_tr) # 139 species
+nrow(sp_tr) # 119 species
 
 # recoding variable to match trait type ----
 
@@ -110,6 +110,5 @@ save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
 save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 save(funct_spaces, file=here::here("outputs/", "funct_spaces.RData") )
-save(sp_faxes_coord, file=here::here("outputs/", "sp_faxes_coord.RData") )
 
 ##################################  end of code ######################################################################

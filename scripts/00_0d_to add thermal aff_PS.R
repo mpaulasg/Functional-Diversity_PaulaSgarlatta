@@ -10,10 +10,9 @@ library(here)
 
 spatial_thermal <- read.csv(here::here("from_paula", "SpatialUVC_species_traits_only_thermal.csv") )
 kelp_thermal <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_only_thermal_kelp.csv") )
-nokelp_thermal <- read.csv(here::here("from_paula", "TemporalBRUV_species_traits_only_thermal_no_kelp.csv") )
 
-thermal_all <- bind_rows(spatial_thermal, kelp_thermal,
-                         nokelp_thermal)%>%
+
+thermal_all <- bind_rows(spatial_thermal, kelp_thermal)%>%
   distinct(Species, .keep_all = TRUE ) %>%
   as.data.frame()
 

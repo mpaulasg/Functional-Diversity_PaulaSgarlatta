@@ -25,9 +25,7 @@ load(here::here("data", "kelp_metadata.RData") )
 load(here::here("data", "kelp_sp_occ.RData") )
 load(here::here("outputs/", "temporal_fd_kelp.RData") )
 
-load(here::here("data", "nokelp_metadata.RData") )
-load(here::here("data", "nokelp_sp_occ.RData") )
-load(here::here("outputs/", "temporal_fd_nokelp.RData") )
+
 
 
 ## settings ####
@@ -50,13 +48,11 @@ names(spatial_fd$details$asb_vert_nm)
 
 
 # color code for the 4 years
-years_colors <- c(y2002="green3", y2008="blue3", y2013="grey50", y2018="red3")
+years_colors <- c(y2002="green3", y2018="red3")
 
 # computing occurrences of species in each habitat
 kelp_years_sp_occ <- rbind( 
   y2002 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
-  y2008 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2008"),"Code"],],2,max ),
-  y2013 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2013"),"Code"],],2,max ),
   y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max )
 )  
 
@@ -72,11 +68,11 @@ kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
 kelp_years_multidimFD$details
 
 # FIde for kelp sites
-kelp_fide_years<- kelp_metadata %>%
-  mutate(Year=paste0("y",Year)) %>%
-  select(Year) %>%
-  bind_cols( select(temporal_fd_kelp$functional_diversity_indices, fide_PC1, fide_PC2 , fide_PC3) ) %>%
-  filter( Year %in% names(years_colors) )
+# kelp_fide_years<- kelp_metadata %>%
+#   mutate(Year=paste0("y",Year)) %>%
+#   select(Year) %>%
+#   bind_cols( select(temporal_fd_kelp$functional_diversity_indices, fide_PC1, fide_PC2 , fide_PC3) ) %>%
+#   filter( Year %in% names(years_colors) )
 
 
 ## plotting  ####
@@ -118,16 +114,24 @@ for ( z in 1:length(pairs_axes) ) {
                          asb_sp_coord2D=list(vv=pool_coord[sp_h,xy]),
                          asb_vertices_nD=list(vv=kelp_years_multidimFD$details$asb_vert_nm[[h]]),
                          plot_sp = FALSE,
+                         # size_sp = c(vv=2),
+                         # size_vert = c(vv=2),
+                         # shape_sp = c(vv=12, 2),
+                         # shape_vert = c(vv=12, 2),
+                         # color_sp = c(vv=col_h),
                          color_ch=c(vv=col_h),
-                         fill_ch=c(vv=col_h),
+                         # color_vert = c(vv=col_h),
+                         # fill_sp = c(vv=col_h),
+                         # fill_vert = c(vv=col_h),
+                          fill_ch=c(vv=col_h),
                          alpha_ch=c(vv=0.1)
     )
   }# end of h
   
   # average position of species (in the 4 sites) for each year
   ggplot_z <- ggplot_z +
-    geom_point(data=kelp_fide_years, aes_string( x=paste0("fide_PC",xy[1]), y=paste0("fide_PC",xy[2]),
-                                          color = "Year", shape = "Year"), size=0.9, show.legend = FALSE) +
+    #geom_point(data=kelp_fide_years, aes_string( x=paste0("fide_PC",xy[1]), y=paste0("fide_PC",xy[2]),
+                                          #color = "Year", shape = "Year"), size=0.9, show.legend = FALSE) +
     scale_colour_manual( values = years_colors )
   
   
@@ -151,98 +155,6 @@ for ( z in 1:length(pairs_axes) ) {
 
 
 
-## temporal no kelp ####
-
-# computing occurrences of species in each habitat
-nokelp_years_sp_occ <- rbind( 
-  y2002 = apply(nokelp_sp_occ [nokelp_metadata[which(nokelp_metadata$Year=="2002"),"Code"],],2,max ),
-  y2008 = apply(nokelp_sp_occ [nokelp_metadata[which(nokelp_metadata$Year=="2008"),"Code"],],2,max ),
-  y2013 = apply(nokelp_sp_occ [nokelp_metadata[which(nokelp_metadata$Year=="2013"),"Code"],],2,max ),
-  y2018 = apply(nokelp_sp_occ [nokelp_metadata[which(nokelp_metadata$Year=="2018"),"Code"],],2,max )
-)  
-
-# compute FRic for all habitats  ---
-nokelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord, 
-                                         asb_sp_w = nokelp_years_sp_occ,
-                                         ind_vect = c("fric"), 
-                                         scaling = TRUE, 
-                                         details_returned = TRUE
-)
-
-# FIde for nokelp sites
-nokelp_fide_years<- nokelp_metadata %>%
-  mutate(Year=paste0("y",Year)) %>%
-  select(Year) %>%
-  bind_cols( select(temporal_fd_nokelp$functional_diversity_indices, fide_PC1, fide_PC2 , fide_PC3) ) %>%
-  filter( Year %in% names(years_colors) )
-
-
-
-## plotting  ####
-
-# list to store ggplot
-ggplot_temporal_nokelp<-list()
-
-# pairs of axes
-pairs_axes<-list( c(1,2), c(1,3) )
-
-for ( z in 1:length(pairs_axes) ) {
-  
-  # names of axes   
-  xy<-pairs_axes[[z]]
-  
-  # background with axes range set + title
-  ggplot_z<-background.plot(range_faxes=range_axes,
-                            faxes_nm=paste0("PC", xy), 
-                            color_bg="grey95")
-  
-  # convex hull of species pool
-  ggplot_z<-pool.plot(ggplot_bg=ggplot_z,
-                      sp_coord2D=pool_coord[,xy],
-                      vertices_nD=pool_vert_nm,
-                      plot_pool=FALSE,
-                      color_ch=NA, fill_ch="white", alpha_ch=1)
-  
-  # loop on years
-  for (h in row.names(nokelp_years_sp_occ) ) {
-    
-    # color given habitat
-    col_h<-as.character(years_colors[h])
-    
-    # species present in v
-    sp_h<-names(which(nokelp_years_multidimFD$details$asb_sp_occ[h,]==1))
-    
-    # plot convex hull of assemblage but not species
-    ggplot_z<-fric.plot( ggplot_bg=ggplot_z, 
-                         asb_sp_coord2D=list(vv=pool_coord[sp_h,xy]),
-                         asb_vertices_nD=list(vv=nokelp_years_multidimFD$details$asb_vert_nm[[h]]),
-                         plot_sp = FALSE,
-                         color_ch=c(vv=col_h),
-                         fill_ch=c(vv=col_h),
-                         alpha_ch=c(vv=0.1)
-    )
-    
-  }# end of v
-
-  # average position of species (in the 4 sites) for each year
-  ggplot_z <- ggplot_z +
-    geom_point(data=nokelp_fide_years, aes_string( x=paste0("fide_PC",xy[1]), y=paste0("fide_PC",xy[2]),
-                                                 color = "Year", shape = "Year"), size=0.9, show.legend = FALSE) +
-    scale_colour_manual( values = years_colors )
-
-  # title  
-  if (z==1) {
-    ggplot_z <- ggplot_z + 
-      ggtitle("Temporal - No Kelp")
-  }
-  
-  # ggplot stored in list
-  ggplot_temporal_nokelp[[z]]<-ggplot_z
-  
-}# end of z
-
-
-
 ## spatial ####
 
 # computing occurrences of species in each habitat
@@ -261,9 +173,9 @@ hab_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
 )
 
 # FIde
-fide_hab<- spatial_metadata %>%
-  select(Habitat) %>%
-  bind_cols( select(spatial_fd$functional_diversity_indices, fide_PC1, fide_PC2 , fide_PC3) )
+# fide_hab<- spatial_metadata %>%
+#   select(Habitat) %>%
+#   bind_cols( select(spatial_fd$functional_diversity_indices, fide_PC1, fide_PC2 , fide_PC3) )
 
 
 # color code for the 3 habitats
@@ -309,7 +221,15 @@ for ( a in 1:length(pairs_axes) ) {
                          asb_sp_coord2D=list(vv=pool_coord[sp_b,xy]),
                          asb_vertices_nD=list(vv=hab_multidimFD$details$asb_vert_nm[[b]]),
                          plot_sp = FALSE,
+                         # size_sp = c(vv=2),
+                         # size_vert = c(vv=2),
+                         # shape_sp = c(vv=4),
+                         # shape_vert = c(vv=7),
+                         #color_sp = c(vv=col_b),
                          color_ch = c(vv=col_b),
+                         #color_vert = c(vv=col_b),
+                         #fill_vert = c(vv=col_b),
+                         #fill_sp = c(vv=col_b),
                          fill_ch= c(vv=col_b),
                          alpha_ch = c(vv=0.1))
     
@@ -317,8 +237,8 @@ for ( a in 1:length(pairs_axes) ) {
   
   # average position of species (in the 3 sites) of each habitat
   ggplot_a <- ggplot_a +
-    geom_point(data=fide_hab, aes_string( x=paste0("fide_PC",xy[1]), y=paste0("fide_PC",xy[2]),
-                               color = "Habitat", shape = "Habitat"), size=0.9, show.legend = FALSE) +
+    # geom_point(data=fide_hab, aes_string( x=paste0("fide_PC",xy[1]), y=paste0("fide_PC",xy[2]),
+    #                            color = "Habitat", shape = "Habitat"), size=0.9, show.legend = FALSE) +
     scale_colour_manual( values = hab_colors )
   
   
@@ -344,101 +264,11 @@ for ( a in 1:length(pairs_axes) ) {
 
 
 ## merging all plots into a single figure and saving as png ####
-figure3 <- ( ggplot_temporal_nokelp[[1]] +  ggplot_temporal_kelp[[1]] + ggplot_spatial[[1]] ) / ( 
+figure3 <- ( ggplot_temporal_kelp[[1]] + ggplot_spatial[[1]] ) / ( 
   
-  ggplot_temporal_nokelp[[2]] +  ggplot_temporal_kelp[[2]] + ggplot_spatial[[2]])
+ ggplot_temporal_kelp[[2]] + ggplot_spatial[[2]])
 
 
-ggsave(figure3, file=here::here("outputs/", "Figure3.png"),
+ggsave(figure3, file=here::here("outputs/", "Figure3_bis.png"),
        height = 16, width = 24, unit = "cm" )
 
-
-###################### FDis convex hull  ################################## (probably delete this)
-
-load(here::here("outputs", "sp_gower_dist.RData") )
-load(here::here("data", "tr_cat.RData") )
-
-
-# Compute functional spaces quality to retrieve species coordinates matrix:
-fspaces_quality_kelp <- mFD::quality.fspaces(sp_dist = sp_gower_dist, 
-                                               maxdim_pcoa         = 10,
-                                               deviation_weighting = "absolute",
-                                               fdist_scaling       = FALSE,
-                                               fdendro             = "average")
-
-# Retrieve species coordinates matrix:
-sp_faxes_coord_kelp <- fspaces_quality_kelp$details_fspaces$sp_pc_coord
-
-
-# range of axes
-range_faxes_coord <- range(pool_coord[,1:3])
-range_axes <- range_faxes_coord +
-  c(-1, 1) * (range_faxes_coord[2] - range_faxes_coord[1]) * 0.1
-
-
-# Retrieve the background plot:
-ggplot_bg_kelp <- mFD::background.plot(
-  range_faxes = range_axes, 
-  faxes_nm    = c("PC 1", "PC 2"), 
-  color_bg    = "grey90") 
-
-## temporal kelp ####
-
-# computing occurrences of species in each habitat
-kelp_years_sp_occ <- rbind( 
-  y2002 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
-  y2008 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2008"),"Code"],],2,max ),
-  y2013 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2013"),"Code"],],2,max ),
-  y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max )
-)  
-
-
-# Retrieve the matrix of species coordinates for "basket_1" and PC1 and PC2
-# sp_filter <- mFD::sp.filter(asb_nm         = list("y2002", "y2008", "y2013", "y2018"), 
-#                              sp_faxes_coord = sp_faxes_coord_kelp, 
-#                              asb_sp_w       = kelp_years_sp_occ)
-
-# compute FDis for kelp  ---
-kelp_years_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_faxes_coord_kelp, 
-                                         asb_sp_w = kelp_years_sp_occ,
-                                         ind_vect = c("fdis"), 
-                                         scaling = TRUE, 
-                                         details_returned = TRUE
-)
-
-plots_alpha <- mFD::alpha.multidim.plot(
-  output_alpha_fd_multidim = kelp_years_multidimFD,
-  plot_asb_nm              = c("y2002", "y2018"),
-  ind_nm                   = c("fdis"),
-  faxes                    = NULL,
-  faxes_nm                 = NULL,
-  range_faxes              = c(NA, NA),
-  color_bg                 = "grey95",
-  shape_sp                 = c(pool = 3, asb1 = 21, asb2 = 21),
-  size_sp                  = c(pool = 0.7, asb1 = 1, asb2 = 1),
-  color_sp                 = c(pool = "grey50", asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  color_vert               = c(pool = "grey50", asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  fill_sp                  = c(pool = NA, asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  fill_vert                = c(pool = NA, asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  color_ch                 = c(pool = NA, asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  fill_ch                  = c(pool = "white", asb1 = "#1F968BFF", asb2 = "#DCE319FF"),
-  alpha_ch                 = c(pool = 1, asb1 = 0.3, asb2 = 0.3),
-  shape_centroid_fdis      = c(asb1 = 22,  asb2 = 24),
-  shape_centroid_fdiv      = c(asb1 = 22,  asb2 = 24),
-  shape_centroid_fspe      = 23,
-  color_centroid_fspe      = "black",
-  size_sp_nm               = 3, 
-  color_sp_nm              = "black",
-  plot_sp_nm               = NULL,
-  fontface_sp_nm           = "plain",
-  save_file                = FALSE,
-  check_input              = TRUE)         
-
-fdis <- plots_alpha$"fdis"$"patchwork"
-
-
-
-## merging all plots into a single figure and saving as png ####
-
-ggsave(fdis, file=here::here("outputs/", "figure7_fdis.png"),
-       height = 16, width = 24, unit = "cm" )
