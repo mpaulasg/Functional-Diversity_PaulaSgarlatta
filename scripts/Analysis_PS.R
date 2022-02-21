@@ -121,6 +121,7 @@ plot(spatial_res_fdis) # Good
 system.time(spatial_mod_fdis <- drop1(spatial_fdis, test = "Chisq", all.cols=TRUE))
 print(spatial_mod_fdis)
 
+
 ### KELP - Fide1 ###
 
 kelp_fide1 <- glmmTMB(fide_PC1 ~ Year + (1|Site), data=kelp_stats, family = gaussian())
@@ -138,6 +139,8 @@ print(kelp_mod_fide1)
 
 spatial_fide1 <- glmmTMB (fide_PC1 ~ Habitat + (1|Site),data=spatial_stats, family = gaussian())
 
+## Not working
+
 spatial_fide1 <- lm(fide_PC1 ~ Habitat, data=spatial_stats)
 
 summary(spatial_fide1)
@@ -145,6 +148,7 @@ Anova(spatial_fide1)# Not significant - p=0.25
 
 spatial_res_fide1 <- simulateResiduals(spatial_fide1)
 plot(spatial_res_fide1) # Good
+
 
 system.time(spatial_mod_fide1 <- drop1(spatial_fide1, test = "Chisq", all.cols=TRUE))
 print(spatial_mod_fide1)
@@ -290,17 +294,22 @@ plot(kelp_res_s) #Good
 
 ### SPACE ###
 
-space_s <- glmmTMB (sp_richn ~ Habitat + (1|Site), data=spatial_stats, family = nbinom1()) 
-
-space_lm_s <- lmer(sp_richn ~ Habitat + (1|Site), data = spatial_stats)
-
-Anova(space_lm_s)
+space_s <- glmmTMB (sp_richn ~ Habitat + (1|Site), data=spatial_stats, family = nbinom2()) 
 
 summary(space_s)
 Anova(space_s)#Not significant
 
-space_res_s <- simulateResiduals(space_lm_s)
-plot(space_res_s) #Good 
+largeModel <- glmer.nb(sp_richn ~Habitat + (1|Site), data=spatial_stats)
+
+smallModel <- glmer.nb(sp_richn ~1+(1|Site), data=spatial_stats)
+
+
+
+library(pbkrtest)
+PBmodcomp(largeModel, smallModel, nsim = 50)
+
+space_res_s <- simulateResiduals(space_s)
+plot(space_res_s) # Good 
 
 #Post-hoc tests
 
@@ -321,7 +330,7 @@ plot(kelp_res_fric) # Good
 spatial_fric <- glmmTMB (fric ~ Habitat + (1|Site) , data=spatial_stats, family = beta_family())
 
 summary(spatial_fric)
-Anova(spatial_fric)#Significant
+Anova(spatial_fric)#Not significant
 
 spatial_res_fric <- simulateResiduals(spatial_fric)
 plot(spatial_res_fric) # Good
@@ -331,10 +340,13 @@ plot(spatial_res_fric) # Good
 kelp_fdis <- glmmTMB(fdis ~ Year + (1|Site), data=kelp_stats, family = beta_family())
 
 summary(kelp_fdis)
-Anova(kelp_fdis)#Significative
+Anova(kelp_fdis)#No Significative
 
 kelp_res_fdis <- simulateResiduals(kelp_fdis)
-plot(kelp_res_fdis) # Good
+plot(kelp_res_fdis) # Not good
+
+resid <- residuals(simulateResiduals(kelp_fdis), quantileFunction = qnorm, outliers = c(-7,7))
+plot(resid~predict(kelp_fdis))
 
 #Post-hoc tests
 

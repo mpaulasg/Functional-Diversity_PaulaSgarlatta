@@ -100,6 +100,10 @@ funct_spaces$quality_fspaces
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
 summary(sp_3D_coord)
 
+#see variance explained by the PCoA axes
+
+gower<-funct_spaces$details_deviation ## CHECK
+  
 # saving ####
 
 # trait values and trait coding dataframes ----
