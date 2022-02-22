@@ -21,12 +21,12 @@ library(mFD)
 load(here::here("outputs", "sp_3D_coord.RData") )
 
 load(here::here("data", "spatial_metadata.RData") )
-load(here::here("data", "spatial_sp_occ.RData") )
-load(here::here("outputs/", "spatial_fd.RData") )
+load(here::here("data", "using biomass-maxN", "spatial_sp_biom.RData") )
+load(here::here("outputs/", "using biomass-maxN", "spatial_fd_biomass.RData") )
 
 load(here::here("data", "kelp_metadata.RData") )
-load(here::here("data", "kelp_sp_occ.RData") )
-load(here::here("outputs/", "temporal_fd_kelp.RData") )
+load(here::here("data", "using biomass-maxN", "kelp_sp_maxN.RData") )
+load(here::here("outputs/", "using biomass-maxN", "temporal_fd_kelp_biomass.RData") )
 
 
 ## settings ####
@@ -55,9 +55,9 @@ thermal_aff_colors <- c(tropical = "lightsalmon1", temperate = "#2C6BAA")
 # computing occurrences of species in each year (we will use 2002-2009-2018)
 
 kelp_years_sp_occ <- rbind( 
-  y2002 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
-  y2009 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2009"),"Code"],],2,max ),
-  y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max ))  
+  y2002 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
+  y2009 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2009"),"Code"],],2,max ),
+  y2018 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max ))  
 
 
 # # Retrieve species coordinates matrix for year 2002:
@@ -383,9 +383,9 @@ for (z in 1:length(pairs_axes)) {
 
 # computing occurrences of species in each habitat
 hab_sp_occ <- rbind( 
-  Inshore = apply(spatial_sp_occ [spatial_metadata[which(spatial_metadata$Habitat=="Inshore"),"Code"],],2,max ),
-  Midshelf = apply(spatial_sp_occ [spatial_metadata[which(spatial_metadata$Habitat=="Midshelf"),"Code"],],2,max ),
-  Offshore = apply(spatial_sp_occ [spatial_metadata[which(spatial_metadata$Habitat=="Offshore"),"Code"],],2,max )
+  Inshore = apply(spatial_sp_biom [spatial_metadata[which(spatial_metadata$Habitat=="Inshore"),"Code"],],2,max ),
+  Midshelf = apply(spatial_sp_biom [spatial_metadata[which(spatial_metadata$Habitat=="Midshelf"),"Code"],],2,max ),
+  Offshore = apply(spatial_sp_biom [spatial_metadata[which(spatial_metadata$Habitat=="Offshore"),"Code"],],2,max )
 )  
 
 ########## INSHORE
@@ -702,7 +702,7 @@ figure9 <- ( ggplot_2002[[1]] + ggplot_2009[[1]] +  ggplot_2018[[1]] )/
    ( ggplot_inshore[[1]]  + ggplot_midshelf[[1]] +  ggplot_offshore[[1]] )
 
 
-ggsave(figure9, file=here::here("outputs/", "Figure9.png"),
+ggsave(figure9, file=here::here("outputs/", "using biomass-maxN", "Figure9_biomass.png"),
        height = 16, width = 24, unit = "cm" )
 
 
