@@ -7,6 +7,8 @@
 ##
 ################################################################################
 
+### Using data from sites
+
 rm(list=ls()) # cleaning memory
 
 ##Load packages
@@ -33,6 +35,7 @@ kelp_stats <- temporal_alpha_kelp %>%
   mutate(Site=sub("_.*", "", Site1),Year=sub(".*_", "", Site1), .before="Site1")%>% 
   select(-Site1)
 
+kelp_stats$Year_cont <- as.numeric(kelp_stats$Year)
 
 spatial_stats <- spatial_alpha %>%
   rownames_to_column(var = "Site1") %>% 
@@ -61,7 +64,7 @@ plot(kelp_res_s) #Good
 space_s <- glmmTMB (sp_richn ~ Habitat + (1|Site), data=spatial_stats, family = poisson()) 
 
 summary(space_s)
-Anova(space_s)#Significant
+Anova(space_s)#Significant - p=0.025
 
 space_res_s <- simulateResiduals(space_s)
 plot(space_res_s) #Good 
@@ -80,7 +83,7 @@ kelp_res_fric <- simulateResiduals(kelp_fric)
 plot(kelp_res_fric) # Good
 
 system.time(kelp_mod_fric <- drop1(kelp_fric, test = "Chisq", all.cols=TRUE))
-print(kelp_mod_fric)
+print(kelp_mod_fric) #p=0.01
 
 ### SPATIAL - FRic ###
 
@@ -93,7 +96,7 @@ spatial_res_fric <- simulateResiduals(spatial_fric)
 plot(spatial_res_fric) # Good
 
 system.time(spatial_mod_fric <- drop1(spatial_fric, test = "Chisq", all.cols=TRUE))
-print(spatial_mod_fric)
+print(spatial_mod_fric)# p<0.00005
 
 ### KELP - FDis ###
 
@@ -106,7 +109,7 @@ kelp_res_fdis <- simulateResiduals(kelp_fdis)
 plot(kelp_res_fdis) # Good
 
 system.time(kelp_mod_fdis <- drop1(kelp_fdis, test = "Chisq", all.cols=TRUE))
-print(kelp_mod_fdis)
+print(kelp_mod_fdis) # p=0.02
 
 ### SPATIAL - Fdis ###
 
@@ -119,7 +122,7 @@ spatial_res_fdis <- simulateResiduals(spatial_fdis)
 plot(spatial_res_fdis) # Good
 
 system.time(spatial_mod_fdis <- drop1(spatial_fdis, test = "Chisq", all.cols=TRUE))
-print(spatial_mod_fdis)
+print(spatial_mod_fdis) # p=0.47
 
 
 ### KELP - Fide1 ###
@@ -133,7 +136,7 @@ kelp_res_fide1 <- simulateResiduals(kelp_fide1)
 plot(kelp_res_fide1) # Good
 
 system.time(kelp_mod_fide1 <- drop1(kelp_fide1, test = "Chisq", all.cols=TRUE))
-print(kelp_mod_fide1)
+print(kelp_mod_fide1) #p=0.08 - not significant
 
 ### SPATIAL - FIde1 ###
 
@@ -161,7 +164,7 @@ kelp_res_fide2 <- simulateResiduals(kelp_fide2)
 plot(kelp_res_fide2) # Good
 
 system.time(kelp_mod_fide2 <- drop1(kelp_fide2, test = "Chisq", all.cols=TRUE))
-print(kelp_mod_fide2)
+print(kelp_mod_fide2) #p=0.012
 
 ### SPATIAL - FIde2 ###
 
@@ -174,7 +177,7 @@ spatial_res_fide2 <- simulateResiduals(spatial_fide2)
 plot(spatial_res_fide2) # Good
 
 system.time(spatial_mod_fide2 <- drop1(spatial_fide2, test = "Chisq", all.cols=TRUE))
-print(spatial_mod_fide2)
+print(spatial_mod_fide2) # p=0.64
 
 ### KELP - Fide3 ###
 
@@ -187,7 +190,7 @@ kelp_res_fide3 <- simulateResiduals(kelp_fide3)
 plot(kelp_res_fide3) # Good
 
 system.time(kelp_mod_fide3 <- drop1(kelp_fide3, test = "Chisq", all.cols=TRUE))
-print(kelp_mod_fide3)
+print(kelp_mod_fide3) #p=0.004
 
 ### SPATIAL - FIde3 ###
 
@@ -200,7 +203,7 @@ spatial_res_fide3 <- simulateResiduals(spatial_fide3)
 plot(spatial_res_fide3) # Good
 
 system.time(spatial_mod_fide3 <- drop1(spatial_fide3, test = "Chisq", all.cols=TRUE))
-print(spatial_mod_fide3)
+print(spatial_mod_fide3)#p=0.01
 
 ## Shift FIde 
 

@@ -57,6 +57,7 @@ thermal_aff_colors <- c(tropical = "lightsalmon1", temperate = "#2C6BAA")
 kelp_years_sp_occ <- rbind( 
   y2002 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
   y2009 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2009"),"Code"],],2,max ),
+  y2013 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2013"),"Code"],],2,max ),
   y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max ))  
 
 
@@ -377,7 +378,110 @@ for (z in 1:length(pairs_axes)) {
   ggplot_2018[[z]] <- ggplot_z_2018
   
 }# end of z
+
+
+######### Try 2013
+
+
+
+# # Retrieve species coordinates matrix for year 2013:
+
+kelp_2013_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+  as.data.frame() %>%
+  rownames_to_column("Sites") %>%
+  filter(Sites == "y2013") %>%
+  column_to_rownames("Sites") %>%
+  as.matrix()
+
+kelp_2013_occ_2 <- kelp_2013_occ %>% 
+  as.data.frame() %>% 
+  gather(Species, Abundance, 1:101)
+
+add_thermal <- left_join(kelp_2013_occ_2, thermal, by= "Species")
+
+kelp_2013_occ_thermal <- add_thermal %>% 
+  spread(Species, Abundance, fill=0) %>% 
+  column_to_rownames("thermal_label") %>% 
+  as.matrix()
+
+sp_filter_2013 <- mFD::sp.filter(asb_nm          = c("y2013"), 
+                                 sp_faxes_coord = sp_3D_coord, 
+                                 asb_sp_w       = kelp_years_sp_occ)
+
+sp_2d_coord_final_2013 <- sp_filter_2013$`species coordinates`[, c("PC1", "PC2", "PC3")]
+
+sp_thermal_2013 <- sp_2d_coord_final_2013 %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Species") %>% 
+  left_join(add_thermal, by="Species")
+
+
+## Compute FRic values #### 
+
+# compute FRic for all habitats  ---
+Fric_2013 <- alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
+                               asb_sp_w = kelp_2013_occ_thermal,
+                               ind_vect = c("fric"),
+                               scaling = TRUE,
+                               details_returned = TRUE)
+
+## plotting  ####
+
+# list to store ggplot
+ggplot_2013 <- list()
+
+# pairs of axes
+pairs_axes <- list( c(1,2) )
+
+for (z in 1:length(pairs_axes)) {
   
+  # names of axes   
+  xy <- pairs_axes[[z]]
+  
+  # species present in trop:
+  sp_trop_2013 <- sp_thermal_2013$Species[which(sp_thermal_2013$thermal_label == "tropical")]
+  
+  # species present in temp:
+  sp_temp_2013 <- sp_thermal_2013$Species[which(sp_thermal_2013$thermal_label == "temperate")]
+  
+  # vertices in trop:
+  vert_trop_2013 <- Fric_2013$details$asb_vert_nm$tropical
+  
+  # vertices in temp:
+  vert_temp_2013 <- Fric_2013$details$asb_vert_nm$temperate
+  
+  # plot convex hull of assemblage but not species
+  ggplot_z_2013 <-fric.plot(ggplot_bg = ggplot_z, 
+                            asb_sp_coord2D = list(asb1 = sp_2d_coord_final_2013[sp_trop_2013, xy], 
+                                                  asb2 = sp_2d_coord_final_2013[sp_temp_2013, xy]),
+                            asb_vertices_nD = list(asb1 = vert_trop_2013, 
+                                                   asb2 = vert_temp_2013),
+                            plot_sp = TRUE,
+                            color_sp = thermal_aff_colors,
+                            fill_sp = c(asb1 = "white", asb2 = "white"),
+                            size_sp = c(asb1 = 1, asb2 = 1),
+                            shape_sp = c(asb1 = 16, asb2 = 16),
+                            color_vert = thermal_aff_colors,
+                            fill_vert = thermal_aff_colors,
+                            size_vert = c(asb1 = 4, asb2 = 4),
+                            shape_vert = c(asb1 = 16, asb2 = 16),
+                            alpha_ch = c(asb1 = 0, asb2 = 0),
+                            color_ch = c(asb1 = NA, asb2 ="#00C19A"),
+                            fill_ch = c(asb1 = NA, asb2 = NA))
+  
+  # legend and title
+  if (z==1) {
+    ggplot_z_2013 <- ggplot_z_2013  + labs(title = "2013" )+
+      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+  }
+  
+  # ggplot stored in list
+  ggplot_2013[[z]] <- ggplot_z_2013
+  
+}# end of z
+
+ggsave(ggplot_z_2013, file=here::here("outputs/", "kelp_2013.png"),
+       height = 16, width = 24, unit = "cm" )
   
 ######################## SPATIAL ####
 
