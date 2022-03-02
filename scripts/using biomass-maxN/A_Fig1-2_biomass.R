@@ -173,10 +173,9 @@ plot_tempo_func <- ggplot(temporal_toplot,
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Functional richness") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
-           panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
-           axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.title = element_text(size=14), legend.text = element_text(size=14),
-        legend.background = element_blank(), legend.key=element_blank())
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.position = "none")
 plot_tempo_func
 
 
@@ -218,8 +217,8 @@ plot_tempo_fdis <- ggplot(temporal_toplot,
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.title = element_text(size=14), legend.text = element_text(size=14),
-        legend.background = element_blank(), legend.key=element_blank())
+        legend.position = "none")
+
 
 plot_tempo_fdis
 
@@ -263,9 +262,7 @@ plot_tempo_fide1 <- ggplot(temporal_toplot,
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.title = element_text(size=14), legend.text = element_text(size=14),
-        legend.background = element_blank(), legend.key=element_blank())
-
+        legend.position = "none")
 plot_tempo_fide1
 
 ## merging all plot into a single figure and saving as png ####
@@ -304,9 +301,7 @@ plot_tempo_fide2 <- ggplot(temporal_toplot,
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.title = element_text(size=14), legend.text = element_text(size=14),
-        legend.background = element_blank(), legend.key=element_blank())
-
+        legend.position = "none")
 plot_tempo_fide2
 
 ## merging all plot into a single figure and saving as png ####
@@ -345,9 +340,7 @@ plot_tempo_fide3 <- ggplot(temporal_toplot,
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.title = element_text(size=14), legend.text = element_text(size=14),
-        legend.background = element_blank(), legend.key=element_blank())
-
+        legend.position = "none")
 plot_tempo_fide3
 
 ## merging all plot into a single figure and saving as png ####
