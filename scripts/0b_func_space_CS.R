@@ -92,7 +92,10 @@ funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12,
                                  deviation_weighting = "absolute", fdist_scaling = FALSE,
                                  fdendro = "average") 
 
-funct_spaces$quality_fspaces
+funct_spaces
+
+sp_faxes_coord <- funct_spaces$details_fspaces$sp_pc_coord
+
 
 # => 3D space has the lowest mAD (0.055)
 
@@ -114,5 +117,6 @@ save(summary_traits, file=here::here("outputs/", "summary_traits.RData") )
 save(sp_gower_dist, file=here::here("outputs/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("outputs/", "sp_3D_coord.RData") )
 save(funct_spaces, file=here::here("outputs/", "funct_spaces.RData") )
+save(sp_faxes_coord, file=here::here("outputs/", "sp_faxes_coord.RData") )
 
 ##################################  end of code ######################################################################

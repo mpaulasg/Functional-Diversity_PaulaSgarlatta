@@ -148,11 +148,11 @@ for (z in 1:length(pairs_axes)) {
                          plot_sp = TRUE,
                          color_sp = thermal_aff_colors,
                          fill_sp = c(asb1 = "white", asb2 = "white"),
-                         size_sp = c(asb1 = 1, asb2 = 1),
+                         size_sp = c(asb1 = 3, asb2 = 3),
                          shape_sp = c(asb1 = 16, asb2 = 16),
                          color_vert = thermal_aff_colors,
                          fill_vert = thermal_aff_colors,
-                         size_vert = c(asb1 = 4, asb2 = 4),
+                         size_vert = c(asb1 = 3, asb2 = 3),
                          shape_vert = c(asb1 = 16, asb2 = 16),
                          alpha_ch = c(asb1 = 0, asb2 = 0),
                          color_ch = c(asb1 = NA, asb2 = NA),
@@ -204,6 +204,8 @@ plot_caption <- ggplot2::ggplot(data.frame(x = range_axes,
 ## merging all plots into a single figure and saving as png ####
 figure <- panels.to.patchwork(ggplot_pc, plot_caption = plot_caption)
 
+figure <- ggplot_pc [[1]]
+
 
 ggsave(figure, file=here::here("outputs/", "using biomass-maxN",  "Figure5_biomass.png"),
-       height = 16, width = 24, unit = "cm" )
+       height = 16, width = 30, unit = "cm" )

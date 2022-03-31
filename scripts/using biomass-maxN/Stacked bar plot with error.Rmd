@@ -1,0 +1,37 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(readxl)
+library(reshape2)
+spatial_data3 <- read_excel("E:/temp_stats/temp_stats/Spatial_data6.xlsx")
+long_spatial3 <- melt(spatial_data3, id = c("Habitat"))
+long_spatial3$Habitat <- factor(long_spatial3$Habitat, levels = c("Sydney Inshore","SIMP Inshore","SIMP Midshelf", "SIMP Offshore"))
+spat_mutate3 <- mutate(group_by(long_spatial3, Habitat), percent = value / sum(value) * 100) %>%
+       ungroup()
+```
+
+```{r}
+haborg_data = spat_mutate3 %>% group_by(Habitat, variable) %>% summarise(percent = sum(percent), n = n(), mean = mean(value), se = sd(value/sqrt(n))
+```
+
+```{r}
+haborg_data = haborg_data %>% mutate(se) %>%
+  group_by(Habitat) %>%
+  arrange(desc(variable)) %>%
+  mutate(
+    pos = cumsum(percent),
+    upper = pos + se/2,
+    lower = pos - se/2
+  ) %>%
+  ungroup()
+```
+
+
+```{r}
+ggplot(haborg_data, aes(Habitat, percent, fill = variable))+ geom_bar(stat="identity", width = 0.7)+ labs(y="Abundance(%)", x="Site") + labs(fill ="Benthic organisms") + theme_nice() + scale_fill_manual(values = c("#330000", "#993333", "#CC0000", "#FF9933", "#FFCC33", "#99CC33","#33CCCC", "#006666", "#003333"))+
+  geom_errorbar(aes(ymin = lower, ymax = upper), width=0.09, colour = "#333333", position = "identity")
+
+```

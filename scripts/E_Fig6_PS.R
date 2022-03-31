@@ -32,7 +32,7 @@ qual_space <- mFD::quality.fspaces.plot(
   fspaces_quality            = funct_spaces,
   quality_metric             = "mad",
   fspaces_plot               = c("tree_average", "pcoa_2d", "pcoa_3d", 
-                                 "pcoa_4d", "pcoa_5d", "pcoa_6d"),
+                                 "pcoa_4d"),
   name_file                  = NULL,
   range_dist                 = NULL,
   range_dev                  = NULL,
@@ -60,13 +60,13 @@ corr_table <- as.data.frame(cor_tr_faxes$tr_faxes_stat)
 plot_corr <- cor_tr_faxes$tr_faxes_plot
 
 
-ggsave(qual_space, file=here::here("outputs/", "Figure4S.png"),
+ggsave(qual_space, file=here::here("outputs/", "Figure4S_March.png"),
+       height = 20, width = 50, unit = "cm" )
+
+ggsave(plot_corr, file=here::here("outputs/", "Figure5S_March.png"),
        height = 16, width = 30, unit = "cm" )
 
-ggsave(plot_corr, file=here::here("outputs/", "Figure5S.png"),
-       height = 16, width = 30, unit = "cm" )
-
-write.csv(corr_table, file=here::here("outputs/", "Correlation_traits_table.csv"), 
+write.csv(corr_table, file=here::here("outputs/", "Correlation_traits_table_March.csv"), 
           row.names = FALSE)
 
 
