@@ -92,12 +92,12 @@ funct_spaces<- mFD::quality.fspaces(sp_dist = sp_gower_dist, maxdim_pcoa = 12,
                                  deviation_weighting = "absolute", fdist_scaling = FALSE,
                                  fdendro = "average") 
 
-funct_spaces
-
-sp_faxes_coord <- funct_spaces$details_fspaces$sp_pc_coord
-
+funct_spaces$quality_fspaces
 
 # => 3D space has the lowest mAD (0.055)
+
+
+sp_faxes_coord <- funct_spaces$details_fspaces$sp_pc_coord
 
 # species coordinates
 sp_3D_coord<-funct_spaces$details_fspaces$sp_pc_coord[,1:3]
