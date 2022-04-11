@@ -1,0 +1,15 @@
+Site,Latitude,Longitude,Data_type,Habitat
+Bare Bluff-Inshore,-30.15487,153.22,Spatial,Inshore
+Corindi-Inshore,-30.01707,153.22,Spatial,Inshore
+Muttonbird Island-Inshore,-30.29,153.15,Spatial,Inshore
+40 Acres -Midshelf,-30.21,153.21733,Spatial,Midshelf
+Split-Midshelf,-30.228,153.194,Spatial,Midshelf
+NW Solitary-Midshelf,-30.23,153.18,Spatial,Midshelf
+South Solitary-Offshore,-30.20501,153.26511,Spatial,Offshore
+North Solitary-Offshore,-29.92873,153.38964,Spatial,Offshore
+North West Rock-Offshore,-29.913579,153.383362,Spatial,Offshore
+Split N,-30.24125,153.20163,Temporal,Kelp
+Sawtell,-30.36616,153.13127,Temporal,Kelp
+Split W,-30.23806,153.194,Temporal,Kelp
+Whitmore,-30.34795,153.13901,Temporal,Kelp
+Jeffory Shoal,-30.24913,153.1993,Temporal,Kelp

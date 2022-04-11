@@ -1,0 +1,16 @@
+"trait","axis","test","stat","value","p.value"
+"Maximum reported length","PC1","Kruskal-Wallis","eta2",0.083,0.0137
+"Maximum reported length","PC2","Kruskal-Wallis","eta2",0.883,0
+"Maximum reported length","PC3","Kruskal-Wallis","eta2",0.011,0.283
+"Common aggregation","PC1","Kruskal-Wallis","eta2",0.752,0
+"Common aggregation","PC2","Kruskal-Wallis","eta2",-0.008,0.5702
+"Common aggregation","PC3","Kruskal-Wallis","eta2",0.044,0.028
+"Vertical position","PC1","Kruskal-Wallis","eta2",0.306,0
+"Vertical position","PC2","Kruskal-Wallis","eta2",0.076,0.0045
+"Vertical position","PC3","Kruskal-Wallis","eta2",-0.015,0.896
+"Diet","PC1","Kruskal-Wallis","eta2",0.309,0
+"Diet","PC2","Kruskal-Wallis","eta2",0.551,0
+"Diet","PC3","Kruskal-Wallis","eta2",0.756,0
+"Kmax","PC1","Linear Model","r2",0.017,0.1627
+"Kmax","PC2","Linear Model","r2",0.695,0
+"Kmax","PC3","Linear Model","r2",0.017,0.1636
