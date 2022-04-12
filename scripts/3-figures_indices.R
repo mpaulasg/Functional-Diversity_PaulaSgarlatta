@@ -10,7 +10,7 @@
 ##
 ## Fig. S2-S4 - Functional Identity
 ##
-## Fig. S5
+## Fig. S8 - Habitat
 ##
 ##
 ## Code by Paula Sgarlatta, Sebastien Villeger and Camille Magneville 
@@ -438,5 +438,59 @@ figureS4_fide3 <- ( plot_spatial_fide3 + plot_tempo_fide3 )
 
 ggsave(figureS4_fide3, file=here::here("outputs",  "FigureS4.jpeg"),
        height = 22, width = 35, unit = "cm" )
+
+
+################### Habitat
+
+
+# Load data
+
+habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"))
+
+habitat_toplot <- habitat %>% 
+  pivot_longer(cols= 4:10, names_to="Group") %>%
+  filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
+  mutate(value=as.numeric(value)) %>%
+  group_by(Site, Habitat,Transect, Group) %>%
+  summarize(total=sum(value)) %>% 
+  group_by(Site, Transect) %>% 
+  mutate(percent_cover=(total*100/125)) %>% #125 points per transect
+  dplyr::select(-total)
+
+
+
+habitat_summary <-habitat_toplot%>%
+  group_by(Habitat, Group)%>%
+  summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
+            n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
+  mutate(se) %>%
+  group_by(Habitat) %>%
+  arrange(desc(Group)) %>%
+  mutate(
+    pos = cumsum(Percent_cover_habitat),
+    upper = pos + se/2,
+    lower = pos - se/2
+  ) %>%
+  ungroup() %>% 
+  filter(mean > 1)
+
+
+
+## Plot figure
+
+habitat_v3 <- ggplot(habitat_summary, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
+  geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
+  geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
+        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20))+
+  labs(y="Percent cover (%)", x="") + scale_fill_discrete(name = "", 
+                                                          labels = c("Coral", "Ecklonia radiata", "Macroalgae", "Other invertebrates",
+                                                                     "Rock & sand", "Sponges & tunicates", "Turf & CCA"))
+
+ggsave(habitat_v3, file=here::here("outputs", "FigureS8.jpeg"),
+       height = 16, width = 24, unit = "cm" )
+
 
 ######################## end of code #########################
