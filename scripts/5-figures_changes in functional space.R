@@ -5,7 +5,7 @@
 ##
 ##  * changes in space and time (only 2002, 2009 and 2018) - Figure 4
 ##
-##  * changes in time (all years) - Figure S6
+##  * changes in time (all years) - Figure S7
 ## 
 ## 
 ## Code by Paula Sgarlatta, Camille Magneville and Sebastien Villeger 
