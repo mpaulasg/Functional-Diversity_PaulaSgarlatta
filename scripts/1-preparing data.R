@@ -46,8 +46,15 @@ dim(kelp_sp_occ) # 69 assemblages * 101 species
 kelp_sp <- colnames(kelp_sp_occ) 
 length(kelp_sp) # 101 sp
 
+## This is to make a graph later
 
-############## => temporal data ready ####
+kelp_sp_data <- kelp_sp %>% 
+  as.data.frame() %>% 
+  rename(Species = ".") %>% 
+  mutate(data_1 = "temporal")
+
+
+#=> temporal data ready ####
 
 ## spatial survey data ####
 
@@ -71,11 +78,26 @@ spatial_sp_occ <- spatial_summary$asb_sp_occ
 spatial_sp <- colnames(spatial_sp_occ)
 length(spatial_sp) # 53
 
+## This is to make a graph later
+
+spatial_sp_data <- spatial_sp %>% 
+  as.data.frame() %>% 
+  rename(Species = ".") %>% 
+  mutate(data_2 = "spatial")
+
+
 ## names of species present in at least one dataset ####
 sum(spatial_sp %in% kelp_sp)# 35 species shared 
 
 species_allsurveys <- unique( c(kelp_sp ,  spatial_sp) ) 
 length(species_allsurveys) # 119 species
+
+
+## This is to make a graph later
+
+species_both <- kelp_sp_data %>% 
+  full_join(spatial_sp_data, by ="Species") %>% 
+  replace (is.na(.), "no")
 
 
 ## saving dataframes #####
@@ -91,6 +113,9 @@ save(spatial_sp_biom, file=here::here("data","spatial_sp_biom.RData") )
 save(spatial_summary, file=here::here("data","spatial_summary.RData") )
 
 save(species_allsurveys, file=here::here("data", "species_allsurveys.RData") )
+
+write.csv(species_both, file=here::here("data", "species_both.csv"), 
+           row.names = FALSE )
 
 
 ######### Species position in multidimensional space #############

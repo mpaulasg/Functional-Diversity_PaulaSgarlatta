@@ -8,7 +8,7 @@
 ##  * changes in time (all years) - Figure S6
 ## 
 ## 
-## Code by Camille Magneville, Paula Sgarlatta and Sebastien Villeger 
+## Code by Paula Sgarlatta, Camille Magneville and Sebastien Villeger 
 ##
 ################################################################################
 
@@ -22,6 +22,7 @@ library(here)
 library(patchwork)
 library(mFD)
 library(ggpubr)
+library(fishualize)
 
 # loading data
 
@@ -112,21 +113,59 @@ kelp_years_sp_occ <- rbind(
   y2010 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2010"),"Code"],],2,max ),
   y2011 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2011"),"Code"],],2,max ),
   y2013 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2013"),"Code"],],2,max ),
+  y2014 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2014"),"Code"],],2,max ),
   y2015 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2015"),"Code"],],2,max ),
   y2018 = apply(kelp_sp_maxN [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max ))  
 
-# background with axes range set + title
-ggplot_z <- background.plot(range_faxes = range_axes,
+# background with axes range set + title - different options for graphs
+
+ggplot_z_full <- background.plot(range_faxes = range_axes,
                             faxes_nm = c("PC1", "PC2"), 
                             color_bg = "grey95")
 
+ggplot_z_PC1 <-background.plot(range_faxes = range_axes,
+                               faxes_nm = c("PC1", ""), 
+                               color_bg = "grey95")
+
+
+ggplot_z_PC2 <-background.plot(range_faxes = range_axes,
+                               faxes_nm = c("", "PC2"), 
+                               color_bg = "grey95")
+
+ggplot_z_empty <-background.plot(range_faxes = range_axes,
+                               faxes_nm = c("", ""), 
+                               color_bg = "grey95")
+
 
 # convex hull of global species pool
-ggplot_z <- pool.plot(ggplot_bg = ggplot_z,
+
+ggplot_z_full <- pool.plot(ggplot_bg = ggplot_z_full,
                       sp_coord2D = sp_3D_coord_bg,
                       vertices_nD = pool_vert_nm,
                       plot_pool = FALSE,
                       color_ch = "NA", fill_ch = "white", alpha_ch = 1)
+
+ggplot_z_PC1 <- pool.plot(ggplot_bg = ggplot_z_PC1,
+                           sp_coord2D = sp_3D_coord_bg,
+                           vertices_nD = pool_vert_nm,
+                           plot_pool = FALSE,
+                           color_ch = "NA", fill_ch = "white", alpha_ch = 1)
+
+
+ggplot_z_PC2 <- pool.plot(ggplot_bg = ggplot_z_PC2,
+                          sp_coord2D = sp_3D_coord_bg,
+                          vertices_nD = pool_vert_nm,
+                          plot_pool = FALSE,
+                          color_ch = "NA", fill_ch = "white", alpha_ch = 1)
+
+ggplot_z_empty <- pool.plot(ggplot_bg = ggplot_z_empty,
+                          sp_coord2D = sp_3D_coord_bg,
+                          vertices_nD = pool_vert_nm,
+                          plot_pool = FALSE,
+                          color_ch = "NA", fill_ch = "white", alpha_ch = 1)
+
+
+
 
 sp_2d_coord <- sp_3D_coord[, c("PC1", "PC2")]
 
@@ -280,7 +319,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage 
-  ggplot_z_2002 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2002 <-fric.plot(ggplot_bg = ggplot_z_PC2, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -290,10 +329,10 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
     # add species names if needed:
@@ -305,7 +344,7 @@ for (z in (1:plot_nb)) {
                                ggplot2::aes_string(x = xy_z[1],
                                                    y = xy_z[2],
                                                    label = "label"),
-                               size = 3, colour= "black",
+                               size = 4, colour= "black",
                                fontface = "plain",
                                max.overlaps = Inf,
                                box.padding = grid::unit(2, 'lines'),
@@ -320,13 +359,36 @@ for (z in (1:plot_nb)) {
   # legend and title
   if (z==1) {
     ggplot_z_2002 <- ggplot_z_2002  + labs(title = "2002" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   # ggplot stored in list
   ggplot_2002[[z]] <- ggplot_z_2002
   
 }# end of z
 
+################### Now without species names 
+
+plot_sp_nm <- NULL
+
+# plot convex hull of assemblage 
+ggplot_2002_no_sp <-fric.plot(ggplot_bg = ggplot_z_PC2, 
+                          asb_sp_coord2D = asb_sp_coord2D_k,
+                          asb_vertices_nD = vertices_nD_k,
+                          plot_sp = TRUE,
+                          color_sp = thermal_aff_colors,
+                          fill_sp = c(asb1 = "white", asb2 = "white"),
+                          size_sp = c(asb1 = 1, asb2 = 1),
+                          shape_sp = c(asb1 = 16, asb2 = 16),
+                          color_vert = thermal_aff_colors,
+                          fill_vert = thermal_aff_colors,
+                          size_vert = c(asb1 = 1, asb2 = 1),
+                          shape_vert = c(asb1 = 16, asb2 = 16),
+                          alpha_ch = c(asb1 = 0, asb2 = 0),
+                          color_ch = c(asb1 = "seagreen4", asb2 =NA),
+                          fill_ch = c(asb1 = NA, asb2 = NA))
+
+ggplot_2002_no_sp <- ggplot_2002_no_sp  + labs(title = "2002" )+
+  theme(plot.title = element_text(size = 20, color = "seagreen4"))
 
 ################ 2003
 
@@ -399,11 +461,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi" ,
-                 "Chromis_hypsilepis" , "Orectolobus_maculatus",
-                 "Pseudocaranx_dentex","Scorpis_lineolata", 
-                 "Nelusetta_ayraud", "Siganus_fuscescens",
-                 "Thalassoma_lunare", "Thalassoma_lutescens" )
 
 ## define arguments values and prepare data for plotting:
 
@@ -435,12 +492,6 @@ if (is.na(range_faxes[1]) && is.na(range_faxes[2])) {
 # create a dataframe with species coordinates and option (vertices + label)
 sp_faxes_coord_plot <- data.frame(sp_faxes_coord, label = "")
 
-# if some species names to be plotted, adding a character variable to sp_faxes_coord:
-
-if (! is.null(plot_sp_nm)) {
-  sp_faxes_coord_plot[plot_sp_nm, "label"] <- plot_sp_nm
-}
-
 # get vertices of the convex hull of the species pool:
 vert_pool <- fd_details$pool_vert_nm
 
@@ -451,7 +502,7 @@ pool <- "pool"
 asb1 <- plot_asb_nm[1]
 nm_asb <- asb1
 asb2 <- plot_asb_nm[2]
-nm_asb <- paste(nm_asb, asb2, sep = "_")
+nm_asb <- paste(nm_asb, asb2, sep = ". ")
 
 sp_asb1 <- names(which(fd_details$asb_sp_occ[asb1, ] == 1))
 sp_asb2 <- names(which(fd_details$asb_sp_occ[asb2, ] == 1))
@@ -481,7 +532,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2003 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2003 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -491,45 +542,19 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2003 <- ggplot_z_2003  + labs(title = "2003" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2003 <- ggplot_z_2003 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2003 <- ggplot_z_2003  + labs(title = "2003" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
-  }
-  # ggplot stored in list
+     # ggplot stored in list
   ggplot_2003[[z]] <- ggplot_z_2003
   
 }# end of z
@@ -538,7 +563,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2004:
 
-kelp_2004_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2004_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2004") %>%
@@ -604,12 +629,7 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi" ,
-                 "Orectolobus_maculatus","Sarda_australis",
-                 "Scorpis_lineolata", "Trachinops_taeniatus" ,
-                 "Chaetodon_flavirostris", "Nelusetta_ayraud", 
-                 "Paracaesio_xanthura" ,"Sufflamen_chrysopterum",
-                 "Thalassoma_lunare", "Thalassoma_lutescens" )
+plot_sp_nm <- NULL
 
 ## define arguments values and prepare data for plotting:
 
@@ -641,12 +661,6 @@ if (is.na(range_faxes[1]) && is.na(range_faxes[2])) {
 # create a dataframe with species coordinates and option (vertices + label)
 sp_faxes_coord_plot <- data.frame(sp_faxes_coord, label = "")
 
-# if some species names to be plotted, adding a character variable to sp_faxes_coord:
-
-if (! is.null(plot_sp_nm)) {
-  sp_faxes_coord_plot[plot_sp_nm, "label"] <- plot_sp_nm
-}
-
 # get vertices of the convex hull of the species pool:
 vert_pool <- fd_details$pool_vert_nm
 
@@ -657,7 +671,7 @@ pool <- "pool"
 asb1 <- plot_asb_nm[1]
 nm_asb <- asb1
 asb2 <- plot_asb_nm[2]
-nm_asb <- paste(nm_asb, asb2, sep = "_")
+nm_asb <- paste(nm_asb, asb2, sep = ". ")
 
 sp_asb1 <- names(which(fd_details$asb_sp_occ[asb1, ] == 1))
 sp_asb2 <- names(which(fd_details$asb_sp_occ[asb2, ] == 1))
@@ -687,7 +701,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2004 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2004 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -697,44 +711,18 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2004 <- ggplot_z_2004  + labs(title = "2004" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2004 <- ggplot_z_2004 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2004 <- ggplot_z_2004  + labs(title = "2004" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
-  }
   # ggplot stored in list
   ggplot_2004[[z]] <- ggplot_z_2004
   
@@ -744,7 +732,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2005:
 
-kelp_2005_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2005_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2005") %>%
@@ -811,12 +799,7 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi" ,
-                 "Orectolobus_maculatus","Pseudocaranx_dentex",
-                 "Scorpis_lineolata", "Trachinops_taeniatus" ,
-                 "Lutjanus_russellii", "Nelusetta_ayraud", 
-                 "Paracaesio_xanthura" , "Siganus_fuscescens",
-                 "Thalassoma_lunare" )
+plot_sp_nm <- NULL
 
 ## define arguments values and prepare data for plotting:
 
@@ -848,12 +831,6 @@ if (is.na(range_faxes[1]) && is.na(range_faxes[2])) {
 # create a dataframe with species coordinates and option (vertices + label)
 sp_faxes_coord_plot <- data.frame(sp_faxes_coord, label = "")
 
-# if some species names to be plotted, adding a character variable to sp_faxes_coord:
-
-if (! is.null(plot_sp_nm)) {
-  sp_faxes_coord_plot[plot_sp_nm, "label"] <- plot_sp_nm
-}
-
 # get vertices of the convex hull of the species pool:
 vert_pool <- fd_details$pool_vert_nm
 
@@ -864,7 +841,7 @@ pool <- "pool"
 asb1 <- plot_asb_nm[1]
 nm_asb <- asb1
 asb2 <- plot_asb_nm[2]
-nm_asb <- paste(nm_asb, asb2, sep = "_")
+nm_asb <- paste(nm_asb, asb2, sep = ". ")
 
 sp_asb1 <- names(which(fd_details$asb_sp_occ[asb1, ] == 1))
 sp_asb2 <- names(which(fd_details$asb_sp_occ[asb2, ] == 1))
@@ -894,7 +871,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2005 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2005 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -904,44 +881,18 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2005 <- ggplot_z_2005  + labs(title = "2005" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2005 <- ggplot_z_2005 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2005 <- ggplot_z_2005  + labs(title = "2005" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
-  }
   # ggplot stored in list
   ggplot_2005[[z]] <- ggplot_z_2005
   
@@ -951,7 +902,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2006:
 
-kelp_2006_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2006_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2006") %>%
@@ -1017,14 +968,6 @@ vert_temp
 faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
-plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Brachaelurus_waddi" ,"Eupetrichthys_angustipes",
-                 "Orectolobus_halei", "Parapercis_stricticeps",
-                 "Pseudocaranx_dentex","Abudefduf_bengalensis",
-                 "Scorpis_lineolata", "Trachinops_taeniatus" ,
-                 "Abudefduf_bengalensis", "Nelusetta_ayraud", 
-                 "Seriola_rivoliana", "Siganus_fuscescens",
-                 "Stethojulis_interrupta", "Thalassoma_lunare" )
 
 ## define arguments values and prepare data for plotting:
 
@@ -1055,12 +998,6 @@ if (is.na(range_faxes[1]) && is.na(range_faxes[2])) {
 
 # create a dataframe with species coordinates and option (vertices + label)
 sp_faxes_coord_plot <- data.frame(sp_faxes_coord, label = "")
-
-# if some species names to be plotted, adding a character variable to sp_faxes_coord:
-
-if (! is.null(plot_sp_nm)) {
-  sp_faxes_coord_plot[plot_sp_nm, "label"] <- plot_sp_nm
-}
 
 # get vertices of the convex hull of the species pool:
 vert_pool <- fd_details$pool_vert_nm
@@ -1102,7 +1039,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2006 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2006 <-fric.plot(ggplot_bg = ggplot_z_PC2, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -1112,44 +1049,18 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2006 <- ggplot_z_2006  + labs(title = "2006" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2006 <- ggplot_z_2006 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2006 <- ggplot_z_2006  + labs(title = "2006" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
-  }
   # ggplot stored in list
   ggplot_2006[[z]] <- ggplot_z_2006
   
@@ -1159,7 +1070,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2007:
 
-kelp_2007_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2007_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2007") %>%
@@ -1226,13 +1137,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi" ,
-                 "Carcharias_taurus", "Kyphosus_sydneyanus",
-                 "Orectolobus_maculatus", "Scorpis_lineolata",
-                 "Trachinops_taeniatus","Aulostomus_chinensis",
-                 "Chaetodon_flavirostris", "Echeneis_naucrates",
-                 "Lutjanus_russellii", "Pterocaesio_digramma",
-                 "Thalassoma_lunare")
 
 ## define arguments values and prepare data for plotting:
 
@@ -1263,12 +1167,6 @@ if (is.na(range_faxes[1]) && is.na(range_faxes[2])) {
 
 # create a dataframe with species coordinates and option (vertices + label)
 sp_faxes_coord_plot <- data.frame(sp_faxes_coord, label = "")
-
-# if some species names to be plotted, adding a character variable to sp_faxes_coord:
-
-if (! is.null(plot_sp_nm)) {
-  sp_faxes_coord_plot[plot_sp_nm, "label"] <- plot_sp_nm
-}
 
 # get vertices of the convex hull of the species pool:
 vert_pool <- fd_details$pool_vert_nm
@@ -1310,7 +1208,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2007 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2007 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -1320,44 +1218,18 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2007 <- ggplot_z_2007  + labs(title = "2007" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2007 <- ggplot_z_2007 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2007 <- ggplot_z_2007  + labs(title = "2007" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
-  }
   # ggplot stored in list
   ggplot_2007[[z]] <- ggplot_z_2007
   
@@ -1367,7 +1239,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2008:
 
-kelp_2008_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2008_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2008") %>%
@@ -1434,11 +1306,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi" ,
-                 "Orectolobus_maculatus", "Scorpis_lineolata",
-                 "Seriola_dumerili","Trachinops_taeniatus",
-                 "Lutjanus_russellii", "Nelusetta_ayraud" ,
-                 "Synodus_jaculum")
 
 ## define arguments values and prepare data for plotting:
 
@@ -1516,7 +1383,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2008 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2008 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -1526,44 +1393,18 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "red", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2008 <- ggplot_z_2008  + labs(title = "2008" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2008 <- ggplot_z_2008 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2008 <- ggplot_z_2008  + labs(title = "2008" )+
-      theme(plot.title = element_text(size = 20, color = "red"))
-  }
   # ggplot stored in list
   ggplot_2008[[z]] <- ggplot_z_2008
   
@@ -1573,7 +1414,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2009:
 
-kelp_2009_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2009_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2009") %>%
@@ -1640,12 +1481,12 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Epinephelus_fasciatus", "Thalassoma_lunare",
-                 "Thalassoma_lutescens", "Brachaelurus_waddi",
-                 "Kyphosus_sydneyanus",
-                 "Parma_unifasciata",
-                 "Pseudocaranx_dentex", 
-                 "Trachinops_taeniatus")
+plot_sp_nm <- c( "E. fasciatus", "T. lunare",
+                 "T. lutescens", "B.waddi",
+                 "K. sydneyanus",
+                 "P. unifasciata",
+                 "P. dentex", 
+                 "T. taeniatus")
 
 ## define arguments values and prepare data for plotting:
 
@@ -1723,7 +1564,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2009 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2009 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -1733,16 +1574,16 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "#2C6BAA", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2009 <- ggplot_z_2009  + labs(title = "2009" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
   # add species names if needed:
@@ -1754,7 +1595,7 @@ for (z in (1:plot_nb)) {
                                ggplot2::aes_string(x = xy_z[1],
                                                    y = xy_z[2],
                                                    label = "label"),
-                               size = 3, colour= "black",
+                               size = 4, colour= "black",
                                fontface = "plain",
                                max.overlaps = Inf,
                                box.padding = grid::unit(2, 'lines'),
@@ -1764,23 +1605,42 @@ for (z in (1:plot_nb)) {
                                segment.color = "black")
   }
   
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2009 <- ggplot_z_2009  + labs(title = "2009" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
-  }
   # ggplot stored in list
   ggplot_2009[[z]] <- ggplot_z_2009
   
 }# end of z
 
+######### Now without species names 
+
+plot_sp_nm <- NULL
+
+# plot convex hull of assemblage but not species
+ggplot_2009_no_sp <-fric.plot(ggplot_bg = ggplot_z_empty, 
+                          asb_sp_coord2D = asb_sp_coord2D_k,
+                          asb_vertices_nD = vertices_nD_k,
+                          plot_sp = TRUE,
+                          color_sp = thermal_aff_colors,
+                          fill_sp = c(asb1 = "white", asb2 = "white"),
+                          size_sp = c(asb1 = 1, asb2 = 1),
+                          shape_sp = c(asb1 = 16, asb2 = 16),
+                          color_vert = thermal_aff_colors,
+                          fill_vert = thermal_aff_colors,
+                          size_vert = c(asb1 = 1, asb2 = 1),
+                          shape_vert = c(asb1 = 16, asb2 = 16),
+                          alpha_ch = c(asb1 = 0, asb2 = 0),
+                          color_ch = c(asb1 = "seagreen4", asb2 =NA),
+                          fill_ch = c(asb1 = NA, asb2 = NA))
+
+# legend and title
+
+ggplot_2009_no_sp <- ggplot_2009_no_sp  + labs(title = "2009" )+
+    theme(plot.title = element_text(size = 20, color = "seagreen4"))
+
 ################ 2010
 
 # # Retrieve species coordinates matrix for year 2010:
 
-kelp_2010_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2010_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2010") %>%
@@ -1847,12 +1707,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi",
-                 "Orectolobus_maculatus","Parapercis_ramsayi",
-                 "Scorpis_lineolata","Seriola_lalandi",
-                 "Trachinops_taeniatus", "Aetobatus_narinari" ,
-                 "Labroides_dimidiatus", "Paracaesio_xanthura",
-                 "Platax_teira")
 
 ## define arguments values and prepare data for plotting:
 
@@ -1930,7 +1784,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2010 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2010 <-fric.plot(ggplot_bg = ggplot_z_full, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -1940,43 +1794,16 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "#2C6BAA", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2010 <- ggplot_z_2010  + labs(title = "2010" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
-  }
-  
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2010 <- ggplot_z_2010 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2010 <- ggplot_z_2010  + labs(title = "2010" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   # ggplot stored in list
   ggplot_2010[[z]] <- ggplot_z_2010
@@ -1987,7 +1814,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2011:
 
-kelp_2011_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2011_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2011") %>%
@@ -2037,7 +1864,6 @@ sp_faxes_coord <- fd_details$sp_faxes_coord
 ## get number of dimensions in input:
 nb_dim <- ncol(sp_faxes_coord)
 
-
 #Check vertices to choose which species to plot
 
 # vertices in trop:
@@ -2054,11 +1880,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi",
-                 "Kyphosus_sydneyanus", "Orectolobus_halei",
-                 "Pseudocaranx_dentex","Scorpis_lineolata",
-                 "Trachinops_taeniatus", "Aulostomus_chinensis" ,
-                 "Thalassoma_lunare", "Thalassoma_lutescens")
 
 ## define arguments values and prepare data for plotting:
 
@@ -2136,7 +1957,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2011 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2011 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -2146,43 +1967,16 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "#2C6BAA", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2011 <- ggplot_z_2011  + labs(title = "2011" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
-  }
-  
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2011 <- ggplot_z_2011 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2011 <- ggplot_z_2011  + labs(title = "2011" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   # ggplot stored in list
   ggplot_2011[[z]] <- ggplot_z_2011
@@ -2193,7 +1987,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2013:
 
-kelp_2013_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2013_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2013") %>%
@@ -2260,12 +2054,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi",
-                 "Orectolobus_halei","Parapercis_ramsayi",
-                 "Scorpis_lineolata","Seriola_hippos",
-                 "Trachinops_taeniatus", 
-                "Labroides_dimidiatus",
-                 "Lutjanus_russellii" , "Siganus_fuscescens")
 
 ## define arguments values and prepare data for plotting:
 
@@ -2343,7 +2131,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2013 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2013 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -2353,46 +2141,194 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "#2C6BAA", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2013 <- ggplot_z_2013  + labs(title = "2013" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
-  }
-  
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2013 <- ggplot_z_2013 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2013 <- ggplot_z_2013  + labs(title = "2013" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   # ggplot stored in list
   ggplot_2013[[z]] <- ggplot_z_2013
+  
+}# end of z
+
+
+############# 2014
+
+# # Retrieve species coordinates matrix for year 2014:
+
+kelp_2014_occ <- kelp_years_sp_occ %>% 
+  as.data.frame() %>%
+  rownames_to_column("Sites") %>%
+  filter(Sites == "y2014") %>%
+  column_to_rownames("Sites") %>%
+  as.matrix()
+
+kelp_2014_occ_2 <- kelp_2014_occ %>% 
+  as.data.frame() %>% 
+  gather(Species, Abundance, 1:101)
+
+add_thermal <- left_join(kelp_2014_occ_2, thermal, by= "Species")
+
+kelp_2014_occ_thermal <- add_thermal %>% 
+  spread(Species, Abundance, fill=0) %>% 
+  column_to_rownames("thermal_label") %>% 
+  as.matrix()
+
+sp_filter_2014 <- mFD::sp.filter(asb_nm          = c("y2014"), 
+                                 sp_faxes_coord = sp_3D_coord, 
+                                 asb_sp_w       = kelp_years_sp_occ)
+
+sp_2d_coord_final_2014 <- sp_filter_2014$`species coordinates`[, c("PC1", "PC2", "PC3")]
+
+sp_thermal_2014 <- sp_2d_coord_final_2014 %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Species") %>% 
+  left_join(add_thermal, by="Species")
+
+## Compute FRic values #### 
+
+Fric_2014 <- alpha.fd.multidim(sp_faxes_coord = sp_2d_coord,
+                               asb_sp_w = kelp_2014_occ_thermal,
+                               ind_vect = c("fric"),
+                               scaling = TRUE,
+                               details_returned = TRUE)
+
+
+## retrieve names of main input:
+asb_fd_ind <- Fric_2014$functional_diversity_indices
+fd_details <- Fric_2014$details
+
+### Prepare data for plotting:
+
+## get coordinates of species:
+sp_faxes_coord <- fd_details$sp_faxes_coord
+
+## get number of dimensions in input:
+nb_dim <- ncol(sp_faxes_coord)
+
+
+#Check vertices to choose which species to plot
+
+# vertices in trop:
+vert_trop <- Fric_2014$details$asb_vert_nm$tropical
+vert_trop
+
+# vertices in temp:
+vert_temp <- Fric_2014$details$asb_vert_nm$temperate
+vert_temp
+
+## Define arguments
+
+faxes               = NULL
+faxes_nm            = NULL
+range_faxes         = c(NA, NA)
+plot_asb_nm <- c("temperate", "tropical")
+
+## define arguments values and prepare data for plotting:
+
+# give faxes identity if faxes set to NULL:
+if (is.null(faxes)) {
+  faxes <- colnames(sp_faxes_coord)[1:min(c(4, nb_dim))]
+}
+
+# give faxes names if faxes set to NULL:
+if (is.null(faxes_nm)) {
+  faxes_nm <- faxes
+}
+names(faxes_nm) <- faxes
+
+# get number of axes:
+nb_faxes <- length(faxes)
+
+# get combinations of axes on plot:
+axes_plot <- utils::combn(faxes, 2)
+plot_nb   <- ncol(axes_plot)
+
+# set range of axes if c(NA, NA):
+if (is.na(range_faxes[1]) && is.na(range_faxes[2])) {
+  range_sp_coord  <- range(sp_faxes_coord)
+  range_faxes <- range_sp_coord +
+    c(-1, 1) * (range_sp_coord[2] - range_sp_coord[1]) * 0.1
+}
+
+# create a dataframe with species coordinates and option (vertices + label)
+sp_faxes_coord_plot <- data.frame(sp_faxes_coord, label = "")
+
+# if some species names to be plotted, adding a character variable to sp_faxes_coord:
+
+if (! is.null(plot_sp_nm)) {
+  sp_faxes_coord_plot[plot_sp_nm, "label"] <- plot_sp_nm
+}
+
+# get vertices of the convex hull of the species pool:
+vert_pool <- fd_details$pool_vert_nm
+
+# retrieve names and weights of species present in each assemblage:
+
+# get names of assemblages:
+pool <- "pool"
+asb1 <- plot_asb_nm[1]
+nm_asb <- asb1
+asb2 <- plot_asb_nm[2]
+nm_asb <- paste(nm_asb, asb2, sep = "_")
+
+sp_asb1 <- names(which(fd_details$asb_sp_occ[asb1, ] == 1))
+sp_asb2 <- names(which(fd_details$asb_sp_occ[asb2, ] == 1))
+
+## plotting  ####
+
+# list to store ggplot
+ggplot_2014 <- list()
+
+# pairs of axes
+
+for (z in (1:plot_nb)) {
+  
+  # names of axes
+  xy_z <- axes_plot[1:2, z]
+  
+  # get species coordinates along the 2 axes:
+  sp_coord_xy <- as.matrix(sp_faxes_coord_plot[, xy_z])
+  colnames(sp_coord_xy) <- c("x", "y")
+  
+  # list with dataframes for plot:
+  asb_sp_coord2D_k <- list()
+  asb_sp_coord2D_k[["asb1"]] <- sp_coord_xy[sp_asb1, ]
+  vertices_nD_k <- list()
+  vertices_nD_k[["asb1"]] <- fd_details$asb_vert_nm[[asb1]]
+  asb_sp_coord2D_k[["asb2"]] <- sp_coord_xy[sp_asb2, ]
+  vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
+  
+  # plot convex hull of assemblage but not species
+  ggplot_z_2014 <-fric.plot(ggplot_bg = ggplot_z_PC1, 
+                            asb_sp_coord2D = asb_sp_coord2D_k,
+                            asb_vertices_nD = vertices_nD_k,
+                            plot_sp = TRUE,
+                            color_sp = thermal_aff_colors,
+                            fill_sp = c(asb1 = "white", asb2 = "white"),
+                            size_sp = c(asb1 = 1, asb2 = 1),
+                            shape_sp = c(asb1 = 16, asb2 = 16),
+                            color_vert = thermal_aff_colors,
+                            fill_vert = thermal_aff_colors,
+                            size_vert = c(asb1 = 1, asb2 = 1),
+                            shape_vert = c(asb1 = 16, asb2 = 16),
+                            alpha_ch = c(asb1 = 0, asb2 = 0),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
+                            fill_ch = c(asb1 = NA, asb2 = NA))
+  
+  # legend and title
+  if (z==1) {
+    ggplot_z_2014 <- ggplot_z_2014  + labs(title = "2014" )+
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
+  }
+  # ggplot stored in list
+  ggplot_2014[[z]] <- ggplot_z_2014
   
 }# end of z
 
@@ -2400,7 +2336,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2015:
 
-kelp_2015_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2015_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2015") %>%
@@ -2467,13 +2403,6 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi",
-                 "Orectolobus_halei","Parapercis_stricticeps",
-                 "Scorpis_lineolata","Seriola_dumerili",
-                 "Trachinops_taeniatus", 
-                 "Labroides_dimidiatus","Lethrinus_nebulosus",
-                 "Lutjanus_russellii" , "Plectorhinchus_flavomaculatus",
-                 "Pterocaesio_digramma")
 
 ## define arguments values and prepare data for plotting:
 
@@ -2551,7 +2480,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2015 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2015 <-fric.plot(ggplot_bg = ggplot_z_full, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -2561,43 +2490,16 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "#2C6BAA", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2015 <- ggplot_z_2015  + labs(title = "2015" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
-  }
-  
-  # add species names if needed:
-  if (! is.null(plot_sp_nm)) {
-    x <- NULL
-    y <- NULL
-    ggplot_z_2015 <- ggplot_z_2015 +
-      ggrepel::geom_text_repel(data = sp_faxes_coord_plot,
-                               ggplot2::aes_string(x = xy_z[1],
-                                                   y = xy_z[2],
-                                                   label = "label"),
-                               size = 3, colour= "black",
-                               fontface = "plain",
-                               max.overlaps = Inf,
-                               box.padding = grid::unit(2, 'lines'),
-                               force = 5,
-                               arrow = grid::arrow(length = grid::unit(0.02,
-                                                                       'npc')),
-                               segment.color = "black")
-  }
-  
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2015 <- ggplot_z_2015  + labs(title = "2015" )+
-      theme(plot.title = element_text(size = 20, color = "#2C6BAA"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   # ggplot stored in list
   ggplot_2015[[z]] <- ggplot_z_2015
@@ -2608,7 +2510,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for year 2018:
 
-kelp_2018_occ <- kelp_years_sp_occ %>% # I'm sure there is an easier way to do this...
+kelp_2018_occ <- kelp_years_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "y2018") %>%
@@ -2675,11 +2577,11 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Brachaelurus_waddi",
-                 "Orectolobus_maculatus","Parapercis_stricticeps",
-                 "Lutjanus_russellii" , "Paracaesio_xanthura",
-                 "Stethojulis_interrupta",
-                 "Thalassoma_lunare")
+plot_sp_nm <- c( "A. maculatus", "B. waddi",
+                 "O. maculatus","P. stricticeps",
+                 "L. russellii" , "P. xanthura",
+                 "S. interrupta",
+                 "T. lunare")
 
 ## define arguments values and prepare data for plotting:
 
@@ -2757,7 +2659,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_2018 <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_2018 <-fric.plot(ggplot_bg = ggplot_z_empty, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -2767,16 +2669,16 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
-                            color_ch = c(asb1 = "#00C19A", asb2 =NA),
+                            color_ch = c(asb1 = "seagreen4", asb2 =NA),
                             fill_ch = c(asb1 = NA, asb2 = NA))
   
   # legend and title
   if (z==1) {
     ggplot_z_2018 <- ggplot_z_2018  + labs(title = "2018" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
+      theme(plot.title = element_text(size = 20, color = "seagreen4"))
   }
   
   # add species names if needed:
@@ -2788,7 +2690,7 @@ for (z in (1:plot_nb)) {
                                ggplot2::aes_string(x = xy_z[1],
                                                    y = xy_z[2],
                                                    label = "label"),
-                               size = 3, colour= "black",
+                               size = 4, colour= "black",
                                fontface = "plain",
                                max.overlaps = Inf,
                                box.padding = grid::unit(2, 'lines'),
@@ -2798,17 +2700,37 @@ for (z in (1:plot_nb)) {
                                segment.color = "black")
   }
   
-  
-  
-  # legend and title
-  if (z==1) {
-    ggplot_z_2018 <- ggplot_z_2018  + labs(title = "2018" )+
-      theme(plot.title = element_text(size = 20, color = "#00C19A"))
-  }
-  # ggplot stored in list
+# ggplot stored in list
   ggplot_2018[[z]] <- ggplot_z_2018
   
 }# end of z
+
+
+############## Now without species names
+
+plot_sp_nm <- NULL
+
+# plot convex hull of assemblage but not species
+ggplot_2018_no_sp <-fric.plot(ggplot_bg = ggplot_z_PC1, 
+                          asb_sp_coord2D = asb_sp_coord2D_k,
+                          asb_vertices_nD = vertices_nD_k,
+                          plot_sp = TRUE,
+                          color_sp = thermal_aff_colors,
+                          fill_sp = c(asb1 = "white", asb2 = "white"),
+                          size_sp = c(asb1 = 1, asb2 = 1),
+                          shape_sp = c(asb1 = 16, asb2 = 16),
+                          color_vert = thermal_aff_colors,
+                          fill_vert = thermal_aff_colors,
+                          size_vert = c(asb1 = 1, asb2 = 1),
+                          shape_vert = c(asb1 = 16, asb2 = 16),
+                          alpha_ch = c(asb1 = 0, asb2 = 0),
+                          color_ch = c(asb1 = "seagreen4", asb2 =NA),
+                          fill_ch = c(asb1 = NA, asb2 = NA))
+
+# legend and title
+
+ggplot_2018_no_sp <- ggplot_2018_no_sp  + labs(title = "2018" )+
+    theme(plot.title = element_text(size = 20, color = "seagreen4"))
 
 ######################## SPATIAL ####
 
@@ -2823,7 +2745,7 @@ hab_sp_occ <- rbind(
 
 # # Retrieve species coordinates matrix for inshore:
 
-inshore_occ <- hab_sp_occ %>% # I'm sure there is an easier way to do this...
+inshore_occ <- hab_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "Inshore") %>%
@@ -2876,7 +2798,6 @@ sp_faxes_coord <- fd_details$sp_faxes_coord
 ## get number of dimensions in input:
 nb_dim <- ncol(sp_faxes_coord)
 
-
 #Check vertices to choose which species to plot
 
 # vertices 
@@ -2889,9 +2810,9 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("Inshore")
-plot_sp_nm <- c( "Austrolabrus_maculatus", "Achoerodus_viridis" ,
-                 "Girella_elevata","Pempheris_affinis",
-                 "Parma_oligolepis")
+plot_sp_nm <- c( "A. maculatus", "A. viridis" ,
+                 "G. elevata","P. affinis",
+                 "P. oligolepis")
 
 ## define arguments values and prepare data for plotting:
 
@@ -2964,7 +2885,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb1"]] <- fd_details$asb_vert_nm[[asb1]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_inshore <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_inshore <-fric.plot(ggplot_bg = ggplot_z_full, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -2974,7 +2895,7 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16),
                             color_vert = c(asb1 = "#2C6BAA"),
                             fill_vert = c(asb1 = "#2C6BAA"),
-                            size_vert = c(asb1 = 4),
+                            size_vert = c(asb1 = 1),
                             shape_vert = c(asb1 = 16),
                             alpha_ch = c(asb1 = 0),
                             color_ch = c(asb1 = "#2C6BAA"),
@@ -2989,7 +2910,7 @@ for (z in (1:plot_nb)) {
                                ggplot2::aes_string(x = xy_z[1],
                                                    y = xy_z[2],
                                                    label = "label"),
-                               size = 3, colour= "black",
+                               size = 4, colour= "black",
                                fontface = "plain",
                                max.overlaps = Inf,
                                box.padding = grid::unit(2, 'lines'),
@@ -3016,7 +2937,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for midshelf:
 
-midshelf_occ <- hab_sp_occ %>% # I'm sure there is an easier way to do this...
+midshelf_occ <- hab_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "Midshelf") %>%
@@ -3085,11 +3006,11 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c("Aulostomus_chinensis",  "Halichoeres_margaritaceus", 
-                "Siganus_fuscescens", 
-                "Thalassoma_lunare","Thalassoma_lutescens",
-                "Achoerodus_viridis", "Kyphosus_sydneyanus",
-                "Parma_unifasciata")
+plot_sp_nm <- c("A. chinensis",  "H. margaritaceus", 
+                "S. fuscescens", 
+                "T. lunare","T. lutescens",
+                "A. viridis", "K. sydneyanus",
+                "P. unifasciata")
 
 ## define arguments values and prepare data for plotting:
 
@@ -3169,7 +3090,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_midshelf <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_midshelf <-fric.plot(ggplot_bg = ggplot_z_PC1, 
                                 asb_sp_coord2D = asb_sp_coord2D_k,
                                 asb_vertices_nD = vertices_nD_k,
                                 plot_sp = TRUE,
@@ -3179,7 +3100,7 @@ for (z in (1:plot_nb)) {
                                 shape_sp = c(asb1 = 16, asb2 = 16),
                                 color_vert = thermal_aff_colors,
                                 fill_vert = thermal_aff_colors,
-                                size_vert = c(asb1 = 4, asb2 = 4),
+                                size_vert = c(asb1 = 1, asb2 = 1),
                                 shape_vert = c(asb1 = 16, asb2 = 16),
                                 alpha_ch = c(asb1 = 0, asb2 = 0),
                                 color_ch = c(asb1 = "lightsalmon1", asb2 =NA),
@@ -3195,7 +3116,7 @@ for (z in (1:plot_nb)) {
                                ggplot2::aes_string(x = xy_z[1],
                                                    y = xy_z[2],
                                                    label = "label"),
-                               size = 3, colour= "black",
+                               size = 4, colour= "black",
                                fontface = "plain",
                                max.overlaps = Inf,
                                box.padding = grid::unit(2, 'lines'),
@@ -3222,7 +3143,7 @@ for (z in (1:plot_nb)) {
 
 # # Retrieve species coordinates matrix for midshelf:
 
-offshore_occ <- hab_sp_occ %>% # I'm sure there is an easier way to do this...
+offshore_occ <- hab_sp_occ %>% 
   as.data.frame() %>%
   rownames_to_column("Sites") %>%
   filter(Sites == "Offshore") %>%
@@ -3291,11 +3212,11 @@ faxes               = NULL
 faxes_nm            = NULL
 range_faxes         = c(NA, NA)
 plot_asb_nm <- c("temperate", "tropical")
-plot_sp_nm <- c("Caesio_caerulaurea",
-                "Halichoeres_margaritaceus",
-                "Labroides_dimidiatus", "Mulloidichthys_vanicolensis", 
-                "Naso_unicornis", "Plectorhinchus_flavomaculatus", "Paracanthurus_hepatus", 
-                "Achoerodus_viridis")
+plot_sp_nm <- c("C. caerulaurea",
+                "H. margaritaceus",
+                "L. dimidiatus", "M. vanicolensis", 
+                "N. unicornis", "P. flavomaculatus", "P. hepatus", 
+                "A. viridis")
 
 ## define arguments values and prepare data for plotting:
 
@@ -3374,7 +3295,7 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
   
   # plot convex hull of assemblage but not species
-  ggplot_z_offshore <-fric.plot(ggplot_bg = ggplot_z, 
+  ggplot_z_offshore <-fric.plot(ggplot_bg = ggplot_z_PC1, 
                             asb_sp_coord2D = asb_sp_coord2D_k,
                             asb_vertices_nD = vertices_nD_k,
                             plot_sp = TRUE,
@@ -3384,7 +3305,7 @@ for (z in (1:plot_nb)) {
                             shape_sp = c(asb1 = 16, asb2 = 16),
                             color_vert = thermal_aff_colors,
                             fill_vert = thermal_aff_colors,
-                            size_vert = c(asb1 = 4, asb2 = 4),
+                            size_vert = c(asb1 = 1, asb2 = 1),
                             shape_vert = c(asb1 = 16, asb2 = 16),
                             alpha_ch = c(asb1 = 0, asb2 = 0),
                             color_ch = c(asb1 = "firebrick3", asb2 =NA),
@@ -3400,7 +3321,7 @@ for (z in (1:plot_nb)) {
                                ggplot2::aes_string(x = xy_z[1],
                                                    y = xy_z[2],
                                                    label = "label"),
-                               size = 3, colour= "black",
+                               size = 4, colour= "black",
                                fontface = "plain",
                                max.overlaps = Inf,
                                box.padding = grid::unit(2, 'lines'),
@@ -3415,109 +3336,30 @@ for (z in (1:plot_nb)) {
   # legend and title
   if (z==1) {
     ggplot_z_offshore <- ggplot_z_offshore  + labs(title = "Offshore" )+
-      theme(plot.title = element_text(size = 20, color = "firebrick3"))
+      theme(plot.title = element_text(size = 20, color = "firebrick3")) +
+      add_fishape(family = "Acanthuridae",
+                  option = "Naso_unicornis",
+                  xmin =  0.25 ,xmax = 0.35, ymin = -0.20, ymax = -0.35,
+                  fill = "black",
+                  alpha = 1)
   }
   # ggplot stored in list
   ggplot_offshore[[z]] <- ggplot_z_offshore
-  
 }# end of z
 
-## merging all plots into a single figure and saving as png ####
+## merging all plots into the different figures and saving as jpeg ####
 
-figure9A <- (ggplot_2002[[1]] + ggplot_2009[[1]] + ggplot_2018[[1]])
-               
-figure9B <-(ggplot_inshore[[1]] + ggplot_midshelf[[1]] + ggplot_offshore[[1]])
+figure4 <- (ggplot_2002[[1]] + ggplot_2009[[1]] + ggplot_2018[[1]])/(ggplot_inshore[[1]] + ggplot_midshelf[[1]] + ggplot_offshore[[1]])
 
-figure9 <- (figure9A/figure9B) ## too much 
+ggsave(figure4, file=here::here("outputs", "Figure4.jpeg"),
+       height = 25, width = 45, unit = "cm" )
 
+figure7s_a <-  (ggplot_2002_no_sp | ggplot_2003[[1]] | ggplot_2004[[1]] |  ggplot_2005[[1]])/
+              (ggplot_2006[[1]] |  ggplot_2007[[1]] | ggplot_2008[[1]] | ggplot_2009_no_sp )/
+  (ggplot_2010[[1]] | ggplot_2011[[1]] | ggplot_2013[[1]] | ggplot_2014[[1]])/
+ (ggplot_2015[[1]] |  ggplot_2018_no_sp)
 
-ggsave(figure9A, file=here::here("outputs/", "using biomass-maxN", "Figure9A.png"),
-       height = 16, width = 30, unit = "cm" )
-
-ggsave(figure9B, file=here::here("outputs/", "using biomass-maxN", "Figure9B.png"),
-       height = 16, width = 30, unit = "cm" )
-
-ggsave(figure9, file=here::here("outputs/", "using biomass-maxN", "Figure9_all.png"),
-       height = 25, width = 30, unit = "cm" )
-
-
-figure4S <- ( ggplot_2002[[1]] + ggplot_2003[[1]] +  ggplot_2004[[1]] +  ggplot_2005[[1]] + ggplot_2006[[1]] +  ggplot_2007[[1]] ) /
-  ( ggplot_2008[[1]] + ggplot_2009[[1]] +  ggplot_2011[[1]] + ggplot_2013[[1]] + ggplot_2015[[1]] +  ggplot_2018[[1]] )
-
-ggsave(figure4S , file=here::here("outputs/", "using biomass-maxN", "Figure4s_biomass.png"),
+ggsave(figure7s_a , file=here::here("outputs", "Figure7s.jpeg"),
        height = 30, width = 30, unit = "cm" )
 
-#################################################################################################################
-
-############ Without tropical/temperate
-## settings ####
-
-## temporal kelp ####
-
-# computing occurrences of species in each year (we will use 2002-2010-2018)
-
-kelp_years_sp_occ <- rbind( 
-  y2002 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2002"),"Code"],],2,max ),
-  y2010 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2010"),"Code"],],2,max ),
-  y2018 = apply(kelp_sp_occ [kelp_metadata[which(kelp_metadata$Year=="2018"),"Code"],],2,max ))  
-
-
-sp_filter_2002 <- mFD::sp.filter(asb_nm          = c("y2002"), 
-                                 sp_faxes_coord = sp_3D_coord, 
-                                 asb_sp_w       = kelp_years_sp_occ)
-
-sp_faxes_coord_3D <- sp_filter_2002$`species coordinates`[, c("PC1", "PC2")]
-
-# Set faxes limits:
-# set range of axes if c(NA, NA):
-range_sp_coord  <- range(sp_3D_coord)
-range_faxes_lim <- range_sp_coord + c(-1, 1)*(range_sp_coord[2] - 
-                                                range_sp_coord[1]) * 0.05
-
-# coordinates of all species ----
-pool_coord<-spatial_fd$details$sp_faxes_coord[,c("PC1", "PC2")] 
-
-# vertices of all fe in 4D ----
-pool_vert_nm<-spatial_fd$details$pool_vert_nm
-
-# Retrieve the background plot:
-ggplot_bg <- mFD::background.plot(
-  range_faxes = range_faxes_lim, 
-  faxes_nm    = c("PC 1", "PC 2"), 
-  color_bg    = "grey90") 
-
-
-# convex hull of all species pool
-
-ggplot_z<-pool.plot(ggplot_bg=ggplot_bg,
-                    sp_coord2D=pool_coord,
-                    vertices_nD=pool_vert_nm,
-                    plot_pool=FALSE,
-                    color_ch=NA, fill_ch="white", alpha_ch=1)
-
-# Retrieve vertices names:
-vert_nm <- vertices(sp_faxes_coord_3D, 
-                    order_2D = TRUE, check_input = TRUE)
-
-# compute FRic for kelp 2002  ---
-
-ggplot_fric <- mFD::fric.plot(
-  ggplot_bg       = ggplot_z,
-  asb_sp_coord2D  = list(y2002 = sp_faxes_coord_3D),
-  asb_vertices_nD = list(y2002 = vert_nm),
-  plot_sp         = TRUE,
-  color_ch        = c("y2002" = "red"), 
-  fill_ch         = c("y2002" = "white"), 
-  alpha_ch        = c("y2002" = 0.3),
-  size_sp = c("y2002" = 1),
-  shape_sp = c("y2002" = 16),
-  color_sp = c("y2002" = "red"),
-  fill_sp = c("y2002" = "red"),
-  size_vert = c("y2002" = 1),
-  color_vert = c("y2002" = "red"),
-  fill_vert = c("y2002" = "red"),
-  shape_vert = c("y2002" = 16))
-ggplot_fric
-
-ggsave(ggplot_fric, file=here::here("outputs/", "kelp_2002.png"),
-       height = 16, width = 24, unit = "cm" )
+################################### end of code ##########################################
