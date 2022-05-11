@@ -64,8 +64,10 @@ Aus_coast <- subset(Aus, FEAT_CODE != "sea")
 Aus_crop <- crop(Aus_coast, extent(Sites.grid))
 
 
-color_data <- c(Inshore= "#2C6BAA", Midshelf= "lightsalmon1", 
-                Offshore="firebrick3", Kelp= "seagreen4")
+color_data <- c(Inshore= "#482677FF", Midshelf= "#FD6A02", 
+                Offshore="#FDE725FF", Kelp= "seagreen4")
+
+
 
 shape_data <- c(Inshore= 19, Midshelf= 19, 
                 Offshore=19, Kelp= 17)
@@ -73,7 +75,7 @@ shape_data <- c(Inshore= 19, Midshelf= 19,
 sites_plot <- ggplot()+ theme_classic() + 
   geom_polygon(data = Aus_crop, aes(x=long, y=lat, group=group), fill="grey", colour="black") +
   coord_equal(ratio = 1)+
-  geom_point(data=sites, aes(x=Longitude, y=Latitude, colour= Habitat, 
+  geom_point(data=sites, aes(x=Longitude, y=Latitude, colour = Habitat,
                              shape=Habitat, size=2)) +
   scale_color_manual(name="Habitat", values=color_data) +
   scale_shape_manual(name="Habitat", values=shape_data)+
@@ -105,7 +107,7 @@ Aus <- ggplot(data = ozmap()) +
 ###Place both figures together
 
 map <- ggdraw(sites_plot) +
-  draw_plot(Aus, x = 0.15, y = 0.6, width = 0.4, height = 0.4)
+  draw_plot(Aus, x = 0.10, y = 0.65, width = 0.4, height = 0.4)
 
 ggsave(map, file=here::here("outputs", "Figure1.jpeg"),  
        height = 20, width = 18, unit = "cm")
@@ -157,7 +159,7 @@ spatial_toplot <- spatial_all %>%
 spatial_toplot
 
 # color code for the 3 habitats
-hab_colors <- c(Inshore= "#2C6BAA", Midshelf= "lightsalmon1", Offshore="firebrick3")
+hab_colors <- c(Inshore= "#482677FF", Midshelf= "#FD6A02", Offshore="#FDE725FF")
 
 ## Fig. 2 - Species richness and functional richness
 

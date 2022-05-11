@@ -97,7 +97,7 @@ write.csv(mAD_values, file=here::here("outputs", "mAD_values.csv"),
 species_both <- read.csv(here::here("data", "species_both.csv")) %>% 
   mutate(type_data= if_else(data_1 == "temporal" & data_2 == "spatial", "both",
                             if_else(data_1 == "temporal" & data_2 == "no", "temporal","spatial"))) %>% 
-  select(-data_1, -data_2)
+  dplyr::select(-data_1, -data_2)
 
 
 # Add data type to sp_faxes_coord
@@ -170,7 +170,7 @@ Fric <- alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
 
 # color code for data type
 
-data_colors <- c(spatial = "lightsalmon1", temporal = "seagreen4", both = "#2C6BAA")
+data_colors <- c(spatial = "#FDE725FF", temporal = "seagreen4", both = "#80471C")
 
 
 ## plotting  ####
@@ -235,7 +235,7 @@ data_colors <- c(spatial = "lightsalmon1", temporal = "seagreen4", both = "#2C6B
 ## Save figure
   
 ggsave(ggplot_z2, file=here::here("outputs",  "Figure1b.jpeg"),
-       height = 16, width = 30, unit = "cm" )
+       height = 16, width = 16, unit = "cm" )
 
 
 ###################### Functional space with thermal affinity information
@@ -318,7 +318,7 @@ Fric <- alpha.fd.multidim(sp_faxes_coord = sp_3D_coord,
 
 # color code for thermal affinity
 
-thermal_aff_colors <- c(tropical = "lightsalmon1", temperate = "#2C6BAA")
+thermal_aff_colors <- c(tropical = "firebrick1", temperate = "#2C6BAA")
 
 
 ## plotting  ####
@@ -409,6 +409,6 @@ figure3 <- ggplot_pc [[1]]
 
 
 ggsave(figure3, file=here::here("outputs",  "Figure3.jpeg"),
-       height = 16, width = 30, unit = "cm" )
+       height = 16, width = 16, unit = "cm" )
 
 ############################## end of code ############################################
