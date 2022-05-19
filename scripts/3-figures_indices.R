@@ -57,7 +57,7 @@ Sites.grid <- expand.grid(lon_bound = c(geo_bounds[1], geo_bounds[3]),
 
 coordinates(Sites.grid) <- ~ lon_bound + lat_bound
 
-Aus <- readOGR(dsn = "C:/Users/z5179758/Google Drive/PhD/GitHub/Functional-Diversity_PaulaSgarlatta/data/raw_data/61395_shp/australia",layer = "cstauscd_r")
+Aus <- readOGR(dsn = "C:/Users/Paula Sgarlatta/Google Drive/PhD/GitHub/Functional-Diversity_PaulaSgarlatta/data/raw_data/61395_shp/australia",layer = "cstauscd_r") 
 
 Aus_coast <- subset(Aus, FEAT_CODE != "sea")
 
@@ -65,12 +65,12 @@ Aus_crop <- crop(Aus_coast, extent(Sites.grid))
 
 
 color_data <- c(Inshore= "#482677FF", Midshelf= "#FD6A02", 
-                Offshore="#FDE725FF", Kelp= "seagreen4")
+                Offshore="#FDE725FF", Temporal= "seagreen4")
 
 
 
 shape_data <- c(Inshore= 19, Midshelf= 19, 
-                Offshore=19, Kelp= 17)
+                Offshore=19, Temporal= 17)
 
 sites_plot <- ggplot()+ theme_classic() + 
   geom_polygon(data = Aus_crop, aes(x=long, y=lat, group=group), fill="grey", colour="black") +
