@@ -37,17 +37,17 @@ library(here)
 
 sites <- read.csv(here::here("data", "raw_data", "sites.csv"))
 
-buffer <- 0.8
+buffer <- 0.5
 
 geo_bounds <- c(left = min(sites$Longitude)-buffer, 
                 bottom = min(sites$Latitude)-buffer, 
                 right = max(sites$Longitude)+buffer, 
                 top = max(sites$Latitude)+buffer)
 
-min_lon <- 153
-max_lon <- 153.5
+min_lon <- 153.05
+max_lon <- 153.55
 min_lat <- -30.4
-max_lat <- -29.9
+max_lat <- -29.8
 
 
 geo_bounds <- c(left = min_lon, bottom = min_lat, right = max_lon, top = max_lat)
@@ -57,11 +57,12 @@ Sites.grid <- expand.grid(lon_bound = c(geo_bounds[1], geo_bounds[3]),
 
 coordinates(Sites.grid) <- ~ lon_bound + lat_bound
 
-Aus <- readOGR(dsn = "C:/Users/Paula Sgarlatta/Google Drive/PhD/GitHub/Functional-Diversity_PaulaSgarlatta/data/raw_data/61395_shp/australia",layer = "cstauscd_r") 
+Aus <- readOGR(dsn = "C:/Users/z5179758/Google Drive/PhD/GitHub/Functional-Diversity_PaulaSgarlatta/data/raw_data/61395_shp/australia",layer = "cstauscd_r") 
 
 Aus_coast <- subset(Aus, FEAT_CODE != "sea")
 
 Aus_crop <- crop(Aus_coast, extent(Sites.grid))
+
 
 
 color_data <- c(Inshore= "#482677FF", Midshelf= "#FD6A02", 
@@ -80,23 +81,24 @@ sites_plot <- ggplot()+ theme_classic() +
   scale_color_manual(name="Habitat", values=color_data) +
   scale_shape_manual(name="Habitat", values=shape_data)+
   # annotation_scale(location = "br", plot_unit = "km")+ #width_hint = 0.5) +  #br is the location - bottom, right
-  annotation_north_arrow(location = "br", which_north = "true", 
-                         pad_x = unit(0.2, "in"), pad_y = unit(0.3, "in"),
-                         style = north_arrow_fancy_orienteering) +
+  #annotation_north_arrow(location = "br", which_north = "true", 
+                         #pad_x = unit(1.5, "in"), pad_y = unit(0.1, "in"),
+                         #style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
-        legend.position = c(0.85,0.3), legend.title = element_blank(),
+        legend.position = c(0.83,0.6), legend.title = element_blank(),
         legend.text = element_text(size=12),
         panel.border = element_rect(colour = "black",fill = NA),
         axis.text = element_text(size = (14), colour="black"), 
         axis.title = element_blank()) + scale_size(guide = "none")+
-  guides(color = guide_legend(override.aes = list(size = 3) ) )+
-  scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
+  guides(color = guide_legend(override.aes = list(size = 3) ) ) +
+ scale_y_continuous(expand = c(0,0))+
+scale_x_continuous(expand = c(0,0))
 
 sites_plot
 
 #Plot of Australia/rectangle in the area of study
 
-Aus <- ggplot(data = ozmap()) + 
+Aus <- ggplot(data = ozmap(x="country")) + 
   geom_sf(color="black", fill= "white") +
   geom_rect(xmin = 152, xmax = 154, ymin = -32, ymax = -29, 
             fill = NA, colour = "black", size = 0.5) +
@@ -107,7 +109,7 @@ Aus <- ggplot(data = ozmap()) +
 ###Place both figures together
 
 map <- ggdraw(sites_plot) +
-  draw_plot(Aus, x = 0.10, y = 0.65, width = 0.4, height = 0.4)
+  draw_plot(Aus, x = 0.22, y = 0.73, width = 0.28, height = 0.28)
 
 ggsave(map, file=here::here("outputs", "Figure1.jpeg"),  
        height = 20, width = 18, unit = "cm")
@@ -172,10 +174,13 @@ plot_spatial_taxo <- ggplot(spatial_toplot) +
   scale_fill_manual(values=hab_colors) + 
   scale_y_continuous( limits = c(0,25), breaks = seq(from=0, to=35, by=5)  ) +
   labs(x="", y="Species richness") +
+  ggtitle(("(b)"))+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-       legend.position = "none", axis.text.x = element_blank())
+       legend.position = "none", axis.text.x = element_blank(),
+       plot.title = element_text(size = 16, face = "bold"))
+  
 plot_spatial_taxo
 
 # functional ----
@@ -187,10 +192,12 @@ plot_spatial_func <- ggplot(spatial_toplot) +
   scale_fill_manual(values=hab_colors) + 
   scale_y_continuous( limits = c(0,0.5), breaks = seq(from=0, to=0.5, by=0.1)  ) +
   labs(x="", y="Functional richness") +
+   ggtitle(("(d)"))+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-          legend.position = "none")
+          legend.position = "none", plot.title = element_text(size = 16, face = "bold"))
+ 
 
 plot_spatial_func
 
@@ -247,10 +254,13 @@ plot_tempo_taxo <- ggplot(temporal_toplot,
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Species richness") +
+  ggtitle(("(a)")) + 
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(size = 16, face = "bold"))
+  
+
 plot_tempo_taxo
   
 # functional ----
@@ -265,15 +275,18 @@ plot_tempo_func <- ggplot(temporal_toplot,
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Functional richness") +
+  ggtitle(("(c)")) +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(size = 16, face = "bold")) 
+  
+
 plot_tempo_func
 
 
 ## merging all plot into a single figure and saving as png ####
-figure2 <- ( plot_spatial_taxo + plot_tempo_taxo ) / ( plot_spatial_func +  plot_tempo_func )
+figure2 <- ( plot_tempo_taxo + plot_spatial_taxo) / ( plot_tempo_func + plot_spatial_func)
 
 ggsave(figure2, file=here::here("outputs" , "Figure2.jpeg"),
        height = 22, width = 25, unit = "cm" )
@@ -449,7 +462,14 @@ ggsave(figureS4_fide3, file=here::here("outputs",  "FigureS4.jpeg"),
 
 habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"))
 
-habitat_toplot <- habitat %>% 
+## First graph only with coral as broad category:
+
+habitat_toplot_full <- habitat %>% 
+  group_by(Site, Habitat,Transect) %>% 
+  mutate (Coral = sum(Plate_coral, Branching_coral, Columnar_coral, Colony_corals, Foliose_coral, Soft_coral)) %>% 
+  dplyr::select(-Plate_coral, -Branching_coral, -Columnar_coral, -Colony_corals, -Foliose_coral, -Soft_coral) %>% 
+  rename("Ecklonia radiata" = Ecklonia_radiata , "Turf & CCA" = Turf_CCA, "Other invertebrates" = Other_invertebrates,
+         "Sponges & tunicates" = Sponges_tunicates, "Rock & sand" = Rock_sand) %>% 
   pivot_longer(cols= 4:10, names_to="Group") %>%
   filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
   mutate(value=as.numeric(value)) %>%
@@ -459,9 +479,7 @@ habitat_toplot <- habitat %>%
   mutate(percent_cover=(total*100/125)) %>% #125 points per transect
   dplyr::select(-total)
 
-
-
-habitat_summary <-habitat_toplot%>%
+habitat_summary_full <-habitat_toplot_full%>%
   group_by(Habitat, Group)%>%
   summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
             n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
@@ -473,25 +491,82 @@ habitat_summary <-habitat_toplot%>%
     upper = pos + se/2,
     lower = pos - se/2
   ) %>%
-  ungroup() %>% 
+  ungroup() %>%  
   filter(mean > 1)
 
+# color code for the 3 habitats
+colors_full <- c("Ecklonia radiata" = "tan3", Coral="indianred1", Macroalgae = "seagreen", 
+                 "Other invertebrates" ="darkolivegreen4", "Rock & sand"  ="orange",
+                 "Sponges & tunicates" = "mediumorchid1","Turf & CCA" ="red2")
 
+## Plot figure - full
 
-## Plot figure
-
-habitat_v3 <- ggplot(habitat_summary, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
+habitat_full <- ggplot(habitat_summary_full, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
   geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
   geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
+  scale_color_manual(values=colors_full) + 
+  scale_fill_manual(values=colors_full) + 
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
-        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20))+
-  labs(y="Percent cover (%)", x="") + scale_fill_discrete(name = "", 
-                                                          labels = c("Coral", "Ecklonia radiata", "Macroalgae", "Other invertebrates",
-                                                                     "Rock & sand", "Sponges & tunicates", "Turf & CCA"))
+        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20), 
+        legend.title = element_blank()) +  labs(y="Percent cover (%)", x="")
 
-ggsave(habitat_v3, file=here::here("outputs", "FigureS8.jpeg"),
+ggsave(habitat_full, file=here::here("outputs", "habitat_full.jpeg"),
+       height = 16, width = 24, unit = "cm" )
+
+
+### Only corals
+
+habitat_toplot_coral <- habitat %>% 
+  rename( "Sponges & tunicates" = Sponges_tunicates, "Plate coral" = Plate_coral, "Branching coral" = Branching_coral,
+          "Columnar coral" = Columnar_coral, "Colony coral" = Colony_corals, "Foliose coral" = Foliose_coral,
+          "Soft coral" = Soft_coral) %>% 
+  pivot_longer(cols= 8:14, names_to="Group") %>%
+  filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
+  mutate(value=as.numeric(value)) %>%
+  group_by(Site, Habitat,Transect, Group) %>%
+  summarize(total=sum(value)) %>% 
+  group_by(Site, Transect) %>% 
+  mutate(percent_cover=(total*100/125)) %>% #125 points per transect
+  dplyr::select(-total)
+
+
+
+habitat_summary_coral <-habitat_toplot_coral%>%
+  group_by(Habitat, Group)%>%
+  summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
+            n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
+  mutate(se) %>%
+  group_by(Habitat) %>%
+  arrange(desc(Group)) %>%
+  mutate(
+    pos = cumsum(Percent_cover_habitat),
+    upper = pos + se/2,
+    lower = pos - se/2
+  ) %>%
+  ungroup() 
+
+ # filter(mean > 1)
+
+color_coral <- c("Branching coral" ="orange", "Colony coral" = "yellowgreen", "Columnar coral" ="indianred1",
+                  "Foliose coral" ="cornflowerblue", "Plate coral" ="red2",
+                 "Soft coral" = "darkblue", "Sponges & tunicates" = "mediumorchid1")
+
+## Plot figure
+
+habitat_coral <- ggplot(habitat_summary_coral, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
+  geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
+  geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
+  scale_color_manual(values=color_coral) + 
+  scale_fill_manual(values=color_coral) + 
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
+        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20), legend.title = element_blank())+
+  labs(y="Percent cover (%)", x="") 
+
+ggsave(habitat_coral, file=here::here("outputs", "habitat_coral.jpeg"),
        height = 16, width = 24, unit = "cm" )
 
 

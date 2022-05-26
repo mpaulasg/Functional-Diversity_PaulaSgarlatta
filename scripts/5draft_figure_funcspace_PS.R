@@ -404,6 +404,6 @@ figure4 <-  (temporal_ggplot[[1]] + temporal_ggplot[[2]] + temporal_ggplot[[3]])
 
 # saving as jepg ----
 ggsave(figure4, file=here::here("outputs", "Figure4_v2.jpeg"),
-       height = 25, width = 45, unit = "cm" )
+       height = 30, width = 30, unit = "cm" )
 
 

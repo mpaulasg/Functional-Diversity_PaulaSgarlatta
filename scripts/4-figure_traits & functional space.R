@@ -6,7 +6,7 @@
 ##
 ##  *functional space comparing spatial/temporal data (part of Figure 1)
 ##
-##  *functional space with thermal affinity information (Figure 5)
+##  *functional space with thermal affinity information (Figure 3)
 ##   
 ##
 ## Code by Camille Magneville, Paula Sgarlatta and Sebastien Villeger 
@@ -238,7 +238,7 @@ ggsave(ggplot_z2, file=here::here("outputs",  "Figure1b.jpeg"),
        height = 16, width = 16, unit = "cm" )
 
 
-###################### Functional space with thermal affinity information
+#### Functional space with thermal affinity information - Fig. 3
 
 #Loading thermal affinity data
 
@@ -407,8 +407,14 @@ figure <- panels.to.patchwork(ggplot_pc, plot_caption = plot_caption)
 
 figure3 <- ggplot_pc [[1]]
 
+figure3S <- (ggplot_pc [[1]] + ggplot_pc [[2]]) + 
+                        ggplot_pc [[3]]
+
 
 ggsave(figure3, file=here::here("outputs",  "Figure3.jpeg"),
        height = 16, width = 16, unit = "cm" )
+
+ggsave(figure3S, file=here::here("outputs",  "figure3S.jpeg"),
+       height = 16, width = 32, unit = "cm" )
 
 ############################## end of code ############################################

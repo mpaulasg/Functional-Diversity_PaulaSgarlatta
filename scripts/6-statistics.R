@@ -2,8 +2,12 @@
 ##
 ## Script for FD statistical analysis
 ##
+##
+##   1 - GLMM for differences in fish diversity between habitats/years
 ## 
-## Code by Paula Sgarlatta
+##   2 - mvabund for differences in habitat in the cross-shelf gradient
+##   
+##   Code by Paula Sgarlatta
 ##
 ################################################################################
 
@@ -20,6 +24,7 @@ library(lme4)
 library(glmmTMB)
 library(DHARMa)
 library(emmeans)
+library(mvabund)
 library(here)
 
 
@@ -166,5 +171,55 @@ Anova(spatial_fide3) #Significant - p=0.0005
 
 spatial_res_fide3 <- simulateResiduals(spatial_fide3)
 plot(spatial_res_fide3) # Good
+
+############# Habitat
+
+# Load data
+
+habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"))
+
+# Sub-setting the variables and converting it to an mvabund object format
+
+categories <- mvabund(habitat[, 4:10])
+
+# Check the spread of the data
+
+par(mar = c(2, 10, 2, 2)) # adjusts the margins
+boxplot(habitat[, 4:10], horizontal = TRUE, las = 2, main = "Points")
+
+#Ecklonia and coral dominating
+
+
+#Check mean-variance relationship
+
+meanvar.plot(categories)
+
+
+plot(categories ~ as.factor(habitat$Habitat), cex.axis = 0.8, cex = 0.8)
+
+## Let's try with a GLM
+
+mod1 <- manyglm(categories ~ habitat$Habitat, family = "poisson")
+
+plot(mod1)
+
+#Looks a little bit like a fan shape so we will use negative binomial instead
+
+mod2 <- manyglm(categories ~ habitat$Habitat, family = "negative_binomial")
+
+plot(mod2) #Looks better!
+
+anova(mod2) #Significant effect of habitat - p = 0.001
+
+# Now let's check which categories are different
+
+anova(mod2, p.uni = "adjusted") 
+
+# Macroalgae (p=0.001), Ecklonia (p=0.007), Turf (p=0.001),
+#Other invertebrates (p=0.001), Coral (p=0.001) are different between 
+#habitats.
+
+## Can I use the same for different coral morphologies?
+
 
 #################### end of code ##########################################################
