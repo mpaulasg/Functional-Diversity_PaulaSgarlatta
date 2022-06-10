@@ -74,6 +74,12 @@ spatial_summary <- mFD::asb.sp.summary(asb_sp_w = spatial_sp_biom)
 # retrieve occurrence matrix:
 spatial_sp_occ <- spatial_summary$asb_sp_occ
 
+# retrieve total biomass per assemblage:
+
+spatial_biomass <- as.data.frame(spatial_summary$asb_tot_w) %>% 
+  rownames_to_column("Site") %>% 
+rename(Biomass = "spatial_summary$asb_tot_w")
+
 # species names
 spatial_sp <- colnames(spatial_sp_occ)
 length(spatial_sp) # 53
@@ -116,6 +122,9 @@ save(species_allsurveys, file=here::here("data", "species_allsurveys.RData") )
 
 write.csv(species_both, file=here::here("data", "species_both.csv"), 
            row.names = FALSE )
+
+write.csv(spatial_biomass, file=here::here("data", "spatial_biomass.csv"), 
+          row.names = FALSE )
 
 
 ######### Species position in multidimensional space #############

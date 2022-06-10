@@ -20,6 +20,7 @@ library(mFD)
 load(here::here("data", "kelp_sp_maxN.RData") )
 load(here::here("data", "sp_3D_coord.RData") ) 
 load(here::here("data", "spatial_sp_biom.RData") )
+biomass <- read.csv(here::here("data", "spatial_biomass.csv"))
 
 
 ## computing taxonomic and functional diversity for kelp sites ####
@@ -46,13 +47,19 @@ spatial_fd <- mFD::alpha.fd.multidim(
 
 spatial_alpha <- spatial_fd$functional_diversity_indices
 
+## Adding biomass for statistics
+
+spatial <- spatial_alpha %>% 
+  rownames_to_column("Site") %>% 
+  left_join(biomass, by="Site")
+
 # saving ####
 
 save(temporal_fd_kelp, file=here::here("data", "temporal_fd_kelp_biomass.RData") )
 save(temporal_alpha_kelp, file=here::here("data",  "temporal_alpha_kelp_biomass.RData") )
 
 save(spatial_fd, file=here::here("data",  "spatial_fd_biomass.RData") )
-save(spatial_alpha, file=here::here("data", "spatial_alpha_biomass.RData") )
+save(spatial, file=here::here("data", "spatial_alpha_biomass.RData") )
 
 
 #################################### end of script ####################################################################

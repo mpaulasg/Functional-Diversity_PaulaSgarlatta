@@ -4,7 +4,7 @@
 ##
 ## Fig. 1 - Map of study site
 ## 
-## Fig. 2 - Species richness and functional richness
+## Fig. 2 - Species richness, biomass and functional richness
 ## 
 ## Fig. S1 - Functional Dispersion
 ##
@@ -30,6 +30,7 @@ library(rgeos)
 library(ggplot2)
 library(ozmaps)
 library(cowplot)
+library(ggpubr)
 library(ggspatial)
 library(here)
 
@@ -128,8 +129,8 @@ load(here::here("data" ,"temporal_alpha_kelp_biomass.RData") )
 # merging metadata and biodiversity indices in a single table for each habitat type
 
 spatial_all <- spatial_metadata %>% 
-  left_join( rownames_to_column(spatial_alpha, "Code"), by="Code" ) %>%
-  dplyr::select(Code, Habitat, TRic=sp_richn, fric, fdis, fide_PC1, fide_PC2, fide_PC3)
+  left_join( rename (spatial, Code = Site), by="Code" ) %>%
+  dplyr::select(Code, Habitat, TRic=sp_richn, fric, fdis, fide_PC1, fide_PC2, fide_PC3, Biomass)
 
 
 # mean and sd of diversity among each site for each year in each habitat type
@@ -148,17 +149,19 @@ spatial_toplot <- spatial_all %>%
     fide_PC2_mean = mean(fide_PC2),
     fide_PC2_sd = sd(fide_PC2),
     fide_PC3_mean = mean(fide_PC3),
-    fide_PC3_sd = sd(fide_PC3)
+    fide_PC3_sd = sd(fide_PC3), 
+    biomass_mean = mean(Biomass),
+    biomass_sd = sd(Biomass)
   ) %>%
   mutate( TRic_se = TRic_sd/sqrt(n))  %>%
   mutate( fric_se = fric_sd/sqrt(n)) %>% 
   mutate( fdis_se = fdis_sd/sqrt(n)) %>% 
   mutate( fide_PC1_se = fide_PC1_sd/sqrt(n)) %>%
   mutate( fide_PC2_se = fide_PC2_sd/sqrt(n)) %>%
-  mutate( fide_PC3_se = fide_PC3_sd/sqrt(n))
+  mutate( fide_PC3_se = fide_PC3_sd/sqrt(n)) %>% 
+  mutate( biomass_se = biomass_sd/sqrt(n))
   
-
-spatial_toplot
+  spatial_toplot
 
 # color code for the 3 habitats
 hab_colors <- c(Inshore= "#482677FF", Midshelf= "#FD6A02", Offshore="#FDE725FF")
@@ -200,6 +203,23 @@ plot_spatial_func <- ggplot(spatial_toplot) +
  
 
 plot_spatial_func
+
+# Biomass ----
+
+plot_spatial_biomass <- ggplot(spatial_toplot) +
+  geom_bar( aes(x=Habitat, y=biomass_mean, color = Habitat, fill = Habitat), stat="identity", color = "black", size=0.8) +
+  geom_errorbar( aes(x=Habitat, ymin=biomass_mean-biomass_se, ymax=biomass_mean+biomass_se), width=0.1, size=0.8, colour="black" ) +
+  scale_color_manual(values=hab_colors) + 
+  scale_fill_manual(values=hab_colors) + 
+  labs(x="", y="Biomass (g/125m2) ") +
+  ggtitle(("(e)"))+
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
+        legend.position = "none", plot.title = element_text(size = 16, face = "bold"))
+
+
+plot_spatial_biomass
 
 
 ## temporal trends ####
@@ -286,7 +306,10 @@ plot_tempo_func
 
 
 ## merging all plot into a single figure and saving as png ####
-figure2 <- ( plot_tempo_taxo + plot_spatial_taxo) / ( plot_tempo_func + plot_spatial_func)
+
+figure2 <- ggarrange (plot_tempo_taxo, plot_spatial_taxo, plot_tempo_func, plot_spatial_func,
+  plot_spatial_biomass, ncol = 2, nrow = 3)
+           
 
 ggsave(figure2, file=here::here("outputs" , "Figure2.jpeg"),
        height = 22, width = 25, unit = "cm" )
@@ -519,10 +542,10 @@ ggsave(habitat_full, file=here::here("outputs", "habitat_full.jpeg"),
 ### Only corals
 
 habitat_toplot_coral <- habitat %>% 
-  rename( "Sponges & tunicates" = Sponges_tunicates, "Plate coral" = Plate_coral, "Branching coral" = Branching_coral,
+  rename( "Plate coral" = Plate_coral, "Branching coral" = Branching_coral,
           "Columnar coral" = Columnar_coral, "Colony coral" = Colony_corals, "Foliose coral" = Foliose_coral,
           "Soft coral" = Soft_coral) %>% 
-  pivot_longer(cols= 8:14, names_to="Group") %>%
+  pivot_longer(cols= 8:13, names_to="Group") %>%
   filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
   mutate(value=as.numeric(value)) %>%
   group_by(Site, Habitat,Transect, Group) %>%
@@ -551,7 +574,7 @@ habitat_summary_coral <-habitat_toplot_coral%>%
 
 color_coral <- c("Branching coral" ="orange", "Colony coral" = "yellowgreen", "Columnar coral" ="indianred1",
                   "Foliose coral" ="cornflowerblue", "Plate coral" ="red2",
-                 "Soft coral" = "darkblue", "Sponges & tunicates" = "mediumorchid1")
+                 "Soft coral" = "darkblue")
 
 ## Plot figure
 

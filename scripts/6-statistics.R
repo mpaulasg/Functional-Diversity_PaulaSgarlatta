@@ -40,12 +40,11 @@ kelp_stats <- temporal_alpha_kelp %>%
 
 kelp_stats$Year_cont <- as.numeric(kelp_stats$Year)
 
-spatial_stats <- spatial_alpha %>%
-  rownames_to_column(var = "Site1") %>% 
-  mutate(Site=sub("_.*", "", Site1),Habitat=sub(".*_", "", Site1), .before="Site1")%>% 
-  dplyr::select(-Site1)
-
-
+spatial_stats <- spatial %>%
+  rename(Site1 = Site) %>% 
+  mutate(Site=sub("_.*", "", Site1),Habitat=sub(".*_", "", Site1), .before = Site1) %>% 
+  select(-Site1)
+  
 ####### GLMM
 
 ### TEMPORAL ###
@@ -122,6 +121,17 @@ Anova(space_s)#Significant - p=0.025
 space_res_s <- simulateResiduals(space_s)
 plot(space_res_s) #Good 
 
+#Biomass
+
+biomass_s <- glmmTMB (Biomass ~ Habitat + (1|Site), data=spatial_stats, family = nbinom2()) 
+
+summary(biomass_s)
+Anova(biomass_s) #Significant - p=0.017
+
+biomass_res_s <- simulateResiduals(biomass_s)
+plot(biomass_res_s) #Good 
+
+
 ## FRic
 
 spatial_fric <- glmmTMB (fric ~ Habitat + (1|Site) , data=spatial_stats, family = beta_family())
@@ -180,14 +190,14 @@ habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"
 
 # Sub-setting the variables and converting it to an mvabund object format
 
-categories <- mvabund(habitat[, 4:10])
+categories <- mvabund(habitat[, 4:15])
 
 # Check the spread of the data
 
 par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(habitat[, 4:10], horizontal = TRUE, las = 2, main = "Points")
+boxplot(habitat[, 4:15], horizontal = TRUE, las = 2, main = "Points")
 
-#Ecklonia and coral dominating
+#Ecklonia and turf & CCA dominating - however, corals are divided in categories.
 
 
 #Check mean-variance relationship
@@ -203,7 +213,7 @@ mod1 <- manyglm(categories ~ habitat$Habitat, family = "poisson")
 
 plot(mod1)
 
-#Looks a little bit like a fan shape so we will use negative binomial instead
+#Looks like a fan shape so we will use negative binomial instead
 
 mod2 <- manyglm(categories ~ habitat$Habitat, family = "negative_binomial")
 
@@ -213,13 +223,52 @@ anova(mod2) #Significant effect of habitat - p = 0.001
 
 # Now let's check which categories are different
 
-anova(mod2, p.uni = "adjusted") 
+anova(mod2, p.uni = "adjusted", pairwise.comp = habitat$Habitat) 
 
-# Macroalgae (p=0.001), Ecklonia (p=0.007), Turf (p=0.001),
-#Other invertebrates (p=0.001), Coral (p=0.001) are different between 
-#habitats.
+# Macroalgae (p=0.001), Ecklonia (p=0.001), Turf (p=0.001),
+#Other invertebrates (p=0.001), Plate_Coral (p=0.001). Branching_Coral (p=0.001),
+#Columnar_coral (p=0.001), Colony_coral (p=0.001), Foliose_coral(p=0.001), Soft_coral (p=0.001)
+#are different between habitats.
 
-## Can I use the same for different coral morphologies?
+## Now running the models only with coral morphologies
 
+# Sub-setting the variables and converting it to an mvabund object format
+
+categories_coral <- mvabund(habitat[, 8:13])
+
+# Check the spread of the data
+
+par(mar = c(2, 10, 2, 2)) # adjusts the margins
+boxplot(habitat[, 8:13], horizontal = TRUE, las = 2, main = "Points")
+
+#Foliose coral and colony corals dominating
+
+#Check mean-variance relationship
+
+meanvar.plot(categories_coral)
+
+plot(categories_coral ~ as.factor(habitat$Habitat), cex.axis = 0.8, cex = 0.8)
+
+## Let's try with a GLM
+
+mod1 <- manyglm(categories_coral ~ habitat$Habitat, family = "poisson")
+
+plot(mod1)
+
+#Looks like a fan shape so we will use negative binomial instead
+
+mod2 <- manyglm(categories_coral ~ habitat$Habitat, family = "negative_binomial")
+
+plot(mod2) #Looks better!
+
+anova(mod2) #Significant effect of habitat - p = 0.001
+
+# Now let's check which categories are different
+
+anova(mod2, p.uni = "adjusted", pairwise.comp = habitat$Habitat) 
+
+# Plate_Coral (p=0.001). Branching_Coral (p=0.001),
+#Columnar_coral (p=0.001), Colony_coral (p=0.001), Foliose_coral(p=0.001),
+#Soft_coral(p=0.001)
 
 #################### end of code ##########################################################
