@@ -38,6 +38,18 @@ kelp_summary <- mFD::asb.sp.summary(asb_sp_w = kelp_sp_maxN)
 # retrieve occurrence matrix:
 kelp_sp_occ <- kelp_summary$asb_sp_occ
 
+#To check how species MaxN change ovr the years:
+
+temporal_maxn_sp <-  kelp_sp_maxN %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Site") %>% 
+  pivot_longer(!Site, names_to = "species", values_to = "Biomass")%>%  
+  mutate(Year=sub(".*_", "", Site)) %>% 
+  mutate(genus=sub("_.*", "", species), sp=sub(".*_", "", species)) %>% 
+  mutate(Species=paste(substr(genus, 1, 1), sp, sep = ". ")) %>% 
+  dplyr::select(-Site, -genus, -sp, -species) %>% 
+  pivot_wider(names_from = Species, values_from = Biomass, values_fn= sum)
+
 
 # dimensions
 dim(kelp_sp_occ) # 69 assemblages * 101 species
@@ -72,7 +84,20 @@ dim(spatial_sp_biom) # 9 assemblages * 53 species
 spatial_summary <- mFD::asb.sp.summary(asb_sp_w = spatial_sp_biom)
 
 # retrieve occurrence matrix:
-spatial_sp_occ <- spatial_summary$asb_sp_occ
+spatial_sp_occ <- as.data.frame(spatial_summary$asb_sp_occ)
+
+#To check how species biomass change on each habitat:
+
+spatial_biomass_sp <-  spatial_sp_biom %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Site") %>% 
+  pivot_longer(!Site, names_to = "species", values_to = "Biomass")%>%  
+  mutate(Habitat=sub(".*_", "", Site)) %>% 
+  mutate(genus=sub("_.*", "", species), sp=sub(".*_", "", species)) %>% 
+  mutate(Species=paste(substr(genus, 1, 1), sp, sep = ". ")) %>% 
+  dplyr::select(-Site, -genus, -sp, -species) %>% 
+  pivot_wider(names_from = Species, values_from = Biomass, values_fn= sum)
+  
 
 # retrieve total biomass per assemblage:
 
@@ -124,6 +149,12 @@ write.csv(species_both, file=here::here("data", "species_both.csv"),
            row.names = FALSE )
 
 write.csv(spatial_biomass, file=here::here("data", "spatial_biomass.csv"), 
+          row.names = FALSE )
+
+write.csv(spatial_biomass_sp, file=here::here("data", "spatial_biomass_sp.csv"), 
+          row.names = FALSE )
+
+write.csv(temporal_maxn_sp, file=here::here("data", "temporal_maxn_sp.csv"), 
           row.names = FALSE )
 
 
@@ -225,4 +256,3 @@ save(sp_gower_dist, file=here::here("data/", "sp_gower_dist.RData") )
 save(sp_3D_coord, file=here::here("data/", "sp_3D_coord.RData") )
 save(funct_spaces, file=here::here("data/", "funct_spaces.RData") )
 save(sp_faxes_coord, file=here::here("data/", "sp_faxes_coord.RData") )
-

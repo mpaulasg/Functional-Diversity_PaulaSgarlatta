@@ -62,17 +62,17 @@ spatial_sp_biom <- spatial_sp_biom %>%
   pivot_longer(!Site, names_to="species", values_to="count") %>% 
   mutate(genus=sub("_.*", "", species), sp=sub(".*_", "", species)) %>% 
   mutate(Species=paste(substr(genus, 1, 1), sp, sep = ". ")) %>% 
-  select(-genus, -sp, -species) %>% 
+  dplyr::select(-genus, -sp, -species) %>% 
   pivot_wider(names_from = Species, values_from=count) %>% 
   column_to_rownames("Site")
 
-kelp_sp_maxN <- kelp_sp_maxN %>% 
+kelp_sp_maxN_1 <- kelp_sp_maxN %>% 
   as.data.frame() %>% 
   rownames_to_column("Site") %>% 
   pivot_longer(!Site, names_to="species", values_to="count") %>% 
   mutate(genus=sub("_.*", "", species), sp=sub(".*_", "", species)) %>% 
   mutate(Species=paste(substr(genus, 1, 1), sp, sep = ". ")) %>% 
-  select(-genus, -sp, -species) %>% 
+  dplyr::select(-genus, -sp, -species) %>% 
   pivot_wider(names_from = Species, values_from=count) %>% 
   column_to_rownames("Site")
 

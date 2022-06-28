@@ -175,7 +175,7 @@ plot_spatial_taxo <- ggplot(spatial_toplot) +
   geom_errorbar( aes(x=Habitat, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,25), breaks = seq(from=0, to=35, by=5)  ) +
+  scale_y_continuous( limits = c(0,30), breaks = seq(from=0, to=30, by=5)  ) +
   labs(x="", y="Species richness") +
   ggtitle(("(b)"))+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
@@ -193,7 +193,7 @@ plot_spatial_func <- ggplot(spatial_toplot) +
   geom_errorbar( aes(x=Habitat, ymin=fric_mean-fric_se, ymax=fric_mean+fric_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  scale_y_continuous( limits = c(0,0.5), breaks = seq(from=0, to=0.5, by=0.1)  ) +
+  scale_y_continuous( limits = c(0,0.8), breaks = seq(from=0, to=0.8, by=0.2)  ) +
   labs(x="", y="Functional richness") +
    ggtitle(("(d)"))+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
@@ -270,7 +270,7 @@ plot_tempo_taxo <- ggplot(temporal_toplot,
   geom_line(aes(x= Year, y= TRic_mean) , stat="identity", size=1)+
   geom_errorbar( aes(x=Year, ymin=TRic_mean-TRic_se, ymax=TRic_mean+TRic_se), width=0.4, size=0.8) +
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(15,30), breaks = seq(from=15, to=30, by=5)  ) +
+  scale_y_continuous( limits = c(0,30), breaks = seq(from=0, to=30, by=5)  ) +
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Species richness") +
@@ -291,7 +291,7 @@ plot_tempo_func <- ggplot(temporal_toplot,
   geom_line(aes(x= Year, y= fric_mean) , stat="identity", size=1)+
   geom_errorbar( aes(x=Year, ymin=fric_mean-fric_se, ymax=fric_mean+fric_se), width=0.4, size=0.8) +
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
-  scale_y_continuous( limits = c(0.4,0.8), breaks = seq(from=0.4, to=0.8, by=0.2)  ) +
+  scale_y_continuous( limits = c(0,0.8), breaks = seq(from=0, to=0.8, by=0.2)  ) +
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Functional richness") +
