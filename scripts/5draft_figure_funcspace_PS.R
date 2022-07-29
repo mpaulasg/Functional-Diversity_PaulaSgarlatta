@@ -44,7 +44,7 @@ sp_thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>%
 ## preparing  ###
 
 # names of Functional axes to plot
-axes_nm <- c("PC1", "PC2")
+axes_nm <- c("PC1", "PC3")
 
 # coordinates of species along those axes
 sp_coord_2D <- sp_3D_coord[,axes_nm]
@@ -117,6 +117,7 @@ temp_mFD<-alpha.fd.multidim(sp_faxes_coord = sp_coord_2D,
 
 # vertices of the global pool in 2D ----
 pool_vert_nm_2D<-temp_mFD$details$pool_vert_nm
+temp_mFD$details$asb_vert_nm$y2018
 
 
 # compute only with temperate species (not for values, only for plotting in 2D)
@@ -154,7 +155,7 @@ for (b in years_names) {
   
   # background
   ggplot_b <- background.plot(range_faxes = range_axes,
-                              faxes_nm = c("PC1", "PC2"), 
+                              faxes_nm = c("PC1", "PC3"), 
                               color_bg = "grey95")
   
   # adding title
@@ -189,8 +190,10 @@ for (b in years_names) {
   sp_b<-row.names(temp_mFD$details$asb_sp_faxes_coord[[b]])
   temp_sp_b<-tab_sp %>%
     filter(Species_name %in% sp_b & affinity=="temperate")
+  temp_sp_b$Species_name
   trop_sp_b<-tab_sp %>%
     filter(Species_name %in% sp_b & affinity=="tropical")
+  trop_sp_b$Species_name
   
   ggplot_b<- fide.plot(ggplot_bg=ggplot_b,
                        asb_sp_coord2D=list(temp=temp_mFD$details$asb_sp_faxes_coord[[b]][temp_sp_b$Species_name,],
@@ -277,18 +280,20 @@ hab_temperate_multidimFD<-alpha.fd.multidim(sp_faxes_coord = sp_coord_2D[tempera
                                   scaling = TRUE, details_returned = TRUE)
 
 
+hab_temperate_multidimFD$details$asb_vert_nm$Offshore
 
+hab_temperate_multidimFD$details$asb_vert_nm$Inshore
 
 # list with names of species to display for each habitat    # @ Paula: would be better to provide full names and to pick codes from the table "tab_sp"
 
 sp_code_spatial<- list( Inshore = c( "A. maculatus", "A. viridis" , "G. elevata", "P. affinis", "P. oligolepis"),
  Midshelf= c("A. chinensis",  "H. margaritaceus",  "S. fuscescens",  "T. lunare", 
              "T. lutescens", "A. viridis", "K. sydneyanus", "P. unifasciata"),
- Offshore = c("C. caerulaurea","H. margaritaceus",  "L. dimidiatus", "M. vanicolensis",  
+ Offshore = c(  "L. dimidiatus", "M. vanicolensis",  
               "N. unicornis", "P. flavomaculatus", "P. hepatus",  "A. viridis")
  )
 
-
+#"C. caerulaurea","H. margaritaceus",
 
 # list to store panels
 hab_ggplot<-list()
@@ -298,7 +303,7 @@ for (v in hab_names) {
 
   # background
   ggplot_v <- background.plot(range_faxes = range_axes,
-                              faxes_nm = c("PC1", "PC2"), 
+                              faxes_nm = c("PC1", "PC3"), 
                               color_bg = "grey95")
   
   # adding title
@@ -400,10 +405,18 @@ for (v in hab_names) {
 figure4 <-  (temporal_ggplot[[1]] + temporal_ggplot[[2]] + temporal_ggplot[[3]])/
   (hab_ggplot[[1]] + hab_ggplot[[2]] + hab_ggplot[[3]])
 
+figure4_habitat <- (hab_ggplot[[1]] + hab_ggplot[[2]] + hab_ggplot[[3]])
 
+figure4_years <- temporal_ggplot[[1]] + temporal_ggplot[[2]] + temporal_ggplot[[3]]
 
 # saving as jepg ----
 ggsave(figure4, file=here::here("outputs", "Figure4_v2.jpeg"),
+       height = 30, width = 30, unit = "cm" )
+
+ggsave(figure4_habitat, file=here::here("outputs", "Figure4_habitat.jpeg"),
+       height = 30, width = 30, unit = "cm" )
+
+ggsave(figure4_years, file=here::here("outputs", "Figure4_years.jpeg"),
        height = 30, width = 30, unit = "cm" )
 
 

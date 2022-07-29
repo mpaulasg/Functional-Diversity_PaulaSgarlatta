@@ -184,7 +184,7 @@ kelp_2002_occ_2 <- kelp_2002_occ %>%
   as.data.frame() %>% 
   gather(Species, Abundance, 1:101)
 
-add_thermal <- left_join(kelp_2002_occ_2, thermal, by= "Species")
+add_thermal <- dplyr::full_join( kelp_2002_occ_2, thermal,by= "Species") #not working!!!
 
 kelp_2002_occ_thermal <- add_thermal %>% 
   spread(Species, Abundance, fill=0) %>% 
@@ -317,7 +317,6 @@ for (z in (1:plot_nb)) {
   vertices_nD_k[["asb1"]] <- fd_details$asb_vert_nm[[asb1]]
   asb_sp_coord2D_k[["asb2"]] <- sp_coord_xy[sp_asb2, ]
   vertices_nD_k[["asb2"]] <- fd_details$asb_vert_nm[[asb2]]
-  
   # plot convex hull of assemblage 
   ggplot_z_2002 <-fric.plot(ggplot_bg = ggplot_z_PC2, 
                             asb_sp_coord2D = asb_sp_coord2D_k,

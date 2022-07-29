@@ -21,7 +21,6 @@ sp_thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>%
   mutate(affinity= if_else(thermal>"23", "tropical", "temperate")) %>%   
   select(-thermal)
 
-  
 ## preparing ###
 
  # names of Functional axes to plot
