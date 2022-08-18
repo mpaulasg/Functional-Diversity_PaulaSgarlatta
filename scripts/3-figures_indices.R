@@ -3,15 +3,15 @@
 ## Script for plotting several figures
 ##
 ## Fig. 1 - Map of study site
+##
+## Fig. 2 - Habitat
+##
+## Fig. 4 - Species richness, biomass and functional richness
 ## 
-## Fig. 2 - Species richness, biomass and functional richness
+## Fig. S3 - Functional Dispersion
 ## 
-## Fig. S1 - Functional Dispersion
-##
-## Fig. S2-S4 - Functional Identity
-##
-## Fig. S8 - Habitat
-##
+## Fig. S4 - Functional Identity
+## 
 ##
 ## Code by Paula Sgarlatta, Sebastien Villeger and Camille Magneville 
 ##
@@ -115,6 +115,123 @@ map <- ggdraw(sites_plot) +
 ggsave(map, file=here::here("outputs", "Figure1.jpeg"),  
        height = 20, width = 18, unit = "cm")
 
+
+################### Habitat
+
+# Load data
+
+habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"))
+
+## First graph only with coral as broad category:
+
+habitat_toplot_full <- habitat %>% 
+  group_by(Site, Habitat,Transect) %>% 
+  mutate (Coral = sum(Plate_coral, Branching_coral, Columnar_coral, Massive_coral, Submassive_corals, Laminar_coral, Soft_coral)) %>% 
+  dplyr::select(-Plate_coral, -Branching_coral, -Columnar_coral, -Massive_coral, -Submassive_corals, -Laminar_coral, -Soft_coral) %>% 
+  rename("Ecklonia radiata" = Ecklonia_radiata , "Turf & CCA" = Turf_CCA, "Other invertebrates" = Other_invertebrates,
+         "Sponges & tunicates" = Sponges_tunicates, "Rock & sand" = Rock_sand) %>% 
+  pivot_longer(cols= 4:10, names_to="Group") %>%
+  filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
+  mutate(value=as.numeric(value)) %>%
+  group_by(Site, Habitat,Transect, Group) %>%
+  summarize(total=sum(value)) %>% 
+  group_by(Site, Transect) %>% 
+  mutate(percent_cover=(total*100/125)) %>% #125 points per transect
+  dplyr::select(-total)
+
+habitat_summary_full <-habitat_toplot_full%>%
+  group_by(Habitat, Group)%>%
+  summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
+            n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
+  mutate(se) %>%
+  group_by(Habitat) %>%
+  arrange(desc(Group)) %>%
+  mutate(
+    pos = cumsum(Percent_cover_habitat),
+    upper = pos + se/2,
+    lower = pos - se/2
+  ) %>%
+  ungroup() %>%  
+  filter(mean > 1)
+
+# color code for the 3 habitats
+
+colors_full <- c("Ecklonia radiata" = "tan3", Coral="indianred1", Macroalgae = "seagreen", 
+                 "Other invertebrates" ="darkolivegreen4", "Rock & sand"  ="orange",
+                 "Sponges & tunicates" = "mediumorchid1","Turf & CCA" ="red2")
+
+## Plot figure - full
+
+habitat_full <- ggplot(habitat_summary_full, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
+  geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
+  geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
+  scale_color_manual(values=colors_full) + 
+  scale_fill_manual(values=colors_full) + 
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
+        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20), 
+        plot.title = element_text(hjust = -0.08, size = 20, face = "bold"),
+        legend.title = element_blank()) +  labs(y="Percent cover (%)", x="") +
+  ggtitle("a)")
+
+ggsave(habitat_full, file=here::here("outputs", "Figure2a.jpeg"),
+       height = 16, width = 24, unit = "cm" )
+
+
+### Only corals
+
+habitat_toplot_coral <- habitat %>% 
+  rename( "Plate coral" = Plate_coral, "Branching coral" = Branching_coral,
+          "Columnar coral" = Columnar_coral, "Massive coral" = Massive_coral, "Submassive coral" = Submassive_corals,
+          "Laminar coral" = Laminar_coral, "Sea anemones & soft coral" = Soft_coral) %>% 
+  pivot_longer(cols= 8:14, names_to="Group") %>%
+  filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
+  mutate(value=as.numeric(value)) %>%
+  group_by(Site, Habitat,Transect, Group) %>%
+  summarize(total=sum(value)) %>% 
+  group_by(Site, Transect) %>% 
+  mutate(percent_cover=(total*100/125)) %>% #125 points per transect
+  dplyr::select(-total)
+
+
+habitat_summary_coral <-habitat_toplot_coral%>%
+  group_by(Habitat, Group)%>%
+  summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
+            n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
+  mutate(se) %>%
+  group_by(Habitat) %>%
+  arrange(desc(Group)) %>%
+  mutate(
+    pos = cumsum(Percent_cover_habitat),
+    upper = pos + se/2,
+    lower = pos - se/2
+  ) %>%
+  ungroup() 
+
+# filter(mean > 1)
+
+color_coral <- c("Branching coral" ="#CBA328", "Columnar coral" ="#DD614A",
+                 "Massive coral" ="cornflowerblue", "Plate coral" ="red2", "Submassive coral" = "#2660A4",
+                 "Sea anemones & soft coral" = "#A1E8AF", "Laminar coral" = "#5CA4A9")
+
+## Plot figure
+
+habitat_coral <- ggplot(habitat_summary_coral, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
+  geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
+  geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
+  scale_color_manual(values=color_coral) + 
+  scale_fill_manual(values=color_coral) + 
+  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
+        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
+        axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
+        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20), legend.title = element_blank(),
+        plot.title = element_text(hjust = -0.08, size = 18, face = "bold"))+
+  labs(y="Percent cover (%)", x="") + ggtitle("b)")
+
+ggsave(habitat_coral, file=here::here("outputs", "Figure2b.jpeg"),
+       height = 16, width = 24, unit = "cm" )
+
 ################ Taxonomic and functional diversity graphs
 
 # loading data
@@ -166,7 +283,7 @@ spatial_toplot <- spatial_all %>%
 # color code for the 3 habitats
 hab_colors <- c(Inshore= "#482677FF", Midshelf= "#FD6A02", Offshore="#FDE725FF")
 
-## Fig. 2 - Species richness and functional richness
+## Fig. 4 - Species richness and functional richness
 
 # taxonomic ----
 
@@ -177,7 +294,7 @@ plot_spatial_taxo <- ggplot(spatial_toplot) +
   scale_fill_manual(values=hab_colors) + 
   scale_y_continuous( limits = c(0,30), breaks = seq(from=0, to=30, by=5)  ) +
   labs(x="", y="Species richness") +
-  ggtitle(("(b)"))+
+  ggtitle("b)")+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
@@ -195,7 +312,7 @@ plot_spatial_func <- ggplot(spatial_toplot) +
   scale_fill_manual(values=hab_colors) + 
   scale_y_continuous( limits = c(0,0.8), breaks = seq(from=0, to=0.8, by=0.2)  ) +
   labs(x="", y="Functional richness") +
-   ggtitle(("(d)"))+
+   ggtitle("d)")+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
@@ -212,7 +329,7 @@ plot_spatial_biomass <- ggplot(spatial_toplot) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   labs(x="", y="Biomass (g/125m2) ") +
-  ggtitle(("(e)"))+
+  ggtitle("e)")+
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
@@ -274,7 +391,7 @@ plot_tempo_taxo <- ggplot(temporal_toplot,
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Species richness") +
-  ggtitle(("(a)")) + 
+  ggtitle("a)") + 
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
@@ -295,7 +412,7 @@ plot_tempo_func <- ggplot(temporal_toplot,
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") + 
   labs(x="", y="Functional richness") +
-  ggtitle(("(c)")) +
+  ggtitle(("c)")) +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
@@ -307,15 +424,15 @@ plot_tempo_func
 
 ## merging all plot into a single figure and saving as png ####
 
-figure2 <- ggarrange (plot_tempo_taxo, plot_spatial_taxo, plot_tempo_func, plot_spatial_func,
+figure4 <- ggarrange (plot_tempo_taxo, plot_spatial_taxo, plot_tempo_func, plot_spatial_func,
   plot_spatial_biomass, ncol = 2, nrow = 3)
            
 
-ggsave(figure2, file=here::here("outputs" , "Figure2.jpeg"),
+ggsave(figure4, file=here::here("outputs" , "Figure4.jpeg"),
        height = 22, width = 25, unit = "cm" )
   
 
-######### Fig. S1 - Functional Dispersion
+######### Fig. S3 - Functional Dispersion
 
 
 plot_spatial_fdis <- ggplot(spatial_toplot) +
@@ -324,11 +441,13 @@ plot_spatial_fdis <- ggplot(spatial_toplot) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
   scale_y_continuous( limits = c(0,0.8), breaks = seq(from=0, to=0.8, by=0.2)  ) +
-  labs(x="", y="Functional dispersion") +
+  labs(x="", y="") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("b)")
+
 plot_spatial_fdis
 
 ## temporal trends ####
@@ -342,24 +461,25 @@ plot_tempo_fdis <- ggplot(temporal_toplot,
   scale_y_continuous( limits = c(0,0.8), breaks = seq(from=0, to=0.8, by=0.1)  ) +
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") +
-  labs(x="", y="") +
+  labs(x="", y="Functional dispersion") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("a)")
 
 
 plot_tempo_fdis
 
 ## merging all plot into a single figure and saving as png ####
 
-figureS1_fdis <- ( plot_spatial_fdis + plot_tempo_fdis )
+figureS3_fdis <- (plot_tempo_fdis + plot_spatial_fdis )
 
-ggsave(figureS1_fdis, file=here::here("outputs",  "FigureS1.jpeg"),
+ggsave(figureS3_fdis, file=here::here("outputs",  "FigureS3.jpeg"),
        height = 22, width = 35, unit = "cm" )
 
 
-#### Fig. S2-S3 - Functional Identity
+#### Fig. S4 - Functional Identity
 
 ## FIde PC1
 
@@ -368,11 +488,12 @@ plot_spatial_fide1 <- ggplot(spatial_toplot) +
   geom_errorbar( aes(x=Habitat, ymin=fide_PC1_mean-fide_PC1_se, ymax=fide_PC1_mean+fide_PC1_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  labs(x="", y="Functional Identity PC1") +
+  labs(x="", y="") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("b)")
 
 plot_spatial_fide1
 
@@ -386,19 +507,15 @@ plot_tempo_fide1 <- ggplot(temporal_toplot,
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") +
-  labs(x="", y="") +
+  labs(x="", y="FIde PC1") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("a)")
+
 plot_tempo_fide1
 
-## merging all plot into a single figure and saving as png ####
-figureS2_fide1 <- ( plot_spatial_fide1 + plot_tempo_fide1 )
-
-ggsave(figureS2_fide1, file=here::here("outputs",  "FigureS2.jpeg"),
-       height = 22, width = 35, unit = "cm" )
-                     
 ## FIde PC2
 
 plot_spatial_fide2 <- ggplot(spatial_toplot) +
@@ -406,11 +523,12 @@ plot_spatial_fide2 <- ggplot(spatial_toplot) +
   geom_errorbar( aes(x=Habitat, ymin=fide_PC2_mean-fide_PC2_se, ymax=fide_PC2_mean+fide_PC2_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  labs(x="", y="Functional Identity PC2") +
+  labs(x="", y="") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("d)")
 
 plot_spatial_fide2
 
@@ -424,18 +542,14 @@ plot_tempo_fide2 <- ggplot(temporal_toplot,
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") +
-  labs(x="", y="") +
+  labs(x="", y="FIde PC2") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("c)")
+
 plot_tempo_fide2
-
-## merging all plot into a single figure and saving as png ####
-figureS3_fide2 <- ( plot_spatial_fide2 + plot_tempo_fide2 )
-
-ggsave(figureS3_fide2, file=here::here("outputs",  "FigureS3.jpeg"),
-       height = 22, width = 35, unit = "cm" )
 
 ## FIde PC3
 
@@ -444,11 +558,12 @@ plot_spatial_fide3 <- ggplot(spatial_toplot) +
   geom_errorbar( aes(x=Habitat, ymin=fide_PC3_mean-fide_PC3_se, ymax=fide_PC3_mean+fide_PC3_se), width=0.1, size=0.8, colour="black" ) +
   scale_color_manual(values=hab_colors) + 
   scale_fill_manual(values=hab_colors) + 
-  labs(x="", y="Functional Identity PC3") +
+  labs(x="", y="") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("f)")
 
 plot_spatial_fide3
 
@@ -462,135 +577,23 @@ plot_tempo_fide3 <- ggplot(temporal_toplot,
   scale_x_continuous( limits = c(2001, 2019), breaks = seq(from=2002, to=2018, by=4)  ) +
   scale_color_manual(values="seagreen4") + 
   scale_fill_manual(values="seagreen4") +
-  labs(x="", y="") +
+  labs(x="", y="FIde PC3") +
   theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks.y = element_blank(), 
         panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
         axis.text = element_text(size = (14),colour = "black"), axis.title = element_text(size= (16)),
-        legend.position = "none")
+        legend.position = "none", plot.title = element_text(hjust = -0.06, size = 18, face = "bold"))+
+  ggtitle("e)")
 
 plot_tempo_fide3
 
 ## merging all plot into a single figure and saving as png ####
 
-figureS4_fide3 <- ( plot_spatial_fide3 + plot_tempo_fide3 )
+figureS4 <- ggarrange ( plot_tempo_fide1, plot_spatial_fide1, plot_tempo_fide2, 
+                        plot_spatial_fide2, plot_tempo_fide3,plot_spatial_fide3,
+                        ncol = 2, nrow = 3)
 
-ggsave(figureS4_fide3, file=here::here("outputs",  "FigureS4.jpeg"),
-       height = 22, width = 35, unit = "cm" )
-
-
-################### Habitat
-
-
-# Load data
-
-habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"))
-
-## First graph only with coral as broad category:
-
-habitat_toplot_full <- habitat %>% 
-  group_by(Site, Habitat,Transect) %>% 
-  mutate (Coral = sum(Plate_coral, Branching_coral, Columnar_coral, Colony_corals, Foliose_coral, Soft_coral)) %>% 
-  dplyr::select(-Plate_coral, -Branching_coral, -Columnar_coral, -Colony_corals, -Foliose_coral, -Soft_coral) %>% 
-  rename("Ecklonia radiata" = Ecklonia_radiata , "Turf & CCA" = Turf_CCA, "Other invertebrates" = Other_invertebrates,
-         "Sponges & tunicates" = Sponges_tunicates, "Rock & sand" = Rock_sand) %>% 
-  pivot_longer(cols= 4:10, names_to="Group") %>%
-  filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
-  mutate(value=as.numeric(value)) %>%
-  group_by(Site, Habitat,Transect, Group) %>%
-  summarize(total=sum(value)) %>% 
-  group_by(Site, Transect) %>% 
-  mutate(percent_cover=(total*100/125)) %>% #125 points per transect
-  dplyr::select(-total)
-
-habitat_summary_full <-habitat_toplot_full%>%
-  group_by(Habitat, Group)%>%
-  summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
-            n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
-  mutate(se) %>%
-  group_by(Habitat) %>%
-  arrange(desc(Group)) %>%
-  mutate(
-    pos = cumsum(Percent_cover_habitat),
-    upper = pos + se/2,
-    lower = pos - se/2
-  ) %>%
-  ungroup() %>%  
-  filter(mean > 1)
-
-# color code for the 3 habitats
-colors_full <- c("Ecklonia radiata" = "tan3", Coral="indianred1", Macroalgae = "seagreen", 
-                 "Other invertebrates" ="darkolivegreen4", "Rock & sand"  ="orange",
-                 "Sponges & tunicates" = "mediumorchid1","Turf & CCA" ="red2")
-
-## Plot figure - full
-
-habitat_full <- ggplot(habitat_summary_full, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
-  geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
-  geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
-  scale_color_manual(values=colors_full) + 
-  scale_fill_manual(values=colors_full) + 
-  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
-        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
-        axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
-        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20), 
-        legend.title = element_blank()) +  labs(y="Percent cover (%)", x="")
-
-ggsave(habitat_full, file=here::here("outputs", "habitat_full.jpeg"),
-       height = 16, width = 24, unit = "cm" )
-
-
-### Only corals
-
-habitat_toplot_coral <- habitat %>% 
-  rename( "Plate coral" = Plate_coral, "Branching coral" = Branching_coral,
-          "Columnar coral" = Columnar_coral, "Colony coral" = Colony_corals, "Foliose coral" = Foliose_coral,
-          "Soft coral" = Soft_coral) %>% 
-  pivot_longer(cols= 8:13, names_to="Group") %>%
-  filter(Site!="Flat_top", Site!="Look_at_me_now") %>% 
-  mutate(value=as.numeric(value)) %>%
-  group_by(Site, Habitat,Transect, Group) %>%
-  summarize(total=sum(value)) %>% 
-  group_by(Site, Transect) %>% 
-  mutate(percent_cover=(total*100/125)) %>% #125 points per transect
-  dplyr::select(-total)
-
-
-
-habitat_summary_coral <-habitat_toplot_coral%>%
-  group_by(Habitat, Group)%>%
-  summarise(Percent_cover_habitat=mean(percent_cover,na.rm=T),
-            n = n(), mean = mean(percent_cover), se = sd(percent_cover/sqrt(n))) %>% 
-  mutate(se) %>%
-  group_by(Habitat) %>%
-  arrange(desc(Group)) %>%
-  mutate(
-    pos = cumsum(Percent_cover_habitat),
-    upper = pos + se/2,
-    lower = pos - se/2
-  ) %>%
-  ungroup() 
-
- # filter(mean > 1)
-
-color_coral <- c("Branching coral" ="orange", "Colony coral" = "yellowgreen", "Columnar coral" ="indianred1",
-                  "Foliose coral" ="cornflowerblue", "Plate coral" ="red2",
-                 "Soft coral" = "darkblue")
-
-## Plot figure
-
-habitat_coral <- ggplot(habitat_summary_coral, aes(x=Habitat, y=Percent_cover_habitat, fill=Group)) +
-  geom_bar(stat="identity", width = 0.7, size = 1, color = "black") + 
-  geom_errorbar(aes(ymin = lower, ymax = upper), size = 0.8, width=0.1, position = "identity", color = "black")+
-  scale_color_manual(values=color_coral) + 
-  scale_fill_manual(values=color_coral) + 
-  theme(panel.background=element_rect(fill="white"), panel.grid.minor = element_blank(), axis.ticks = element_blank(), 
-        panel.grid.major = element_blank(),axis.line = element_line(size = 1, colour = "black"),
-        axis.text = element_text(size = (18), color = "black"), axis.title = element_text(size= (18)),
-        legend.key = element_rect(fill = "white"), legend.text = element_text(size=20), legend.title = element_blank())+
-  labs(y="Percent cover (%)", x="") 
-
-ggsave(habitat_coral, file=here::here("outputs", "habitat_coral.jpeg"),
-       height = 16, width = 24, unit = "cm" )
+ggsave(figureS4, file=here::here("outputs",  "FigureS4.jpeg"),
+       height = 25, width = 30, unit = "cm" )
 
 
 ######################## end of code #########################

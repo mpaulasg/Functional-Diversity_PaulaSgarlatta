@@ -190,12 +190,12 @@ habitat <- read.csv(here::here("data", "raw_data", "habitat_solitaries_2012.csv"
 
 # Sub-setting the variables and converting it to an mvabund object format
 
-categories <- mvabund(habitat[, 4:15])
+categories <- mvabund(habitat[, 4:16])
 
 # Check the spread of the data
 
 par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(habitat[, 4:15], horizontal = TRUE, las = 2, main = "Points")
+boxplot(habitat[, 4:16], horizontal = TRUE, las = 2, main = "Points")
 
 #Ecklonia and turf & CCA dominating - however, corals are divided in categories.
 
@@ -225,23 +225,24 @@ anova(mod2) #Significant effect of habitat - p = 0.001
 
 anova(mod2, p.uni = "adjusted", pairwise.comp = habitat$Habitat) 
 
-# Macroalgae (p=0.001), Ecklonia (p=0.001), Turf (p=0.001),
-#Other invertebrates (p=0.001), Plate_Coral (p=0.001). Branching_Coral (p=0.001),
-#Columnar_coral (p=0.001), Colony_coral (p=0.001), Foliose_coral(p=0.001), Soft_coral (p=0.001)
+# Macroalgae (p=0.005), Ecklonia (p=0.001), Turf (p=0.001),
+#Other invertebrates (p=0.001), Plate_Coral (p=0.001). Branching_Coral (p=0.002),
+#Columnar_coral (p=0.001), Massive_coral (p=0.011), Submassive_coral(p=0.001), Laminar_coral (p=0.001),
+#Soft_coral (p=0.002)
 #are different between habitats.
 
 ## Now running the models only with coral morphologies
 
 # Sub-setting the variables and converting it to an mvabund object format
 
-categories_coral <- mvabund(habitat[, 8:13])
+categories_coral <- mvabund(habitat[, 8:14])
 
 # Check the spread of the data
 
 par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(habitat[, 8:13], horizontal = TRUE, las = 2, main = "Points")
+boxplot(habitat[, 8:14], horizontal = TRUE, las = 2, main = "Points")
 
-#Foliose coral and colony corals dominating
+#Laminar coral and Submassive corals dominating
 
 #Check mean-variance relationship
 
@@ -267,8 +268,8 @@ anova(mod2) #Significant effect of habitat - p = 0.001
 
 anova(mod2, p.uni = "adjusted", pairwise.comp = habitat$Habitat) 
 
-# Plate_Coral (p=0.001). Branching_Coral (p=0.001),
-#Columnar_coral (p=0.001), Colony_coral (p=0.001), Foliose_coral(p=0.001),
-#Soft_coral(p=0.001)
+# Plate_Coral (p=0.001). Branching_Coral (p=0.003),
+#Columnar_coral (p=0.002), Massive_coral (p=0.005), Submasive_coral(p=0.001),
+# Laminar_coral (p=0.001), Soft_coral(p=0.003)
 
 #################### end of code ##########################################################

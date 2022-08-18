@@ -40,7 +40,7 @@ load(here::here("data", "temporal_fd_kelp_biomass.RData") )
 
 thermal <- read.csv(here::here("data", "raw_data", "thermal_all.csv")) %>% 
   mutate(thermal_label= if_else(thermal>"23", "tropical", "temperate")) %>%   
-  select(-thermal)
+  dplyr::select(-thermal)
 
 sp_3D_coord_bg <- sp_3D_coord #This one is just for the background polygon
 

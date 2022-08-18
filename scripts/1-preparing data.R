@@ -197,7 +197,7 @@ summary(sp_tr$Size)
 
 # aggregation as ordinal
 sp_tr$Agg <- factor(sp_tr$Agg, 
-                    levels = c("Solitary", "Pair", "Group"),
+                    levels = c("Solitary", "Pair", "Schooling"),
                     ordered = TRUE)
 summary(sp_tr$Agg)
 
